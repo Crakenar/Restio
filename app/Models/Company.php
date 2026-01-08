@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
+class Company extends Model
+{
+    use HasFactory;
+
+    protected $table = 'companies';
+    protected $fillable = [
+        'name',
+        'slug',
+        'timezone',
+    ];
+
+    public function company_settings(): HasOne
+    {
+        return $this->hasOne(CompanySetting::class);
+    }
+
+    public function vacation_requests(): HasMany
+    {
+        return $this->hasMany(VacationRequest::class);
+    }
+}
