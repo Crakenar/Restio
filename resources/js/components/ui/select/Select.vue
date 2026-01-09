@@ -1,0 +1,29 @@
+<script setup lang="ts">
+import { SelectRoot } from 'reka-ui'
+
+const props = defineProps<{
+    modelValue?: string
+    defaultValue?: string
+    disabled?: boolean
+    name?: string
+    required?: boolean
+}>()
+
+const emit = defineEmits<{
+    'update:modelValue': [value: string]
+}>()
+</script>
+
+<template>
+    <SelectRoot
+        data-slot="select"
+        :model-value="modelValue"
+        :default-value="defaultValue"
+        :disabled="disabled"
+        :name="name"
+        :required="required"
+        @update:model-value="emit('update:modelValue', $event)"
+    >
+        <slot />
+    </SelectRoot>
+</template>

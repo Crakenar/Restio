@@ -11,19 +11,52 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
-import AppLogo from './AppLogo.vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import {
+    BookOpen,
+    Calendar,
+    FileText,
+    Folder,
+    LayoutGrid,
+    Palmtree,
+    Users,
+} from 'lucide-vue-next';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-];
+// Get user role from auth (adjust based on your actual auth structure)
+const page = usePage();
+const userRole = computed(() => {
+    const user = page.props.auth?.user as { role?: string } | undefined;
+    return user?.role;
+});
+
+// Main navigation items
+const mainNavItems = computed<NavItem[]>(() => {
+    const items: NavItem[] = [
+        {
+            title: 'Dashboard',
+            href: '/dashboard',
+            icon: LayoutGrid,
+        },
+        {
+            title: 'Requests',
+            href: '/requests',
+            icon: FileText,
+        },
+    ];
+
+    // Only show Team for managers and admins
+    if (userRole.value === 'manager' || userRole.value === 'admin') {
+        items.push({
+            title: 'Team',
+            href: '/teams',
+            icon: Users,
+        });
+    }
+
+    return items;
+});
 
 const footerNavItems: NavItem[] = [
     {
@@ -45,8 +78,18 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboard()">
-                            <AppLogo />
+                        <Link href="/dashboard">
+                            <div
+                                class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600"
+                            >
+                                <Palmtree class="h-5 w-5 text-white" />
+                            </div>
+                            <div class="ml-1 grid flex-1 text-left text-sm">
+                                <span class="font-semibold">Vacationly</span>
+                                <span class="text-xs text-muted-foreground">
+                                    Manage your time off
+                                </span>
+                            </div>
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -62,5 +105,4 @@ const footerNavItems: NavItem[] = [
             <NavUser />
         </SidebarFooter>
     </Sidebar>
-    <slot />
 </template>

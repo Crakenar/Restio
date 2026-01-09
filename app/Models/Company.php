@@ -18,6 +18,11 @@ class Company extends Model
         'timezone',
     ];
 
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
+
     public function company_settings(): HasOne
     {
         return $this->hasOne(CompanySetting::class);
