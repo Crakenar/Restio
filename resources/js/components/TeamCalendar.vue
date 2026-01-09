@@ -1,38 +1,38 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 import {
-    format,
-    startOfMonth,
-    endOfMonth,
-    eachDayOfInterval,
-    isSameMonth,
-    isSameDay,
     addMonths,
-    subMonths,
+    eachDayOfInterval,
+    endOfMonth,
+    format,
+    isSameDay,
+    isSameMonth,
     isWeekend,
-} from 'date-fns'
-import { ChevronLeft, ChevronRight, AlertCircle } from 'lucide-vue-next'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/utils'
+    startOfMonth,
+    subMonths,
+} from 'date-fns';
+import { AlertCircle, ChevronLeft, ChevronRight } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 interface VacationRequest {
-    id: string
-    startDate: Date
-    endDate: Date
-    type: 'vacation' | 'sick' | 'personal' | 'unpaid' | 'wfh'
-    status: 'pending' | 'approved' | 'rejected'
-    employeeName?: string
-    department?: string
+    id: string;
+    startDate: Date;
+    endDate: Date;
+    type: 'vacation' | 'sick' | 'personal' | 'unpaid' | 'wfh';
+    status: 'pending' | 'approved' | 'rejected';
+    employeeName?: string;
+    department?: string;
 }
 
 const props = defineProps<{
-    requests: VacationRequest[]
-}>()
+    requests: VacationRequest[];
+}>();
 
-const currentMonth = ref(new Date())
+const currentMonth = ref(new Date());
 
 const filters = ref({
     vacation: true,
@@ -40,7 +40,7 @@ const filters = ref({
     personal: true,
     unpaid: true,
     wfh: true,
-})
+});
 
 const typeColors: Record<string, string> = {
     vacation: 'bg-blue-500',
@@ -48,7 +48,7 @@ const typeColors: Record<string, string> = {
     personal: 'bg-green-500',
     unpaid: 'bg-gray-500',
     wfh: 'bg-purple-500',
-}
+};
 
 const typeLabels: Record<string, string> = {
     vacation: 'Paid Leave',
@@ -56,51 +56,51 @@ const typeLabels: Record<string, string> = {
     personal: 'Personal Day',
     unpaid: 'Unpaid Leave',
     wfh: 'Work From Home',
-}
+};
 
-const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const calendarDays = computed(() => {
-    const monthStart = startOfMonth(currentMonth.value)
-    const monthEnd = endOfMonth(currentMonth.value)
-    const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd })
-    const firstDayOfWeek = monthStart.getDay()
-    return Array(firstDayOfWeek).fill(null).concat(daysInMonth)
-})
+    const monthStart = startOfMonth(currentMonth.value);
+    const monthEnd = endOfMonth(currentMonth.value);
+    const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
+    const firstDayOfWeek = monthStart.getDay();
+    return Array(firstDayOfWeek).fill(null).concat(daysInMonth);
+});
 
 const toggleFilter = (type: keyof typeof filters.value) => {
-    filters.value[type] = !filters.value[type]
-}
+    filters.value[type] = !filters.value[type];
+};
 
 const getRequestsForDay = (date: Date) => {
     return props.requests.filter((req) => {
-        if (!filters.value[req.type]) return false
-        if (req.status !== 'approved') return false
-        return date >= req.startDate && date <= req.endDate
-    })
-}
+        if (!filters.value[req.type]) return false;
+        if (req.status !== 'approved') return false;
+        return date >= req.startDate && date <= req.endDate;
+    });
+};
 
 const getTeamCoverage = (date: Date) => {
-    const totalEmployees = 15 // Mock total
-    const absences = getRequestsForDay(date)
-    const presentCount = totalEmployees - absences.length
-    const coveragePercent = (presentCount / totalEmployees) * 100
+    const totalEmployees = 15; // Mock total
+    const absences = getRequestsForDay(date);
+    const presentCount = totalEmployees - absences.length;
+    const coveragePercent = (presentCount / totalEmployees) * 100;
 
     return {
         absences: absences.length,
         present: presentCount,
         coveragePercent,
         isLowCoverage: coveragePercent < 60,
-    }
-}
+    };
+};
 
 const goToPreviousMonth = () => {
-    currentMonth.value = subMonths(currentMonth.value, 1)
-}
+    currentMonth.value = subMonths(currentMonth.value, 1);
+};
 
 const goToNextMonth = () => {
-    currentMonth.value = addMonths(currentMonth.value, 1)
-}
+    currentMonth.value = addMonths(currentMonth.value, 1);
+};
 </script>
 
 <template>
@@ -109,13 +109,21 @@ const goToNextMonth = () => {
             <div class="flex items-center justify-between">
                 <CardTitle>Team Coverage Calendar</CardTitle>
                 <div class="flex items-center gap-2">
-                    <Button variant="outline" size="icon" @click="goToPreviousMonth">
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        @click="goToPreviousMonth"
+                    >
                         <ChevronLeft class="h-4 w-4" />
                     </Button>
                     <div class="min-w-[150px] text-center font-semibold">
                         {{ format(currentMonth, 'MMMM yyyy') }}
                     </div>
-                    <Button variant="outline" size="icon" @click="goToNextMonth">
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        @click="goToNextMonth"
+                    >
                         <ChevronRight class="h-4 w-4" />
                     </Button>
                 </div>
@@ -133,7 +141,9 @@ const goToNextMonth = () => {
                     <Checkbox
                         :id="`filter-${type}`"
                         :checked="filters[type as keyof typeof filters]"
-                        @update:checked="toggleFilter(type as keyof typeof filters)"
+                        @update:checked="
+                            toggleFilter(type as keyof typeof filters)
+                        "
                     />
                     <Label
                         :for="`filter-${type}`"
@@ -164,23 +174,27 @@ const goToNextMonth = () => {
                             :class="
                                 cn(
                                     'relative aspect-square rounded-lg border p-2 transition-all',
-                                    !isSameMonth(day, currentMonth) && 'opacity-50',
-                                    isSameDay(day, new Date()) && 'border-2 border-blue-500',
+                                    !isSameMonth(day, currentMonth) &&
+                                        'opacity-50',
+                                    isSameDay(day, new Date()) &&
+                                        'border-2 border-blue-500',
                                     getTeamCoverage(day).isLowCoverage &&
                                         isSameMonth(day, currentMonth) &&
                                         'bg-red-50 dark:bg-red-950/20',
-                                    isWeekend(day) && 'bg-muted/50'
+                                    isWeekend(day) && 'bg-muted/50',
                                 )
                             "
                         >
                             <div class="flex h-full flex-col">
-                                <div class="mb-1 flex items-start justify-between">
+                                <div
+                                    class="mb-1 flex items-start justify-between"
+                                >
                                     <span
                                         :class="
                                             cn(
                                                 'text-sm font-medium',
                                                 isSameDay(day, new Date()) &&
-                                                    'font-bold text-blue-600'
+                                                    'font-bold text-blue-600',
                                             )
                                         "
                                     >
@@ -188,7 +202,8 @@ const goToNextMonth = () => {
                                     </span>
                                     <AlertCircle
                                         v-if="
-                                            getTeamCoverage(day).isLowCoverage &&
+                                            getTeamCoverage(day)
+                                                .isLowCoverage &&
                                             isSameMonth(day, currentMonth)
                                         "
                                         class="h-3 w-3 text-red-600"
@@ -200,12 +215,14 @@ const goToNextMonth = () => {
                                     class="flex-1 space-y-1 overflow-hidden"
                                 >
                                     <div
-                                        v-for="(req, idx) in getRequestsForDay(day).slice(0, 2)"
+                                        v-for="(req, idx) in getRequestsForDay(
+                                            day,
+                                        ).slice(0, 2)"
                                         :key="idx"
                                         :class="
                                             cn(
                                                 'truncate rounded px-1 py-0.5 text-[10px] text-white',
-                                                typeColors[req.type]
+                                                typeColors[req.type],
                                             )
                                         "
                                         :title="`${req.employeeName} - ${typeLabels[req.type]}`"
@@ -216,7 +233,8 @@ const goToNextMonth = () => {
                                         v-if="getRequestsForDay(day).length > 2"
                                         class="text-[10px] text-muted-foreground"
                                     >
-                                        +{{ getRequestsForDay(day).length - 2 }} more
+                                        +{{ getRequestsForDay(day).length - 2 }}
+                                        more
                                     </div>
                                 </div>
 
@@ -224,8 +242,13 @@ const goToNextMonth = () => {
                                     v-if="isSameMonth(day, currentMonth)"
                                     class="mt-auto pt-1"
                                 >
-                                    <div class="text-center text-[10px] text-muted-foreground">
+                                    <div
+                                        class="text-center text-[10px] text-muted-foreground"
+                                    >
                                         {{ getTeamCoverage(day).present }}/15
+                                        <p class="invisible md:visible">
+                                            Team member
+                                        </p>
                                     </div>
                                 </div>
                             </div>
