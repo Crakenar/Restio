@@ -106,97 +106,97 @@ const getTypeColor = (type: string) => {
         <!-- Header with Action Metrics -->
         <div class="grid gap-4 md:grid-cols-4">
             <Card
-                class="relative overflow-hidden border-0 bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/20"
+                class="relative overflow-hidden border border-slate-200/60 dark:border-white/20 bg-white/60 dark:bg-white/10 text-slate-900 dark:text-white shadow-lg shadow-amber-500/10 backdrop-blur-sm"
             >
                 <CardContent class="p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="mb-1 text-sm font-medium text-amber-100">
+                            <p class="mb-1 text-sm font-medium text-slate-600 dark:text-white/70">
                                 Action Required
                             </p>
                             <p class="text-4xl font-bold">
                                 {{ pendingRequests.length }}
                             </p>
-                            <p class="mt-1 text-xs text-amber-100">
+                            <p class="mt-1 text-xs text-slate-500 dark:text-white/50">
                                 Pending approvals
                             </p>
                         </div>
                         <div
-                            class="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm"
+                            class="flex h-12 w-12 items-center justify-center rounded-full bg-white/40 dark:bg-white/10 backdrop-blur-sm"
                         >
-                            <AlertCircle class="h-6 w-6" />
+                            <AlertCircle class="h-6 w-6 text-amber-500 dark:text-amber-400" />
                         </div>
                     </div>
                 </CardContent>
             </Card>
 
             <Card
-                class="border-l-4 border-l-emerald-500 transition-all duration-300 hover:shadow-lg dark:border-l-emerald-400"
+                class="border border-slate-200/50 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-sm transition-all duration-300 hover:bg-white/60 dark:hover:bg-white/10 hover:shadow-lg"
             >
                 <CardContent class="p-6">
                     <div class="flex items-center justify-between">
                         <div>
                             <p
-                                class="mb-1 text-sm font-medium text-muted-foreground"
+                                class="mb-1 text-sm font-medium text-slate-600 dark:text-white/60"
                             >
                                 Approved
                             </p>
                             <p
-                                class="text-3xl font-bold text-emerald-700 dark:text-emerald-400"
+                                class="text-3xl font-bold text-slate-900 dark:text-white"
                             >
                                 {{ approvedRequests.length }}
                             </p>
                         </div>
                         <CheckCircle2
-                            class="h-8 w-8 text-emerald-600 opacity-60 dark:text-emerald-400"
+                            class="h-8 w-8 text-emerald-400 opacity-60"
                         />
                     </div>
                 </CardContent>
             </Card>
 
             <Card
-                class="border-l-4 border-l-blue-500 transition-all duration-300 hover:shadow-lg dark:border-l-blue-400"
+                class="border border-white/10 bg-white/5 backdrop-blur-sm transition-all duration-300 hover:bg-white/10 hover:shadow-lg"
             >
                 <CardContent class="p-6">
                     <div class="flex items-center justify-between">
                         <div>
                             <p
-                                class="mb-1 text-sm font-medium text-muted-foreground"
+                                class="mb-1 text-sm font-medium text-white/60"
                             >
                                 Out Today
                             </p>
                             <p
-                                class="text-3xl font-bold text-blue-700 dark:text-blue-400"
+                                class="text-3xl font-bold text-white"
                             >
                                 {{ currentAbsences.length }}
                             </p>
                         </div>
                         <Calendar
-                            class="h-8 w-8 text-blue-600 opacity-60 dark:text-blue-400"
+                            class="h-8 w-8 text-blue-400 opacity-60"
                         />
                     </div>
                 </CardContent>
             </Card>
 
             <Card
-                class="border-l-4 border-l-violet-500 transition-all duration-300 hover:shadow-lg dark:border-l-violet-400"
+                class="border border-white/10 bg-white/5 backdrop-blur-sm transition-all duration-300 hover:bg-white/10 hover:shadow-lg"
             >
                 <CardContent class="p-6">
                     <div class="flex items-center justify-between">
                         <div>
                             <p
-                                class="mb-1 text-sm font-medium text-muted-foreground"
+                                class="mb-1 text-sm font-medium text-white/60"
                             >
                                 Team Size
                             </p>
                             <p
-                                class="text-3xl font-bold text-violet-700 dark:text-violet-400"
+                                class="text-3xl font-bold text-white"
                             >
                                 {{ teamMembers }}
                             </p>
                         </div>
                         <Users
-                            class="h-8 w-8 text-violet-600 opacity-60 dark:text-violet-400"
+                            class="h-8 w-8 text-violet-400 opacity-60"
                         />
                     </div>
                 </CardContent>
@@ -205,31 +205,31 @@ const getTypeColor = (type: string) => {
 
         <!-- Main Content Area -->
         <Tabs v-model="activeTab" class="space-y-4">
-            <TabsList class="grid w-full grid-cols-3">
-                <TabsTrigger value="pending" class="relative">
+            <TabsList class="grid w-full grid-cols-3 border border-slate-200/50 dark:border-white/20 bg-white/40 dark:bg-white/10 shadow-lg backdrop-blur-xl">
+                <TabsTrigger value="pending" class="relative data-[state=active]:bg-white/20 data-[state=active]:text-white text-white/70 hover:text-white hover:bg-white/5">
                     Pending
                     <Badge
                         v-if="pendingRequests.length > 0"
-                        class="ml-2 border-0 bg-amber-500 text-white"
+                        class="ml-2 border-0 bg-amber-500 text-white shadow-sm"
                     >
                         {{ pendingRequests.length }}
                     </Badge>
                 </TabsTrigger>
-                <TabsTrigger value="team">Team Calendar</TabsTrigger>
-                <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+                <TabsTrigger value="team" class="data-[state=active]:bg-white/20 data-[state=active]:text-white text-white/70 hover:text-white hover:bg-white/5">Team Calendar</TabsTrigger>
+                <TabsTrigger value="upcoming" class="data-[state=active]:bg-white/20 data-[state=active]:text-white text-white/70 hover:text-white hover:bg-white/5">Upcoming</TabsTrigger>
             </TabsList>
 
             <!-- Pending Requests -->
             <TabsContent value="pending" class="space-y-4">
-                <Card v-if="pendingRequests.length === 0" class="border-dashed">
+                <Card v-if="pendingRequests.length === 0" class="border border-dashed border-slate-300 dark:border-white/20 bg-white/40 dark:bg-white/5">
                     <CardContent
                         class="flex flex-col items-center justify-center py-12"
                     >
                         <CheckCircle2 class="mb-4 h-12 w-12 text-emerald-500" />
-                        <h3 class="mb-2 text-lg font-semibold">
+                        <h3 class="mb-2 text-lg font-semibold text-slate-900 dark:text-white">
                             All caught up!
                         </h3>
-                        <p class="text-sm text-muted-foreground">
+                        <p class="text-sm text-muted-foreground text-white/60">
                             No pending requests to review
                         </p>
                     </CardContent>
@@ -239,7 +239,7 @@ const getTypeColor = (type: string) => {
                     <Card
                         v-for="(request, index) in pendingRequests"
                         :key="request.id"
-                        class="animate-in border-l-4 border-l-amber-500 transition-all duration-300 fade-in slide-in-from-left-4 hover:shadow-md"
+                        class="animate-in border border-slate-200/50 dark:border-white/10 bg-white/40 dark:bg-white/5 transition-all duration-300 fade-in slide-in-from-left-4 hover:bg-white/60 dark:hover:bg-white/10 border-l-4 border-l-amber-500"
                         :style="{ animationDelay: `${index * 50}ms` }"
                     >
                         <CardContent class="p-6">
@@ -247,7 +247,7 @@ const getTypeColor = (type: string) => {
                                 <div class="flex-1">
                                     <div class="mb-3 flex items-center gap-3">
                                         <div
-                                            class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 font-semibold text-white"
+                                            class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 font-semibold text-white shadow-lg shadow-amber-500/20"
                                         >
                                             {{
                                                 request.employeeName?.charAt(
@@ -256,11 +256,11 @@ const getTypeColor = (type: string) => {
                                             }}
                                         </div>
                                         <div>
-                                            <h4 class="font-semibold">
+                                            <h4 class="font-semibold text-slate-900 dark:text-white">
                                                 {{ request.employeeName }}
                                             </h4>
                                             <p
-                                                class="text-sm text-muted-foreground"
+                                                class="text-sm text-slate-600 dark:text-white/60"
                                             >
                                                 {{ request.department }}
                                             </p>
@@ -276,14 +276,14 @@ const getTypeColor = (type: string) => {
                                             {{ request.type }}
                                         </Badge>
                                         <span
-                                            class="text-sm text-muted-foreground"
+                                            class="text-sm text-white/50"
                                         >
                                             {{
                                                 formatDate(request.startDate)
                                             }}
                                             - {{ formatDate(request.endDate) }}
                                         </span>
-                                        <span class="text-sm font-medium">
+                                        <span class="text-sm font-medium text-white/70">
                                             {{
                                                 Math.ceil(
                                                     (request.endDate.getTime() -
@@ -296,7 +296,7 @@ const getTypeColor = (type: string) => {
                                     </div>
                                     <p
                                         v-if="request.reason"
-                                        class="mt-3 text-sm text-muted-foreground italic"
+                                        class="mt-3 text-sm text-slate-600 dark:text-white/60 italic"
                                     >
                                         "{{ request.reason }}"
                                     </p>
@@ -306,7 +306,7 @@ const getTypeColor = (type: string) => {
                                         variant="outline"
                                         size="sm"
                                         @click="emit('approve', request.id)"
-                                        class="border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 dark:border-emerald-800 dark:hover:bg-emerald-950/50"
+                                        class="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
                                     >
                                         <CheckCircle2 class="mr-1 h-4 w-4" />
                                         Approve
@@ -315,7 +315,7 @@ const getTypeColor = (type: string) => {
                                         variant="outline"
                                         size="sm"
                                         @click="emit('reject', request.id)"
-                                        class="border-red-200 hover:bg-red-50 hover:text-red-700 dark:border-red-800 dark:hover:bg-red-950/50"
+                                        class="border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300"
                                     >
                                         <XCircle class="mr-1 h-4 w-4" />
                                         Reject
@@ -334,10 +334,10 @@ const getTypeColor = (type: string) => {
 
             <!-- Upcoming Absences -->
             <TabsContent value="upcoming" class="space-y-4">
-                <Card>
+                <Card class="border border-slate-200/50 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-sm">
                     <CardHeader>
-                        <CardTitle>Upcoming Team Absences</CardTitle>
-                        <CardDescription
+                        <CardTitle class="text-slate-900 dark:text-white">Upcoming Team Absences</CardTitle>
+                        <CardDescription class="text-slate-500 dark:text-white/60"
                             >Plan ahead for team coverage</CardDescription
                         >
                     </CardHeader>
@@ -347,9 +347,9 @@ const getTypeColor = (type: string) => {
                             class="flex flex-col items-center justify-center py-8"
                         >
                             <Calendar
-                                class="mb-4 h-12 w-12 text-muted-foreground/50"
+                                class="mb-4 h-12 w-12 text-slate-300 dark:text-white/30"
                             />
-                            <p class="text-sm text-muted-foreground">
+                            <p class="text-sm text-slate-400 dark:text-white/50">
                                 No upcoming absences scheduled
                             </p>
                         </div>
@@ -357,12 +357,12 @@ const getTypeColor = (type: string) => {
                             <div
                                 v-for="(request, index) in upcomingAbsences"
                                 :key="request.id"
-                                class="flex animate-in items-center justify-between rounded-lg border bg-card p-4 transition-all duration-300 fade-in slide-in-from-right-4 hover:shadow-md"
+                                class="flex animate-in items-center justify-between rounded-lg border border-slate-200/50 dark:border-white/10 bg-white/40 dark:bg-white/5 p-4 transition-all duration-300 fade-in slide-in-from-right-4 hover:bg-white/60 dark:hover:bg-white/10"
                                 :style="{ animationDelay: `${index * 50}ms` }"
                             >
                                 <div class="flex items-center gap-4">
                                     <div
-                                        class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-600 font-semibold text-white"
+                                        class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-600 font-semibold text-white shadow-lg shadow-blue-500/20"
                                     >
                                         {{
                                             request.employeeName?.charAt(0) ||
@@ -370,11 +370,11 @@ const getTypeColor = (type: string) => {
                                         }}
                                     </div>
                                     <div>
-                                        <p class="font-medium">
+                                        <p class="font-medium text-slate-900 dark:text-white">
                                             {{ request.employeeName }}
                                         </p>
                                         <p
-                                            class="text-sm text-muted-foreground"
+                                            class="text-sm text-slate-500 dark:text-white/60"
                                         >
                                             {{ request.department }}
                                         </p>
@@ -388,11 +388,11 @@ const getTypeColor = (type: string) => {
                                         {{ request.type }}
                                     </Badge>
                                     <div class="text-right">
-                                        <p class="text-sm font-medium">
+                                        <p class="text-sm font-medium text-white/80">
                                             {{ formatDate(request.startDate) }}
                                         </p>
                                         <p
-                                            class="text-xs text-muted-foreground"
+                                            class="text-xs text-white/50"
                                         >
                                             {{
                                                 Math.ceil(

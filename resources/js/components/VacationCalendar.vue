@@ -220,16 +220,16 @@ const getTypeAbbreviation = (type: string) => {
 </script>
 
 <template>
-    <Card class="flex-1">
+    <Card class="flex-1 border border-slate-200/50 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-sm">
         <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-4">
-            <CardTitle>Vacation Calendar</CardTitle>
+            <CardTitle class="text-slate-900 dark:text-white">Vacation Calendar</CardTitle>
             <div class="flex items-center gap-4">
                 <!-- View Mode Selector -->
-                <div class="flex items-center gap-1 rounded-lg border p-1">
+                <div class="flex items-center gap-1 rounded-lg border border-slate-200/50 dark:border-white/10 bg-white/40 dark:bg-white/5 p-1">
                     <Button
                         :variant="viewMode === 'weekly' ? 'default' : 'ghost'"
                         size="sm"
-                        class="h-8"
+                        class="h-8 data-[variant=ghost]:text-slate-600 dark:data-[variant=ghost]:text-white/70 data-[variant=ghost]:hover:bg-white/60 dark:data-[variant=ghost]:hover:bg-white/10 data-[variant=ghost]:hover:text-slate-900 dark:data-[variant=ghost]:hover:text-white"
                         @click="viewMode = 'weekly'"
                     >
                         Week
@@ -237,7 +237,7 @@ const getTypeAbbreviation = (type: string) => {
                     <Button
                         :variant="viewMode === 'monthly' ? 'default' : 'ghost'"
                         size="sm"
-                        class="h-8"
+                        class="h-8 data-[variant=ghost]:text-slate-600 dark:data-[variant=ghost]:text-white/70 data-[variant=ghost]:hover:bg-white/60 dark:data-[variant=ghost]:hover:bg-white/10 data-[variant=ghost]:hover:text-slate-900 dark:data-[variant=ghost]:hover:text-white"
                         @click="viewMode = 'monthly'"
                     >
                         Month
@@ -245,7 +245,7 @@ const getTypeAbbreviation = (type: string) => {
                     <Button
                         :variant="viewMode === 'yearly' ? 'default' : 'ghost'"
                         size="sm"
-                        class="h-8"
+                        class="h-8 data-[variant=ghost]:text-slate-600 dark:data-[variant=ghost]:text-white/70 data-[variant=ghost]:hover:bg-white/60 dark:data-[variant=ghost]:hover:bg-white/10 data-[variant=ghost]:hover:text-slate-900 dark:data-[variant=ghost]:hover:text-white"
                         @click="viewMode = 'yearly'"
                     >
                         Year
@@ -254,13 +254,13 @@ const getTypeAbbreviation = (type: string) => {
 
                 <!-- Navigation -->
                 <div class="flex items-center gap-2">
-                    <Button variant="outline" size="icon" @click="handlePrevious">
+                    <Button variant="outline" size="icon" @click="handlePrevious" class="border-slate-200/50 dark:border-white/10 bg-transparent text-slate-700 dark:text-white hover:bg-white/60 dark:hover:bg-white/10">
                         <ChevronLeft class="h-4 w-4" />
                     </Button>
-                    <div class="min-w-[180px] text-center font-semibold">
+                    <div class="min-w-[180px] text-center font-semibold text-slate-900 dark:text-white">
                         {{ currentLabel }}
                     </div>
-                    <Button variant="outline" size="icon" @click="handleNext">
+                    <Button variant="outline" size="icon" @click="handleNext" class="border-slate-200/50 dark:border-white/10 bg-transparent text-slate-700 dark:text-white hover:bg-white/60 dark:hover:bg-white/10">
                         <ChevronRight class="h-4 w-4" />
                     </Button>
                 </div>
@@ -276,14 +276,14 @@ const getTypeAbbreviation = (type: string) => {
                 <div class="grid grid-cols-7 gap-4">
                     <div v-for="day in weeklyDays" :key="day.toISOString()" class="space-y-2">
                         <div class="text-center">
-                            <div class="text-sm font-semibold text-muted-foreground">
+                            <div class="text-sm font-semibold text-slate-500 dark:text-white/50">
                                 {{ format(day, 'EEE') }}
                             </div>
                             <div
                                 :class="
                                     cn(
-                                        'mt-1 text-2xl font-bold',
-                                        isSameDay(day, new Date()) && 'text-blue-600'
+                                        'mt-1 text-2xl font-bold text-slate-900 dark:text-white',
+                                        isSameDay(day, new Date()) && 'text-blue-600 dark:text-blue-400'
                                     )
                                 "
                             >
@@ -294,18 +294,18 @@ const getTypeAbbreviation = (type: string) => {
                             :disabled="isBefore(day, startOfDay(new Date())) || !!hasRequest(day)"
                             :class="
                                 cn(
-                                    'h-32 w-full rounded-lg border-2 p-3 transition-all',
-                                    isSameDay(day, new Date()) && 'border-blue-500',
+                                    'h-32 w-full rounded-lg border p-3 transition-all',
+                                    isSameDay(day, new Date()) && 'border-blue-500 dark:border-blue-400',
                                     isDateSelected(day) &&
-                                        'border-blue-500 bg-blue-100 dark:bg-blue-900',
+                                        'border-blue-500 dark:border-blue-400 bg-blue-100/50 dark:bg-blue-500/20',
                                     hasRequest(day) &&
                                         `${typeColors[hasRequest(day)!.type]} border-transparent text-white`,
                                     !hasRequest(day) &&
                                         !isDateSelected(day) &&
-                                        'border-border hover:bg-accent',
+                                        'border-slate-200/50 dark:border-white/10 hover:bg-white/60 dark:hover:bg-white/5 text-slate-900 dark:text-white',
                                     isBefore(day, startOfDay(new Date())) &&
                                         'cursor-not-allowed opacity-40',
-                                    isWeekend(day) && !hasRequest(day) && 'bg-muted/50'
+                                    isWeekend(day) && !hasRequest(day) && 'bg-slate-100/50 dark:bg-white/5'
                                 )
                             "
                             @click="handleDateClick(day)"
@@ -315,7 +315,7 @@ const getTypeAbbreviation = (type: string) => {
                             </div>
                             <div
                                 v-if="!hasRequest(day) && isDateSelected(day)"
-                                class="text-sm font-medium text-blue-700 dark:text-blue-300"
+                                class="text-sm font-medium text-blue-300"
                             >
                                 Selected
                             </div>
@@ -330,7 +330,7 @@ const getTypeAbbreviation = (type: string) => {
                     <div
                         v-for="day in weekDays"
                         :key="day"
-                        class="py-2 text-center text-sm font-semibold text-muted-foreground"
+                        class="py-2 text-center text-sm font-semibold text-slate-500 dark:text-white/50"
                     >
                         {{ day }}
                     </div>
@@ -345,18 +345,18 @@ const getTypeAbbreviation = (type: string) => {
                                 cn(
                                     'aspect-square rounded-lg border p-2 text-sm transition-all',
                                     !isSameMonth(day, currentMonth) &&
-                                        'text-muted-foreground opacity-50',
-                                    isSameDay(day, new Date()) && 'border-2 border-blue-500',
+                                        'text-slate-400 dark:text-white/30 opacity-50',
+                                    isSameDay(day, new Date()) && 'border-2 border-blue-500 dark:border-blue-400',
                                     isDateSelected(day) &&
-                                        'border-blue-500 bg-blue-100 dark:bg-blue-900',
+                                        'border-blue-500 dark:border-blue-400 bg-blue-100/50 dark:bg-blue-500/20 text-slate-900 dark:text-white',
                                     hasRequest(day) &&
-                                        `${typeColors[hasRequest(day)!.type]} text-white`,
+                                        `${typeColors[hasRequest(day)!.type]} text-white border-transparent`,
                                     !hasRequest(day) &&
                                         !isDateSelected(day) &&
-                                        'border-border hover:bg-accent',
+                                        'border-slate-200/50 dark:border-white/10 hover:bg-white/60 dark:hover:bg-white/5 text-slate-900 dark:text-white/80',
                                     isBefore(day, startOfDay(new Date())) &&
                                         'cursor-not-allowed opacity-40',
-                                    isWeekend(day) && !hasRequest(day) && 'bg-muted/50'
+                                    isWeekend(day) && !hasRequest(day) && 'bg-slate-100/50 dark:bg-white/5'
                                 )
                             "
                             @click="handleDateClick(day)"
@@ -377,16 +377,16 @@ const getTypeAbbreviation = (type: string) => {
                 <div
                     v-for="month in yearlyMonths"
                     :key="month.toISOString()"
-                    class="rounded-lg border p-3"
+                    class="rounded-lg border border-slate-200/50 dark:border-white/10 p-3 hover:bg-white/60 dark:hover:bg-white/5 transition-colors"
                 >
-                    <h3 class="mb-2 text-center text-sm font-semibold">
+                    <h3 class="mb-2 text-center text-sm font-semibold text-slate-900 dark:text-white">
                         {{ format(month, 'MMMM') }}
                     </h3>
                     <div class="grid grid-cols-7 gap-1">
                         <div
                             v-for="(dayLetter, i) in weekDaysShort"
                             :key="i"
-                            class="text-center text-[10px] font-medium text-muted-foreground"
+                            class="text-center text-[10px] font-medium text-slate-400 dark:text-white/50"
                         >
                             {{ dayLetter }}
                         </div>
@@ -397,10 +397,10 @@ const getTypeAbbreviation = (type: string) => {
                                 :class="
                                     cn(
                                         'flex aspect-square items-center justify-center rounded text-[10px]',
-                                        isSameDay(day, new Date()) && 'ring-1 ring-blue-500',
+                                        isSameDay(day, new Date()) && 'ring-1 ring-blue-500 dark:ring-blue-400 text-blue-600 dark:text-blue-400 font-bold',
                                         hasRequest(day) &&
                                             `${typeColors[hasRequest(day)!.type]} text-white`,
-                                        !hasRequest(day) && 'text-muted-foreground'
+                                        !hasRequest(day) && 'text-slate-500 dark:text-white/70'
                                     )
                                 "
                             >
@@ -412,7 +412,7 @@ const getTypeAbbreviation = (type: string) => {
             </div>
 
             <!-- Legend -->
-            <div class="mt-6 flex flex-wrap gap-4 text-sm">
+            <div class="mt-6 flex flex-wrap gap-4 text-sm text-slate-600 dark:text-white/80">
                 <div class="flex items-center gap-2">
                     <div class="h-4 w-4 rounded bg-blue-500" />
                     <span>Paid Leave</span>

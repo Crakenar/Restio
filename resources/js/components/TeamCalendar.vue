@@ -104,25 +104,27 @@ const goToNextMonth = () => {
 </script>
 
 <template>
-    <Card class="flex-1">
+    <Card class="flex-1 border border-slate-200/50 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-sm">
         <CardHeader>
             <div class="flex items-center justify-between">
-                <CardTitle>Team Coverage Calendar</CardTitle>
+                <CardTitle class="text-slate-900 dark:text-white">Team Coverage Calendar</CardTitle>
                 <div class="flex items-center gap-2">
                     <Button
                         variant="outline"
                         size="icon"
                         @click="goToPreviousMonth"
+                        class="border-slate-200/50 dark:border-white/10 bg-transparent text-slate-700 dark:text-white hover:bg-white/60 dark:hover:bg-white/10"
                     >
                         <ChevronLeft class="h-4 w-4" />
                     </Button>
-                    <div class="min-w-[150px] text-center font-semibold">
+                    <div class="min-w-[150px] text-center font-semibold text-slate-900 dark:text-white">
                         {{ format(currentMonth, 'MMMM yyyy') }}
                     </div>
                     <Button
                         variant="outline"
                         size="icon"
                         @click="goToNextMonth"
+                        class="border-slate-200/50 dark:border-white/10 bg-transparent text-slate-700 dark:text-white hover:bg-white/60 dark:hover:bg-white/10"
                     >
                         <ChevronRight class="h-4 w-4" />
                     </Button>
@@ -131,8 +133,8 @@ const goToNextMonth = () => {
         </CardHeader>
         <CardContent class="space-y-6">
             <!-- Filters -->
-            <div class="flex flex-wrap gap-6 rounded-lg bg-muted/30 p-4">
-                <div class="text-sm font-semibold">Filters:</div>
+            <div class="flex flex-wrap gap-6 rounded-lg bg-white/40 dark:bg-white/5 p-4 border border-slate-200/50 dark:border-white/10">
+                <div class="text-sm font-semibold text-slate-900 dark:text-white">Filters:</div>
                 <div
                     v-for="(label, type) in typeLabels"
                     :key="type"
@@ -144,10 +146,11 @@ const goToNextMonth = () => {
                         @update:checked="
                             toggleFilter(type as keyof typeof filters)
                         "
+                        class="border-slate-300 dark:border-white/50 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                     />
                     <Label
                         :for="`filter-${type}`"
-                        class="flex cursor-pointer items-center gap-2 text-sm font-normal"
+                        class="flex cursor-pointer items-center gap-2 text-sm font-normal text-slate-700 dark:text-white/80"
                     >
                         <div :class="cn('h-3 w-3 rounded', typeColors[type])" />
                         {{ label }}
@@ -161,7 +164,7 @@ const goToNextMonth = () => {
                     <div
                         v-for="day in weekDays"
                         :key="day"
-                        class="py-2 text-center text-sm font-semibold text-muted-foreground"
+                        class="py-2 text-center text-sm font-semibold text-slate-500 dark:text-white/60"
                     >
                         {{ day }}
                     </div>
@@ -173,15 +176,15 @@ const goToNextMonth = () => {
                             v-else
                             :class="
                                 cn(
-                                    'relative aspect-square rounded-lg border p-2 transition-all',
+                                    'relative aspect-square rounded-lg border p-2 transition-all border-slate-200/50 dark:border-white/10',
                                     !isSameMonth(day, currentMonth) &&
-                                        'opacity-50',
+                                        'opacity-30',
                                     isSameDay(day, new Date()) &&
-                                        'border-2 border-blue-500',
+                                        'border-2 border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-500/10',
                                     getTeamCoverage(day).isLowCoverage &&
                                         isSameMonth(day, currentMonth) &&
-                                        'bg-red-50 dark:bg-red-950/20',
-                                    isWeekend(day) && 'bg-muted/50',
+                                        'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/30',
+                                    isWeekend(day) && 'bg-slate-50/50 dark:bg-white/5',
                                 )
                             "
                         >
@@ -192,9 +195,9 @@ const goToNextMonth = () => {
                                     <span
                                         :class="
                                             cn(
-                                                'text-sm font-medium',
+                                                'text-sm font-medium text-slate-700 dark:text-white/80',
                                                 isSameDay(day, new Date()) &&
-                                                    'font-bold text-blue-600',
+                                                    'font-bold text-blue-600 dark:text-blue-400',
                                             )
                                         "
                                     >
@@ -206,7 +209,7 @@ const goToNextMonth = () => {
                                                 .isLowCoverage &&
                                             isSameMonth(day, currentMonth)
                                         "
-                                        class="h-3 w-3 text-red-600"
+                                        class="h-3 w-3 text-red-600 dark:text-red-400"
                                     />
                                 </div>
 
@@ -231,7 +234,7 @@ const goToNextMonth = () => {
                                     </div>
                                     <div
                                         v-if="getRequestsForDay(day).length > 2"
-                                        class="text-[10px] text-muted-foreground"
+                                        class="text-[10px] text-slate-500 dark:text-white/50"
                                     >
                                         +{{ getRequestsForDay(day).length - 2 }}
                                         more
@@ -243,7 +246,7 @@ const goToNextMonth = () => {
                                     class="mt-auto pt-1"
                                 >
                                     <div
-                                        class="text-center text-[10px] text-muted-foreground"
+                                        class="text-center text-[10px] text-slate-400 dark:text-white/40"
                                     >
                                         {{ getTeamCoverage(day).present }}/15
                                         <p class="invisible md:visible">
@@ -259,7 +262,7 @@ const goToNextMonth = () => {
 
             <!-- Legend -->
             <div class="space-y-3">
-                <div class="flex flex-wrap gap-4 text-sm">
+                <div class="flex flex-wrap gap-4 text-sm text-slate-600 dark:text-white/80">
                     <div
                         v-for="(label, type) in typeLabels"
                         :key="type"
@@ -269,9 +272,9 @@ const goToNextMonth = () => {
                         <span>{{ label }}</span>
                     </div>
                 </div>
-                <div class="flex items-center gap-2 text-sm">
-                    <AlertCircle class="h-4 w-4 text-red-600" />
-                    <span class="text-muted-foreground">
+                <div class="flex items-center gap-2 text-sm text-slate-600 dark:text-white/60">
+                    <AlertCircle class="h-4 w-4 text-red-500 dark:text-red-400" />
+                    <span>
                         Low coverage (less than 60% present)
                     </span>
                 </div>
