@@ -1,43 +1,15 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Head } from '@inertiajs/vue3'
-import { CalendarDays, Clock, CheckCircle2, User, Users, Building2 } from 'lucide-vue-next'
-import AppLayout from '@/layouts/AppLayout.vue'
-import VacationStatCard from '@/components/VacationStatCard.vue'
-import VacationCalendar from '@/components/VacationCalendar.vue'
-import RequestsTable from '@/components/RequestsTable.vue'
-import AdminDashboard from '@/components/AdminDashboard.vue'
-import TeamCalendar from '@/components/TeamCalendar.vue'
-import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import type { BreadcrumbItem } from '@/types'
+import AdminDashboard from '@/components/dashboards/AdminDashboard.vue';
+import EmployeeDashboard from '@/components/dashboards/EmployeeDashboard.vue';
+import ManagerDashboard from '@/components/dashboards/ManagerDashboard.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
+import type { BreadcrumbItem } from '@/types';
+import type { Employee, VacationRequest } from '@/types/vacation';
+import { Head } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 
-// Types
-interface VacationRequest {
-    id: string
-    startDate: Date
-    endDate: Date
-    type: 'vacation' | 'sick' | 'personal' | 'unpaid' | 'wfh'
-    status: 'pending' | 'approved' | 'rejected'
-    reason?: string
-    employeeName?: string
-    document?: File
-    department?: string
-}
-
-interface Employee {
-    id: string
-    name: string
-    email: string
-    department: string
-    totalDays: number
-    usedDays: number
-    pendingRequests: number
-}
-
-// State
-const userRole = ref<'employee' | 'manager' | 'admin'>('employee')
-const activeView = ref('dashboard')
+// TODO: Replace with actual user data from auth
+const userRole = ref<'employee' | 'manager' | 'admin'>('employee');
 
 // ============================================
 // FAKE DATA - Replace with real API calls later
@@ -88,254 +60,241 @@ const requests = ref<VacationRequest[]>([
         employeeName: 'Alice Brown',
         department: 'Engineering',
     },
-])
+    {
+        id: '6',
+        startDate: new Date(2026, 1, 20),
+        endDate: new Date(2026, 1, 22),
+        type: 'vacation',
+        status: 'pending',
+        employeeName: 'Charlie Wilson',
+        department: 'HR',
+    },
+    {
+        id: '7',
+        startDate: new Date(2026, 0, 25),
+        endDate: new Date(2026, 0, 25),
+        type: 'sick',
+        status: 'rejected',
+        employeeName: 'Diana Prince',
+        department: 'Engineering',
+    },
+]);
 
 const employees = ref<Employee[]>([
-    { id: '1', name: 'John Doe', email: 'john.doe@company.com', department: 'Engineering', totalDays: 25, usedDays: 8, pendingRequests: 0 },
-    { id: '2', name: 'Jane Smith', email: 'jane.smith@company.com', department: 'Marketing', totalDays: 25, usedDays: 5, pendingRequests: 1 },
-    { id: '3', name: 'Bob Johnson', email: 'bob.johnson@company.com', department: 'Sales', totalDays: 20, usedDays: 3, pendingRequests: 0 },
-    { id: '4', name: 'Alice Brown', email: 'alice.brown@company.com', department: 'Engineering', totalDays: 25, usedDays: 6, pendingRequests: 0 },
-    { id: '5', name: 'Charlie Wilson', email: 'charlie.wilson@company.com', department: 'HR', totalDays: 25, usedDays: 10, pendingRequests: 0 },
-    { id: '6', name: 'Diana Prince', email: 'diana.prince@company.com', department: 'Engineering', totalDays: 25, usedDays: 4, pendingRequests: 0 },
-    { id: '7', name: 'Evan Davis', email: 'evan.davis@company.com', department: 'Marketing', totalDays: 25, usedDays: 7, pendingRequests: 0 },
-    { id: '8', name: 'Fiona Green', email: 'fiona.green@company.com', department: 'Sales', totalDays: 20, usedDays: 2, pendingRequests: 0 },
-])
+    {
+        id: '1',
+        name: 'John Doe',
+        email: 'john.doe@company.com',
+        department: 'Engineering',
+        totalDays: 25,
+        usedDays: 8,
+        pendingRequests: 0,
+    },
+    {
+        id: '2',
+        name: 'Jane Smith',
+        email: 'jane.smith@company.com',
+        department: 'Marketing',
+        totalDays: 25,
+        usedDays: 5,
+        pendingRequests: 1,
+    },
+    {
+        id: '3',
+        name: 'Bob Johnson',
+        email: 'bob.johnson@company.com',
+        department: 'Sales',
+        totalDays: 20,
+        usedDays: 3,
+        pendingRequests: 0,
+    },
+    {
+        id: '4',
+        name: 'Alice Brown',
+        email: 'alice.brown@company.com',
+        department: 'Engineering',
+        totalDays: 25,
+        usedDays: 6,
+        pendingRequests: 0,
+    },
+    {
+        id: '5',
+        name: 'Charlie Wilson',
+        email: 'charlie.wilson@company.com',
+        department: 'HR',
+        totalDays: 25,
+        usedDays: 10,
+        pendingRequests: 0,
+    },
+    {
+        id: '6',
+        name: 'Diana Prince',
+        email: 'diana.prince@company.com',
+        department: 'Engineering',
+        totalDays: 25,
+        usedDays: 4,
+        pendingRequests: 0,
+    },
+    {
+        id: '7',
+        name: 'Evan Davis',
+        email: 'evan.davis@company.com',
+        department: 'Marketing',
+        totalDays: 25,
+        usedDays: 7,
+        pendingRequests: 0,
+    },
+    {
+        id: '8',
+        name: 'Fiona Green',
+        email: 'fiona.green@company.com',
+        department: 'Sales',
+        totalDays: 20,
+        usedDays: 2,
+        pendingRequests: 0,
+    },
+]);
 // ============================================
 
 // Handlers
-const handleCreateRequest = (newRequest: Omit<VacationRequest, 'id' | 'status'>) => {
+const handleCreateRequest = (
+    newRequest: Omit<VacationRequest, 'id' | 'status'>,
+) => {
     const request: VacationRequest = {
         ...newRequest,
         id: Date.now().toString(),
         status: 'pending',
-        employeeName: userRole.value === 'employee' ? 'John Doe' : newRequest.employeeName,
-    }
-    requests.value = [...requests.value, request]
-}
+        employeeName:
+            userRole.value === 'employee'
+                ? 'John Doe'
+                : newRequest.employeeName,
+    };
+    requests.value = [...requests.value, request];
+};
 
 const handleApprove = (id: string) => {
     requests.value = requests.value.map((req) =>
-        req.id === id ? { ...req, status: 'approved' as const } : req
-    )
-}
+        req.id === id ? { ...req, status: 'approved' as const } : req,
+    );
+};
 
 const handleReject = (id: string) => {
     requests.value = requests.value.map((req) =>
-        req.id === id ? { ...req, status: 'rejected' as const } : req
-    )
-}
+        req.id === id ? { ...req, status: 'rejected' as const } : req,
+    );
+};
 
 const handleSelectEmployee = (id: string) => {
-    console.log('Selected employee:', id)
-}
+    console.log('Selected employee:', id);
+};
 
-// Computed
-const visibleRequests = computed(() => {
-    return userRole.value === 'employee'
-        ? requests.value.filter((r) => r.employeeName === 'John Doe')
-        : requests.value
-})
-
-const myApprovedRequests = computed(() => {
-    return requests.value.filter((r) => r.employeeName === 'John Doe' && r.status === 'approved')
-})
-
-const totalDaysUsed = computed(() => {
-    return myApprovedRequests.value.reduce((acc, req) => {
-        const days = Math.ceil((req.endDate.getTime() - req.startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
-        return acc + days
-    }, 0)
-})
-
-const totalDaysAllowed = 25
-const daysRemaining = computed(() => totalDaysAllowed - totalDaysUsed.value)
-const pendingRequests = computed(() => requests.value.filter((r) => r.status === 'pending'))
-const lastRequest = computed(() => requests.value[requests.value.length - 1])
-
-const lastRequestStatus = computed(() => {
-    if (!lastRequest.value) return 'No requests'
-    return lastRequest.value.status.charAt(0).toUpperCase() + lastRequest.value.status.slice(1)
-})
-
-const lastRequestSubtitle = computed(() => {
-    if (!lastRequest.value) return 'No requests'
-    const type = lastRequest.value.type
-    return `${type.charAt(0).toUpperCase() + type.slice(1)} leave`
-})
-
-const lastRequestColor = computed(() => {
-    if (!lastRequest.value) return 'text-gray-600'
-    switch (lastRequest.value.status) {
-        case 'approved': return 'text-green-600'
-        case 'pending': return 'text-yellow-600'
-        case 'rejected': return 'text-red-600'
-        default: return 'text-gray-600'
-    }
-})
-
+// Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
-]
+];
+
+// Page title based on role
+const pageTitle = computed(() => {
+    switch (userRole.value) {
+        case 'admin':
+            return 'Admin Dashboard';
+        case 'manager':
+            return 'Manager Dashboard';
+        default:
+            return 'My Dashboard';
+    }
+});
 </script>
 
 <template>
-    <Head title="Vacation Dashboard" />
+    <Head :title="pageTitle" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex h-full flex-1 flex-col overflow-hidden">
-            <!-- Header -->
-            <div class="border-b bg-card">
-                <div class="px-6 py-4">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h1 class="text-2xl font-semibold">
-                                {{ activeView === 'dashboard' ? 'Dashboard' : '' }}
-                                {{ activeView === 'requests' ? 'Requests' : '' }}
-                                {{ activeView === 'team' ? 'Team' : '' }}
-                            </h1>
-                            <p class="mt-1 text-sm text-muted-foreground">
-                                {{ activeView === 'dashboard' ? 'Overview of your vacation and time off' : '' }}
-                                {{ activeView === 'requests' ? 'Manage all time off requests' : '' }}
-                                {{ activeView === 'team' ? 'View and manage team absences' : '' }}
-                            </p>
-                        </div>
-                        <!-- Role Switcher -->
-                        <div class="flex gap-2">
-                            <Button
-                                :variant="userRole === 'employee' ? 'default' : 'outline'"
-                                size="sm"
-                                @click="userRole = 'employee'"
-                            >
-                                <User class="mr-2 h-4 w-4" />
-                                Employee
-                            </Button>
-                            <Button
-                                :variant="userRole === 'manager' ? 'default' : 'outline'"
-                                size="sm"
-                                @click="userRole = 'manager'"
-                            >
-                                <Users class="mr-2 h-4 w-4" />
-                                Manager
-                            </Button>
-                            <Button
-                                :variant="userRole === 'admin' ? 'default' : 'outline'"
-                                size="sm"
-                                @click="userRole = 'admin'"
-                            >
-                                <Building2 class="mr-2 h-4 w-4" />
-                                Admin
-                            </Button>
-                        </div>
-                    </div>
+        <!-- Bold dark gradient background matching auth pages -->
+        <div class="absolute inset-0 -z-10 bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950" />
 
-                    <!-- View Tabs -->
-                    <div class="mt-4 flex gap-2">
-                        <Button
-                            :variant="activeView === 'dashboard' ? 'default' : 'ghost'"
-                            size="sm"
-                            @click="activeView = 'dashboard'"
-                        >
-                            Dashboard
-                        </Button>
-                        <Button
-                            :variant="activeView === 'requests' ? 'default' : 'ghost'"
-                            size="sm"
-                            @click="activeView = 'requests'"
-                        >
-                            Requests
-                        </Button>
-                        <Button
-                            v-if="userRole === 'manager' || userRole === 'admin'"
-                            :variant="activeView === 'team' ? 'default' : 'ghost'"
-                            size="sm"
-                            @click="activeView = 'team'"
-                        >
-                            Team
-                        </Button>
-                    </div>
-                </div>
-            </div>
+        <!-- Animated gradient orbs -->
+        <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+            <div
+                class="absolute -top-1/2 -right-1/2 h-full w-full animate-pulse rounded-full bg-gradient-to-br from-orange-500/20 via-amber-500/20 to-yellow-500/20 blur-3xl"
+                style="animation-duration: 8s"
+            />
+            <div
+                class="absolute -bottom-1/2 -left-1/2 h-full w-full animate-pulse rounded-full bg-gradient-to-tr from-blue-500/20 via-teal-500/20 to-emerald-500/20 blur-3xl"
+                style="animation-duration: 10s; animation-delay: 1s"
+            />
+        </div>
 
-            <!-- Content Area -->
+        <!-- Content -->
+        <div class="relative flex h-full flex-1 flex-col overflow-hidden">
             <div class="flex-1 overflow-auto p-6">
-                <!-- Dashboard View -->
-                <div v-if="activeView === 'dashboard'" class="space-y-6">
-                    <div class="grid gap-4 md:grid-cols-3">
-                        <VacationStatCard
-                            title="Last Request"
-                            :value="lastRequestStatus"
-                            :subtitle="lastRequestSubtitle"
-                            :icon="CheckCircle2"
-                            :icon-color="lastRequestColor"
-                        />
-                        <VacationStatCard
-                            title="Days Remaining"
-                            :value="daysRemaining"
-                            :subtitle="`Out of ${totalDaysAllowed} days this year`"
-                            :icon="CalendarDays"
-                            icon-color="text-blue-600"
-                        />
-                        <VacationStatCard
-                            :title="userRole === 'employee' ? 'Pending Requests' : 'Team Pending'"
-                            :value="pendingRequests.length"
-                            :subtitle="userRole === 'employee' ? 'Awaiting approval' : 'Requires your review'"
-                            :icon="Clock"
-                            icon-color="text-purple-600"
-                        />
-                    </div>
+                <!-- Employee View -->
+                <EmployeeDashboard
+                    v-if="userRole === 'employee'"
+                    :requests="requests"
+                    :total-days-allowed="25"
+                    user-name="John Doe"
+                    @create-request="handleCreateRequest"
+                />
 
-                    <VacationCalendar
-                        :existing-requests="visibleRequests"
-                        :user-role="userRole"
-                        @create-request="handleCreateRequest"
-                    />
-                </div>
+                <!-- Manager View -->
+                <ManagerDashboard
+                    v-else-if="userRole === 'manager'"
+                    :requests="requests"
+                    @approve="handleApprove"
+                    @reject="handleReject"
+                />
 
-                <!-- Requests View -->
-                <div v-if="activeView === 'requests'" class="space-y-4">
-                    <RequestsTable
-                        :requests="visibleRequests"
-                        :user-role="userRole"
-                        @approve="handleApprove"
-                        @reject="handleReject"
-                    />
-                </div>
-
-                <!-- Team View -->
-                <div v-if="activeView === 'team'" class="space-y-4">
-                    <template v-if="userRole === 'admin'">
-                        <Tabs default-value="calendar" class="space-y-4">
-                            <TabsList>
-                                <TabsTrigger value="calendar">Coverage Calendar</TabsTrigger>
-                                <TabsTrigger value="employees">Employees</TabsTrigger>
-                            </TabsList>
-
-                            <TabsContent value="calendar">
-                                <TeamCalendar :requests="requests" />
-                            </TabsContent>
-
-                            <TabsContent value="employees">
-                                <AdminDashboard
-                                    :employees="employees"
-                                    :requests="requests"
-                                    @select-employee="handleSelectEmployee"
-                                />
-                            </TabsContent>
-                        </Tabs>
-                    </template>
-
-                    <template v-else-if="userRole === 'manager'">
-                        <TeamCalendar :requests="requests" />
-                    </template>
-
-                    <template v-else>
-                        <div class="py-12 text-center text-muted-foreground">
-                            <Users class="mx-auto mb-4 h-12 w-12 opacity-50" />
-                            <p>Team view available for admin users only</p>
-                        </div>
-                    </template>
-                </div>
+                <!-- Admin View -->
+                <AdminDashboard
+                    v-else-if="userRole === 'admin'"
+                    :requests="requests"
+                    :employees="employees"
+                    @select-employee="handleSelectEmployee"
+                    @approve="handleApprove"
+                    @reject="handleReject"
+                />
             </div>
+        </div>
+
+        <!-- Development Only: Role Switcher with glass-morphism -->
+        <!-- TODO: Remove this in production - role should come from auth -->
+        <div
+            class="fixed bottom-6 right-6 z-50 flex gap-2 rounded-3xl border border-white/20 bg-white/10 p-2 shadow-2xl backdrop-blur-xl"
+        >
+            <button
+                @click="userRole = 'employee'"
+                :class="[
+                    'rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200',
+                    userRole === 'employee'
+                        ? 'bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-lg shadow-orange-500/30'
+                        : 'text-white/70 hover:bg-white/10 hover:text-white',
+                ]"
+            >
+                Employee
+            </button>
+            <button
+                @click="userRole = 'manager'"
+                :class="[
+                    'rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200',
+                    userRole === 'manager'
+                        ? 'bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-lg shadow-orange-500/30'
+                        : 'text-white/70 hover:bg-white/10 hover:text-white',
+                ]"
+            >
+                Manager
+            </button>
+            <button
+                @click="userRole = 'admin'"
+                :class="[
+                    'rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200',
+                    userRole === 'admin'
+                        ? 'bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-lg shadow-orange-500/30'
+                        : 'text-white/70 hover:bg-white/10 hover:text-white',
+                ]"
+            >
+                Admin
+            </button>
         </div>
     </AppLayout>
 </template>
