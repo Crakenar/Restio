@@ -17,66 +17,25 @@ interface VacationRequest {
     department?: string;
 }
 
-// Fake user role - change this to test different views
-const userRole = ref<'employee' | 'manager' | 'admin'>('manager');
+// Define props received from Inertia controller
+interface Props {
+    requests: VacationRequest[];
+    userRole: 'employee' | 'manager' | 'admin';
+}
 
-// Fake data
-const requests = ref<VacationRequest[]>([
-    {
-        id: '1',
-        startDate: new Date(2026, 0, 20),
-        endDate: new Date(2026, 0, 24),
-        type: 'vacation',
-        status: 'approved',
-        employeeName: 'John Doe',
-        department: 'Engineering',
-    },
-    {
-        id: '2',
-        startDate: new Date(2026, 1, 5),
-        endDate: new Date(2026, 1, 7),
-        type: 'sick',
-        status: 'pending',
-        employeeName: 'Jane Smith',
-        department: 'Marketing',
-    },
-    {
-        id: '3',
-        startDate: new Date(2026, 1, 14),
-        endDate: new Date(2026, 1, 14),
-        type: 'personal',
-        status: 'approved',
-        employeeName: 'John Doe',
-        department: 'Engineering',
-    },
-    {
-        id: '4',
-        startDate: new Date(2026, 0, 15),
-        endDate: new Date(2026, 0, 15),
-        type: 'wfh',
-        status: 'approved',
-        employeeName: 'Bob Johnson',
-        department: 'Sales',
-    },
-    {
-        id: '5',
-        startDate: new Date(2026, 1, 10),
-        endDate: new Date(2026, 1, 12),
-        type: 'vacation',
-        status: 'pending',
-        employeeName: 'Alice Brown',
-        department: 'Engineering',
-    },
-    {
-        id: '6',
-        startDate: new Date(2026, 2, 1),
-        endDate: new Date(2026, 2, 5),
-        type: 'vacation',
-        status: 'rejected',
-        employeeName: 'Charlie Wilson',
-        department: 'HR',
-    },
-]);
+const props = defineProps<Props>();
+
+// Convert props to refs for reactivity (dates need to be converted)
+const requests = ref<VacationRequest[]>(
+    props.requests.map((req) => ({
+        ...req,
+        startDate: new Date(req.startDate),
+        endDate: new Date(req.endDate),
+    })),
+);
+
+// Fake user role - change this to test different views
+const userRole = ref<'employee' | 'manager' | 'admin'>(props.userRole);
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -107,17 +66,17 @@ const handleReject = (id: string) => {
     <Head title="Requests" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <!-- Bold dark gradient background matching auth pages -->
-        <div class="absolute inset-0 -z-10 bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950" />
+        <!-- Gradient background - adapts to theme -->
+        <div class="absolute inset-0 -z-10 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-blue-950 dark:to-indigo-950" />
 
         <!-- Animated gradient orbs -->
         <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
             <div
-                class="absolute -top-1/2 -right-1/2 h-full w-full animate-pulse rounded-full bg-gradient-to-br from-orange-500/20 via-amber-500/20 to-yellow-500/20 blur-3xl"
+                class="absolute -top-1/2 -right-1/2 h-full w-full animate-pulse rounded-full bg-gradient-to-br from-orange-500/10 via-amber-500/10 to-yellow-500/10 dark:from-orange-500/20 dark:via-amber-500/20 dark:to-yellow-500/20 blur-3xl"
                 style="animation-duration: 8s"
             />
             <div
-                class="absolute -bottom-1/2 -left-1/2 h-full w-full animate-pulse rounded-full bg-gradient-to-tr from-blue-500/20 via-teal-500/20 to-emerald-500/20 blur-3xl"
+                class="absolute -bottom-1/2 -left-1/2 h-full w-full animate-pulse rounded-full bg-gradient-to-tr from-blue-500/10 via-teal-500/10 to-emerald-500/10 dark:from-blue-500/20 dark:via-teal-500/20 dark:to-emerald-500/20 blur-3xl"
                 style="animation-duration: 10s; animation-delay: 1s"
             />
         </div>
@@ -130,18 +89,18 @@ const handleReject = (id: string) => {
                     <FileText class="h-8 w-8 text-white" />
                 </div>
                 <div>
-                    <h1 class="text-4xl font-bold tracking-tight text-white">
+                    <h1 class="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
                         Requests
                     </h1>
-                    <p class="mt-1.5 text-sm text-white/70">
+                    <p class="mt-1.5 text-sm text-slate-600 dark:text-white/70">
                         Manage all time off requests across your team
                     </p>
                 </div>
             </div>
 
-            <!-- Glass-morphism content card -->
+            <!-- Content card with theme-aware styling -->
             <div
-                class="flex-1 overflow-auto rounded-3xl border border-white/20 bg-white/10 p-6 shadow-2xl backdrop-blur-xl"
+                class="flex-1 overflow-auto rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-white/10"
             >
                 <RequestsTable
                     :requests="visibleRequests"

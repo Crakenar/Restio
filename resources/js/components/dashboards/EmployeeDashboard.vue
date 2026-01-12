@@ -97,20 +97,20 @@ const formatDateRange = (start: Date, end: Date) => {
     >
         <!-- Welcome Header -->
         <div
-            class="relative overflow-hidden rounded-2xl border border-white/20 bg-white/10 p-8 backdrop-blur-xl transition-all hover:bg-white/15"
+            class="relative overflow-hidden rounded-2xl border border-slate-200 bg-white/80 p-8 backdrop-blur-xl transition-all hover:bg-white dark:border-white/20 dark:bg-white/10 dark:hover:bg-white/15"
         >
             <div class="relative z-10">
                 <h2
-                    class="mb-2 text-2xl font-semibold text-white"
+                    class="mb-2 text-2xl font-semibold text-slate-900 dark:text-white"
                 >
                     Welcome back, {{ userName }}
                 </h2>
-                <p class="text-white/70">
+                <p class="text-slate-600 dark:text-white/70">
                     Plan your time off and track your balance
                 </p>
             </div>
             <div
-                class="absolute top-0 right-0 h-64 w-64 rounded-full bg-gradient-to-br from-orange-400/20 to-rose-400/20 blur-3xl"
+                class="absolute top-0 right-0 h-64 w-64 rounded-full bg-gradient-to-br from-orange-400/10 to-rose-400/10 blur-3xl dark:from-orange-400/20 dark:to-rose-400/20"
             />
         </div>
 
@@ -118,35 +118,35 @@ const formatDateRange = (start: Date, end: Date) => {
         <div class="grid gap-4 md:grid-cols-3">
             <!-- Days Remaining -->
             <Card
-                class="relative overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 hover:shadow-lg"
+                class="relative overflow-hidden border border-slate-200 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-lg dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
             >
                 <CardContent class="p-6">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
                             <div class="mb-2 flex items-center gap-2">
                                 <CalendarDays
-                                    class="h-4 w-4 text-emerald-400"
+                                    class="h-4 w-4 text-emerald-500 dark:text-emerald-400"
                                 />
                                 <p
-                                    class="text-sm font-medium text-white/60"
+                                    class="text-sm font-medium text-slate-600 dark:text-white/60"
                                 >
                                     Days Remaining
                                 </p>
                             </div>
                             <p
-                                class="mb-1 text-4xl font-bold text-white"
+                                class="mb-1 text-4xl font-bold text-slate-900 dark:text-white"
                             >
                                 {{ daysRemaining }}
                             </p>
-                            <p class="text-xs text-white/40">
+                            <p class="text-xs text-slate-500 dark:text-white/40">
                                 of {{ totalDaysAllowed }} total days
                             </p>
                             <!-- Progress bar -->
                             <div
-                                class="mt-3 h-2 overflow-hidden rounded-full bg-white/10"
+                                class="mt-3 h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10"
                             >
                                 <div
-                                    class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 transition-all duration-700"
+                                    class="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-700 dark:from-emerald-400 dark:to-teal-400"
                                     :style="{ width: `${usagePercentage}%` }"
                                 />
                             </div>
@@ -157,27 +157,27 @@ const formatDateRange = (start: Date, end: Date) => {
 
             <!-- Days Used -->
             <Card
-                class="relative overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 hover:shadow-lg"
+                class="relative overflow-hidden border border-slate-200 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-lg dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
             >
                 <CardContent class="p-6">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
                             <div class="mb-2 flex items-center gap-2">
                                 <TrendingUp
-                                    class="h-4 w-4 text-blue-400"
+                                    class="h-4 w-4 text-blue-500 dark:text-blue-400"
                                 />
                                 <p
-                                    class="text-sm font-medium text-white/60"
+                                    class="text-sm font-medium text-slate-600 dark:text-white/60"
                                 >
                                     Days Used
                                 </p>
                             </div>
                             <p
-                                class="mb-1 text-4xl font-bold text-white"
+                                class="mb-1 text-4xl font-bold text-slate-900 dark:text-white"
                             >
                                 {{ totalDaysUsed }}
                             </p>
-                            <p class="text-xs text-white/40">
+                            <p class="text-xs text-slate-500 dark:text-white/40">
                                 {{ usagePercentage }}% of allowance
                             </p>
                         </div>
@@ -187,27 +187,27 @@ const formatDateRange = (start: Date, end: Date) => {
 
             <!-- Pending Requests -->
             <Card
-                class="relative overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 hover:shadow-lg"
+                class="relative overflow-hidden border border-slate-200 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-lg dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
             >
                 <CardContent class="p-6">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
                             <div class="mb-2 flex items-center gap-2">
                                 <Clock
-                                    class="h-4 w-4 text-amber-400"
+                                    class="h-4 w-4 text-amber-500 dark:text-amber-400"
                                 />
                                 <p
-                                    class="text-sm font-medium text-white/60"
+                                    class="text-sm font-medium text-slate-600 dark:text-white/60"
                                 >
                                     Pending Approval
                                 </p>
                             </div>
                             <p
-                                class="mb-1 text-4xl font-bold text-white"
+                                class="mb-1 text-4xl font-bold text-slate-900 dark:text-white"
                             >
                                 {{ pendingRequests.length }}
                             </p>
-                            <p class="text-xs text-white/40">
+                            <p class="text-xs text-slate-500 dark:text-white/40">
                                 {{
                                     pendingRequests.length === 1
                                         ? 'request'
@@ -224,12 +224,12 @@ const formatDateRange = (start: Date, end: Date) => {
         <!-- Upcoming Time Off -->
         <Card
             v-if="upcomingRequests.length > 0"
-            class="border border-white/10 bg-white/5 backdrop-blur-sm"
+            class="border border-slate-200 bg-white/80 backdrop-blur-sm dark:border-white/10 dark:bg-white/5"
         >
             <CardHeader>
-                <CardTitle class="flex items-center gap-2 text-white">
+                <CardTitle class="flex items-center gap-2 text-slate-900 dark:text-white">
                     <Plane
-                        class="h-5 w-5 text-violet-400"
+                        class="h-5 w-5 text-violet-500 dark:text-violet-400"
                     />
                     Upcoming Time Off
                 </CardTitle>
@@ -239,22 +239,22 @@ const formatDateRange = (start: Date, end: Date) => {
                     <div
                         v-for="(request, index) in upcomingRequests"
                         :key="request.id"
-                        class="flex animate-in items-center gap-4 rounded-lg bg-white/5 p-3 transition-all duration-300 fade-in slide-in-from-left-4 hover:bg-white/10"
+                        class="flex animate-in items-center gap-4 rounded-lg bg-slate-100 p-3 transition-all duration-300 fade-in slide-in-from-left-4 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10"
                         :style="{ animationDelay: `${index * 100}ms` }"
                     >
                         <div
-                            class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white/10 bg-white/5"
+                            class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-200 bg-white dark:border-white/10 dark:bg-white/5"
                         >
                             <component
                                 :is="getTypeIcon(request.type)"
-                                class="h-5 w-5 text-violet-400"
+                                class="h-5 w-5 text-violet-500 dark:text-violet-400"
                             />
                         </div>
                         <div class="flex-1">
-                            <p class="text-sm font-medium capitalize text-white">
+                            <p class="text-sm font-medium capitalize text-slate-900 dark:text-white">
                                 {{ request.type }} Leave
                             </p>
-                            <p class="text-xs text-white/50">
+                            <p class="text-xs text-slate-600 dark:text-white/50">
                                 {{
                                     formatDateRange(
                                         request.startDate,
@@ -265,7 +265,7 @@ const formatDateRange = (start: Date, end: Date) => {
                         </div>
                         <div class="text-right">
                             <p
-                                class="text-sm font-semibold text-violet-300"
+                                class="text-sm font-semibold text-violet-600 dark:text-violet-300"
                             >
                                 {{
                                     Math.ceil(

@@ -155,48 +155,48 @@ const getTypeColor = (type: string) => {
             </Card>
 
             <Card
-                class="border border-white/10 bg-white/5 backdrop-blur-sm transition-all duration-300 hover:bg-white/10 hover:shadow-lg"
+                class="border border-slate-200/50 bg-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/60 hover:shadow-lg dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
             >
                 <CardContent class="p-6">
                     <div class="flex items-center justify-between">
                         <div>
                             <p
-                                class="mb-1 text-sm font-medium text-white/60"
+                                class="mb-1 text-sm font-medium text-slate-600 dark:text-white/60"
                             >
                                 Out Today
                             </p>
                             <p
-                                class="text-3xl font-bold text-white"
+                                class="text-3xl font-bold text-slate-900 dark:text-white"
                             >
                                 {{ currentAbsences.length }}
                             </p>
                         </div>
                         <Calendar
-                            class="h-8 w-8 text-blue-400 opacity-60"
+                            class="h-8 w-8 text-blue-500 opacity-60 dark:text-blue-400"
                         />
                     </div>
                 </CardContent>
             </Card>
 
             <Card
-                class="border border-white/10 bg-white/5 backdrop-blur-sm transition-all duration-300 hover:bg-white/10 hover:shadow-lg"
+                class="border border-slate-200/50 bg-white/40 backdrop-blur-sm transition-all duration-300 hover:bg-white/60 hover:shadow-lg dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
             >
                 <CardContent class="p-6">
                     <div class="flex items-center justify-between">
                         <div>
                             <p
-                                class="mb-1 text-sm font-medium text-white/60"
+                                class="mb-1 text-sm font-medium text-slate-600 dark:text-white/60"
                             >
                                 Team Size
                             </p>
                             <p
-                                class="text-3xl font-bold text-white"
+                                class="text-3xl font-bold text-slate-900 dark:text-white"
                             >
                                 {{ teamMembers }}
                             </p>
                         </div>
                         <Users
-                            class="h-8 w-8 text-violet-400 opacity-60"
+                            class="h-8 w-8 text-violet-500 opacity-60 dark:text-violet-400"
                         />
                     </div>
                 </CardContent>
@@ -205,8 +205,8 @@ const getTypeColor = (type: string) => {
 
         <!-- Main Content Area -->
         <Tabs v-model="activeTab" class="space-y-4">
-            <TabsList class="grid w-full grid-cols-3 border border-slate-200/50 dark:border-white/20 bg-white/40 dark:bg-white/10 shadow-lg backdrop-blur-xl">
-                <TabsTrigger value="pending" class="relative data-[state=active]:bg-white/20 data-[state=active]:text-white text-white/70 hover:text-white hover:bg-white/5">
+            <TabsList class="grid w-full grid-cols-3 border border-slate-200 bg-white/90 shadow-lg backdrop-blur-xl dark:border-white/20 dark:bg-white/10">
+                <TabsTrigger value="pending" class="relative text-slate-600 hover:bg-slate-100 hover:text-slate-900 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">
                     Pending
                     <Badge
                         v-if="pendingRequests.length > 0"
@@ -215,8 +215,8 @@ const getTypeColor = (type: string) => {
                         {{ pendingRequests.length }}
                     </Badge>
                 </TabsTrigger>
-                <TabsTrigger value="team" class="data-[state=active]:bg-white/20 data-[state=active]:text-white text-white/70 hover:text-white hover:bg-white/5">Team Calendar</TabsTrigger>
-                <TabsTrigger value="upcoming" class="data-[state=active]:bg-white/20 data-[state=active]:text-white text-white/70 hover:text-white hover:bg-white/5">Upcoming</TabsTrigger>
+                <TabsTrigger value="team" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">Team Calendar</TabsTrigger>
+                <TabsTrigger value="upcoming" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">Upcoming</TabsTrigger>
             </TabsList>
 
             <!-- Pending Requests -->
@@ -229,7 +229,7 @@ const getTypeColor = (type: string) => {
                         <h3 class="mb-2 text-lg font-semibold text-slate-900 dark:text-white">
                             All caught up!
                         </h3>
-                        <p class="text-sm text-muted-foreground text-white/60">
+                        <p class="text-sm text-slate-600 dark:text-white/60">
                             No pending requests to review
                         </p>
                     </CardContent>
