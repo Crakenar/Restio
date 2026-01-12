@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\UserRole;
+use App\Enum\VacationRequestStatus;
+use App\Enum\VacationRequestType;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -14,7 +17,7 @@ class TeamsController extends Controller
         $employees = $this->getFakeEmployees();
 
         // Get current user role (will be replaced with auth()->user()->role)
-        $userRole = 'admin'; // TODO: Replace with auth()->user()->role
+        $userRole = UserRole::ADMIN->value; // TODO: Replace with auth()->user()->role
 
         return Inertia::render('Team', [
             'requests' => $requests,
@@ -34,8 +37,8 @@ class TeamsController extends Controller
                 'id' => '1',
                 'startDate' => '2026-01-20T00:00:00.000Z',
                 'endDate' => '2026-01-24T00:00:00.000Z',
-                'type' => 'vacation',
-                'status' => 'approved',
+                'type' => VacationRequestType::VACATION->value,
+                'status' => VacationRequestStatus::APPROVED->value,
                 'employeeName' => 'John Doe',
                 'department' => 'Engineering',
             ],
@@ -43,8 +46,8 @@ class TeamsController extends Controller
                 'id' => '2',
                 'startDate' => '2026-02-05T00:00:00.000Z',
                 'endDate' => '2026-02-07T00:00:00.000Z',
-                'type' => 'sick',
-                'status' => 'pending',
+                'type' => VacationRequestType::SICK->value,
+                'status' => VacationRequestStatus::PENDING->value,
                 'employeeName' => 'Jane Smith',
                 'department' => 'Marketing',
             ],
@@ -52,8 +55,8 @@ class TeamsController extends Controller
                 'id' => '3',
                 'startDate' => '2026-02-14T00:00:00.000Z',
                 'endDate' => '2026-02-14T00:00:00.000Z',
-                'type' => 'personal',
-                'status' => 'approved',
+                'type' => VacationRequestType::PERSONAL->value,
+                'status' => VacationRequestStatus::APPROVED->value,
                 'employeeName' => 'John Doe',
                 'department' => 'Engineering',
             ],
@@ -61,8 +64,8 @@ class TeamsController extends Controller
                 'id' => '4',
                 'startDate' => '2026-01-15T00:00:00.000Z',
                 'endDate' => '2026-01-15T00:00:00.000Z',
-                'type' => 'wfh',
-                'status' => 'approved',
+                'type' => VacationRequestType::WFH->value,
+                'status' => VacationRequestStatus::APPROVED->value,
                 'employeeName' => 'Bob Johnson',
                 'department' => 'Sales',
             ],
@@ -70,8 +73,8 @@ class TeamsController extends Controller
                 'id' => '5',
                 'startDate' => '2026-02-10T00:00:00.000Z',
                 'endDate' => '2026-02-12T00:00:00.000Z',
-                'type' => 'vacation',
-                'status' => 'approved',
+                'type' => VacationRequestType::VACATION->value,
+                'status' => VacationRequestStatus::APPROVED->value,
                 'employeeName' => 'Alice Brown',
                 'department' => 'Engineering',
             ],
@@ -79,8 +82,8 @@ class TeamsController extends Controller
                 'id' => '6',
                 'startDate' => '2026-01-22T00:00:00.000Z',
                 'endDate' => '2026-01-23T00:00:00.000Z',
-                'type' => 'vacation',
-                'status' => 'approved',
+                'type' => VacationRequestType::VACATION->value,
+                'status' => VacationRequestStatus::APPROVED->value,
                 'employeeName' => 'Diana Prince',
                 'department' => 'Engineering',
             ],
@@ -88,8 +91,8 @@ class TeamsController extends Controller
                 'id' => '7',
                 'startDate' => '2026-01-21T00:00:00.000Z',
                 'endDate' => '2026-01-21T00:00:00.000Z',
-                'type' => 'wfh',
-                'status' => 'approved',
+                'type' => VacationRequestType::WFH->value,
+                'status' => VacationRequestStatus::APPROVED->value,
                 'employeeName' => 'Evan Davis',
                 'department' => 'Marketing',
             ],

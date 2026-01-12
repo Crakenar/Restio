@@ -23,12 +23,13 @@ import {
     Palmtree,
     Users,
 } from 'lucide-vue-next';
+import { UserRole } from '@/enums/UserRole';
 
 // Get user role from auth (adjust based on your actual auth structure)
 const page = usePage();
 const userRole = computed(() => {
     const user = page.props.auth?.user as { role?: string } | undefined;
-    return user?.role;
+    return user?.role as UserRole | undefined;
 });
 
 // Main navigation items
@@ -47,10 +48,19 @@ const mainNavItems = computed<NavItem[]>(() => {
     ];
 
     // Only show Team for managers and admins
-    if (userRole.value === 'manager' || userRole.value === 'admin') {
+    if (userRole.value === UserRole.MANAGER || userRole.value === UserRole.ADMIN) {
         items.push({
             title: 'Team',
             href: '/teams',
+            icon: Users,
+        });
+    }
+
+    // Only show Employees for admins
+    if (userRole.value === UserRole.ADMIN) {
+        items.push({
+            title: 'Employees',
+            href: '/employees',
             icon: Users,
         });
     }

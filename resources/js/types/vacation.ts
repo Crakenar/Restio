@@ -1,4 +1,10 @@
 // Shared types for vacation management components
+import { UserRole } from '@/enums/UserRole';
+import { VacationRequestStatus } from '@/enums/VacationRequestStatus';
+import { VacationRequestType } from '@/enums/VacationRequestType';
+
+// Re-export enums for convenience
+export { UserRole, VacationRequestStatus, VacationRequestType };
 
 export interface Employee {
     id: string;
@@ -22,37 +28,11 @@ export interface VacationRequest {
     document?: File;
 }
 
-export type VacationRequestType =
-    | 'vacation'
-    | 'sick'
-    | 'personal'
-    | 'unpaid'
-    | 'wfh';
-
-export type VacationRequestStatus = 'pending' | 'approved' | 'rejected';
-
-export type UserRole = 'employee' | 'manager' | 'admin';
-
-export const TYPE_LABELS: Record<VacationRequestType, string> = {
-    vacation: 'Paid Leave',
-    sick: 'Sick Leave',
-    personal: 'Personal Day',
-    unpaid: 'Unpaid Leave',
-    wfh: 'Work From Home',
-};
-
-export const TYPE_COLORS: Record<VacationRequestType, string> = {
-    vacation: 'bg-blue-500',
-    sick: 'bg-red-500',
-    personal: 'bg-green-500',
-    unpaid: 'bg-gray-500',
-    wfh: 'bg-purple-500',
-};
-
 export const STATUS_COLORS: Record<VacationRequestStatus, string> = {
-    pending:
+    [VacationRequestStatus.PENDING]:
         'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20',
-    approved:
+    [VacationRequestStatus.APPROVED]:
         'bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20',
-    rejected: 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20',
+    [VacationRequestStatus.REJECTED]:
+        'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20',
 };
