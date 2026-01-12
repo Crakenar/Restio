@@ -1,3 +1,4 @@
+import { UserRole } from '@/enums';
 import { InertiaLinkProps } from '@inertiajs/vue3';
 import type { LucideIcon } from 'lucide-vue-next';
 
@@ -30,7 +31,7 @@ export interface User {
     id: number;
     name: string;
     email: string;
-    role: 'admin' | 'manager' | 'employee';
+    role: UserRole;
     avatar?: string;
     email_verified_at: string | null;
     created_at: string;

@@ -11,19 +11,11 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { UserRole } from '@/enums/UserRole';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
+import { FileText, LayoutGrid, Palmtree, Users } from 'lucide-vue-next';
 import { computed } from 'vue';
-import {
-    BookOpen,
-    Calendar,
-    FileText,
-    Folder,
-    LayoutGrid,
-    Palmtree,
-    Users,
-} from 'lucide-vue-next';
-import { UserRole } from '@/enums/UserRole';
 
 // Get user role from auth (adjust based on your actual auth structure)
 const page = usePage();
@@ -48,7 +40,10 @@ const mainNavItems = computed<NavItem[]>(() => {
     ];
 
     // Only show Team for managers and admins
-    if (userRole.value === UserRole.MANAGER || userRole.value === UserRole.ADMIN) {
+    if (
+        userRole.value === UserRole.MANAGER ||
+        userRole.value === UserRole.ADMIN
+    ) {
         items.push({
             title: 'Team',
             href: '/teams',
@@ -69,16 +64,16 @@ const mainNavItems = computed<NavItem[]>(() => {
 });
 
 const footerNavItems: NavItem[] = [
-    {
-        title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
+    // {
+    //     title: 'Github Repo',
+    //     href: 'https://github.com/laravel/vue-starter-kit',
+    //     icon: Folder,
+    // },
+    // {
+    //     title: 'Documentation',
+    //     href: 'https://laravel.com/docs/starter-kits#vue',
+    //     icon: BookOpen,
+    // },
 ];
 </script>
 
