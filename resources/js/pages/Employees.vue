@@ -17,8 +17,14 @@ interface Employee {
     created_at: string;
 }
 
+interface Department {
+    id: number;
+    name: string;
+}
+
 interface Props {
     employees: Employee[];
+    departments: Department[];
 }
 
 const props = defineProps<Props>();
@@ -94,7 +100,7 @@ const activeTab = ref('list');
                     value="add"
                     class="flex-1 overflow-auto rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-white/10"
                 >
-                    <EmployeeForm @success="activeTab = 'list'" />
+                    <EmployeeForm :departments="departments" @success="activeTab = 'list'" />
                 </TabsContent>
 
                 <!-- Import CSV Tab -->

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { Head, Form, Link } from '@inertiajs/vue3'
-import { CalendarDays, Mail, Lock, User, ArrowRight } from 'lucide-vue-next'
+import { CalendarDays, Mail, Lock, User, ArrowRight, Building2 } from 'lucide-vue-next'
 import { login } from '@/routes'
 import { store } from '@/routes/register'
 import InputError from '@/components/InputError.vue'
@@ -97,6 +97,30 @@ onMounted(() => {
                             />
                         </div>
                         <InputError :message="errors.name" class="text-rose-400 text-sm" />
+                        <InputError :message="errors.name" class="text-rose-400 text-sm" />
+                    </div>
+
+                    <!-- Company Name -->
+                    <div class="space-y-2">
+                        <Label for="company_name" class="text-white/90 text-sm font-medium">
+                            Company Name
+                        </Label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <Building2 class="h-5 w-5 text-white/40" />
+                            </div>
+                            <Input
+                                id="company_name"
+                                type="text"
+                                required
+                                :tabindex="1"
+                                autocomplete="organization"
+                                name="company_name"
+                                placeholder="Acme Inc."
+                                class="pl-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 focus:border-orange-500/50 focus:ring-orange-500/20 h-12"
+                            />
+                        </div>
+                        <InputError :message="errors.company_name" class="text-rose-400 text-sm" />
                     </div>
 
                     <!-- Email -->

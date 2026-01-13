@@ -11,6 +11,7 @@ class CompanySetting extends Model
     use HasFactory;
 
     protected $table = 'company_settings';
+
     protected $fillable = [
         'company_id',
         'annual_days',

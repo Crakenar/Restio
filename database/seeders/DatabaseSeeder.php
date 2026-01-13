@@ -2,11 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Enum\SubscriptionStatus;
 use App\Enum\UserRole;
 use App\Models\Company;
 use App\Models\CompanySetting;
+use App\Models\Subscription;
 use App\Models\User;
-
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\VacationRequest;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -21,6 +22,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(SubscriptionSeeder::class);
+
+        // Get subscription plans
+        $subscriptions = Subscription::all();
+
+        // Create Admin User
         // Create 4 companies with different sizes
         $companySizes = [
             ['users' => 25, 'requests' => 80],  // Large company
@@ -30,7 +37,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($companySizes as $index => $size) {
-            $this->command->info("Creating company " . ($index + 1) . "...");
+            $this->command->info('Creating company '.($index + 1).'...');
 
             // Create company
             $company = Company::factory()->create();
@@ -40,19 +47,54 @@ class DatabaseSeeder extends Seeder
                 ->for($company)
                 ->create();
 
+            // Assign a random active subscription to the company
+            $subscription = $subscriptions->random();
+            $company->subscriptions()->create([
+                'subscription_id' => $subscription->id,
+                'status' => SubscriptionStatus::ACTIVE,
+                'starts_at' => now(),
+                'ends_at' => $subscription->interval === \App\Enum\SubscriptionInterval::ONE_TIME
+                    ? null
+                    : now()->add(1, $subscription->interval->value),
+            ]);
+
+            // Create departments
+            $departments = collect(['Engineering', 'Marketing', 'Sales', 'HR', 'Finance'])
+                ->map(fn ($name) => \App\Models\Department::create([
+                    'company_id' => $company->id,
+                    'name' => $name,
+                ]));
+
             // Create users for this company
             $users = User::factory($size['users'])
                 ->for($company)
+                ->state(function (array $attributes) use ($departments) {
+                    return [
+                        'department_id' => $departments->random()->id,
+                    ];
+                })
                 ->create();
 
-            // Set roles: 1 admin, 2-3 managers, rest are employees
+            // Set roles: 1 owner, 1-2 admins, 2-3 managers, rest are employees
             $users[0]->update([
-                'role' => UserRole::ADMIN,
+                'role' => UserRole::OWNER,
+                'department_id' => $departments->firstWhere('name', 'Engineering')->id,
             ]);
 
+            // Set 1-2 admins
+            $adminCount = fake()->numberBetween(1, 2);
+            for ($i = 1; $i <= $adminCount; $i++) {
+                $users[$i]->update([
+                    'role' => UserRole::ADMIN,
+                ]);
+            }
+
+            // Set 2-3 managers
             $managerCount = fake()->numberBetween(2, 3);
-            for ($i = 1; $i <= $managerCount; $i++) {
-                $users[$i]->update(['role' => UserRole::MANAGER]);
+            for ($i = $adminCount + 1; $i <= $adminCount + $managerCount; $i++) {
+                $users[$i]->update([
+                    'role' => UserRole::MANAGER,
+                ]);
             }
 
             // Create vacation requests with realistic distribution
@@ -85,9 +127,11 @@ class DatabaseSeeder extends Seeder
         $testUser = User::factory()
             ->for($testCompany)
             ->create([
-                'name' => 'Test Admin',
-                'email' => 'admin@example.com',
-                'role' => UserRole::ADMIN,
+                'name' => 'Test Owner',
+                'email' => 'owner@example.com',
+                'password' => \Hash::make('password'),
+                'role' => UserRole::OWNER,
+                'department_id' => $testCompany->departments()->firstWhere('name', 'Engineering')->id,
             ]);
 
         // Give test user some vacation requests
@@ -103,7 +147,10 @@ class DatabaseSeeder extends Seeder
         $this->command->table(
             ['Model', 'Count'],
             [
+                ['Subscriptions', Subscription::query()->count()],
                 ['Companies', Company::query()->count()],
+                ['Company Subscriptions', \App\Models\CompanySubscription::query()->count()],
+                ['Departments', \App\Models\Department::query()->count()],
                 ['Company Settings', CompanySetting::query()->count()],
                 ['Users', User::count()],
                 ['Vacation Requests', VacationRequest::query()->count()],
@@ -112,7 +159,7 @@ class DatabaseSeeder extends Seeder
 
         $this->command->newLine();
         $this->command->info('🔐 Test login credentials:');
-        $this->command->line('   Email: admin@example.com');
+        $this->command->line('   Email: owner@example.com (Owner - Can manage subscriptions)');
         $this->command->line('   Password: password');
     }
 }

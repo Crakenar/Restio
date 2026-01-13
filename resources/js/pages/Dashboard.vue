@@ -107,7 +107,6 @@ const pageTitle = computed(() => {
 
         <!-- Content -->
         <div class="relative flex h-full flex-1 flex-col overflow-hidden">
-            {{ userRole }}
             <div class="flex-1 overflow-auto p-6">
                 <!-- Employee View -->
                 <EmployeeDashboard
@@ -140,45 +139,42 @@ const pageTitle = computed(() => {
 
         <!-- Development Only: Role Switcher with theme-aware styling -->
         <!-- TODO: Remove this in production - role should come from auth -->
-        <!--        <div-->
-        <!--            class="fixed right-6 bottom-6 z-50 flex gap-2 rounded-3xl border border-slate-200 bg-white/90 p-2 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-white/10"-->
-        <!--        >-->
-        <!--            <button-->
-        <!--                v-if="userRole === 'employee'"-->
-        <!--                @click="userRole = 'employee'"-->
-        <!--                :class="[-->
-        <!--                    'rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200',-->
-        <!--                    userRole === 'employee'-->
-        <!--                        ? 'bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-lg shadow-orange-500/30'-->
-        <!--                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white',-->
-        <!--                ]"-->
-        <!--            >-->
-        <!--                Employee-->
-        <!--            </button>-->
-        <!--            <button-->
-        <!--                v-else-if="userRole === 'manager'"-->
-        <!--                @click="userRole = 'manager'"-->
-        <!--                :class="[-->
-        <!--                    'rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200',-->
-        <!--                    userRole === 'manager'-->
-        <!--                        ? 'bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-lg shadow-orange-500/30'-->
-        <!--                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white',-->
-        <!--                ]"-->
-        <!--            >-->
-        <!--                Manager-->
-        <!--            </button>-->
-        <!--            <button-->
-        <!--                v-else-if="userRole === 'admin'"-->
-        <!--                @click="userRole = 'admin'"-->
-        <!--                :class="[-->
-        <!--                    'rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200',-->
-        <!--                    userRole === 'admin'-->
-        <!--                        ? 'bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-lg shadow-orange-500/30'-->
-        <!--                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white',-->
-        <!--                ]"-->
-        <!--            >-->
-        <!--                Admin-->
-        <!--            </button>-->
-        <!--        </div>-->
+        <div
+            class="fixed right-6 bottom-6 z-50 flex gap-2 rounded-3xl border border-slate-200 bg-white/90 p-2 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-white/10"
+        >
+            <button
+                v-if="userRole === 'employee'"
+                :class="[
+                    'rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200',
+                    userRole === 'employee'
+                        ? 'bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-lg shadow-orange-500/30'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white',
+                ]"
+            >
+                Employee
+            </button>
+            <button
+                v-else-if="userRole === 'manager'"
+                :class="[
+                    'rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200',
+                    userRole === 'manager'
+                        ? 'bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-lg shadow-orange-500/30'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white',
+                ]"
+            >
+                Manager
+            </button>
+            <button
+                v-else-if="userRole === 'admin'"
+                :class="[
+                    'rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200',
+                    userRole === 'admin'
+                        ? 'bg-gradient-to-r from-orange-500 to-rose-500 text-white shadow-lg shadow-orange-500/30'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white',
+                ]"
+            >
+                Admin
+            </button>
+        </div>
     </AppLayout>
 </template>

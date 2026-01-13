@@ -39,7 +39,7 @@ class VacationRequestFactory extends Factory
             // Pending requests are typically for future dates
             'start_date' => fake()->dateTimeBetween('+1 week', '+2 months'),
         ])->afterMaking(function (VacationRequest $request) {
-            $request->end_date = (clone $request->start_date)->modify('+' . fake()->numberBetween(1, 7) . ' days');
+            $request->end_date = (clone $request->start_date)->modify('+'.fake()->numberBetween(1, 7).' days');
         });
     }
 
@@ -84,7 +84,7 @@ class VacationRequestFactory extends Factory
             // Sick leave is usually in the past or very recent
             'start_date' => fake()->dateTimeBetween('-1 month', 'now'),
         ])->afterMaking(function (VacationRequest $request) {
-            $request->end_date = (clone $request->start_date)->modify('+' . fake()->numberBetween(1, 5) . ' days');
+            $request->end_date = (clone $request->start_date)->modify('+'.fake()->numberBetween(1, 5).' days');
         });
     }
 
@@ -95,6 +95,7 @@ class VacationRequestFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             $date = fake()->dateTimeBetween('-1 month', '+1 month');
+
             return [
                 'type' => VacationRequestType::WORK_FROM_HOME,
                 'start_date' => $date,

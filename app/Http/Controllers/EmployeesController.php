@@ -20,27 +20,42 @@ class EmployeesController extends Controller
      */
     public function index(): Response
     {
+        $user = auth()->user();
+
         // Only admins can access employee management
         abort_if(
-            auth()->user()->role !== UserRole::ADMIN->value,
+            $user->role !== UserRole::ADMIN->value,
             HttpResponse::HTTP_FORBIDDEN,
             'Only administrators can access employee management.'
         );
 
         $employees = User::query()
-            ->where('company_id', auth()->user()->company_id)
+            ->where('company_id', $user->company_id)
+            ->with('department')
             ->orderBy('created_at', 'desc')
             ->get()
-            ->map(fn ($user) => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'role' => $user->role,
-                'created_at' => $user->created_at->format('Y-m-d H:i:s'),
+            ->map(fn ($employee) => [
+                'id' => $employee->id,
+                'name' => $employee->name,
+                'email' => $employee->email,
+                'role' => $employee->role,
+                'department_id' => $employee->department_id,
+                'department' => $employee->department?->name ?? 'Unassigned',
+                'created_at' => $employee->created_at->format('Y-m-d H:i:s'),
+            ]);
+
+        $departments = \App\Models\Department::query()
+            ->where('company_id', $user->company_id)
+            ->orderBy('name')
+            ->get()
+            ->map(fn ($dept) => [
+                'id' => $dept->id,
+                'name' => $dept->name,
             ]);
 
         return Inertia::render('Employees', [
             'employees' => $employees,
+            'departments' => $departments,
         ]);
     }
 
@@ -55,6 +70,7 @@ class EmployeesController extends Controller
             'password' => Hash::make($request->input('password')),
             'role' => $request->input('role'),
             'company_id' => auth()->user()->company_id,
+            'department_id' => $request->input('department_id'),
         ]);
 
         return redirect()->back()->with('success', 'Employee created successfully');

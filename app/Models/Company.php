@@ -12,6 +12,7 @@ class Company extends Model
     use HasFactory;
 
     protected $table = 'companies';
+
     protected $fillable = [
         'name',
         'slug',
@@ -31,5 +32,20 @@ class Company extends Model
     public function vacation_requests(): HasMany
     {
         return $this->hasMany(VacationRequest::class);
+    }
+
+    public function departments(): HasMany
+    {
+        return $this->hasMany(Department::class);
+    }
+
+    public function subscriptions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(CompanySubscription::class);
+    }
+
+    public function currentSubscription(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(CompanySubscription::class)->latestOfMany();
     }
 }

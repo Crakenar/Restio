@@ -28,6 +28,12 @@ class StoreEmployeeRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
             'role' => ['required', 'string', Rule::in([UserRole::EMPLOYEE->value, UserRole::MANAGER->value, UserRole::ADMIN->value])],
+            'department_id' => [
+                'nullable',
+                Rule::exists('departments', 'id')->where(function ($query) {
+                    return $query->where('company_id', $this->user()->company_id);
+                }),
+            ],
         ];
     }
 

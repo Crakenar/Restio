@@ -2,6 +2,11 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Enum\SubscriptionStatus;
+use App\Models\Company;
+use App\Models\CompanySubscription;
+use App\Models\Department;
+use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\RateLimiter;
@@ -21,7 +26,21 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_authenticate_using_the_login_screen()
     {
-        $user = User::factory()->withoutTwoFactor()->create();
+        $company = Company::factory()->create();
+        $department = Department::factory()->create(['company_id' => $company->id]);
+        $user = User::factory()->withoutTwoFactor()->create([
+            'company_id' => $company->id,
+            'department_id' => $department->id,
+        ]);
+
+        $subscription = Subscription::factory()->create();
+        CompanySubscription::create([
+            'company_id' => $company->id,
+            'subscription_id' => $subscription->id,
+            'status' => SubscriptionStatus::ACTIVE,
+            'starts_at' => now(),
+            'ends_at' => now()->addMonth(),
+        ]);
 
         $response = $this->post(route('login.store'), [
             'email' => $user->email,

@@ -2,7 +2,7 @@
 import AdminDashboard from '@/components/AdminDashboard.vue';
 import TeamCalendar from '@/components/TeamCalendar.vue';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { UserRole } from '@/enums';
+import { UserRole, VacationRequestStatus, VacationRequestType } from '@/enums';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
@@ -13,8 +13,8 @@ interface VacationRequest {
     id: string;
     startDate: Date;
     endDate: Date;
-    type: 'vacation' | 'sick' | 'personal' | 'unpaid' | 'wfh';
-    status: 'pending' | 'approved' | 'rejected';
+    type: VacationRequestType;
+    status: VacationRequestStatus;
     reason?: string;
     employeeName?: string;
     department?: string;
@@ -132,7 +132,10 @@ const handleSelectEmployee = (id: string) => {
                         value="calendar"
                         class="flex-1 overflow-auto rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-white/10"
                     >
-                        <TeamCalendar :requests="requests" />
+                        <TeamCalendar
+                            :requests="requests"
+                            :total-employees="employees.length"
+                        />
                     </TabsContent>
 
                     <TabsContent
@@ -153,7 +156,10 @@ const handleSelectEmployee = (id: string) => {
                 <div
                     class="flex-1 overflow-auto rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-white/10"
                 >
-                    <TeamCalendar :requests="requests" />
+                    <TeamCalendar
+                        :requests="requests"
+                        :total-employees="employees.length"
+                    />
                 </div>
             </template>
 

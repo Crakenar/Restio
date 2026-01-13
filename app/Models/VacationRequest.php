@@ -13,6 +13,7 @@ class VacationRequest extends Model
     use HasFactory;
 
     protected $table = 'vacation_requests';
+
     protected $fillable = [
         'company_id',
         'user_id',

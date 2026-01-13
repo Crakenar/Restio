@@ -9,6 +9,10 @@ import { useForm } from '@inertiajs/vue3';
 import { UserPlus, AlertCircle } from 'lucide-vue-next';
 import { UserRole } from '@/enums/UserRole';
 
+const props = defineProps<{
+    departments: { id: number; name: string }[];
+}>();
+
 const emit = defineEmits<{
     success: [];
 }>();
@@ -18,6 +22,7 @@ const form = useForm({
     email: '',
     password: '',
     role: UserRole.EMPLOYEE,
+    department_id: '',
 });
 
 const submitForm = () => {
@@ -95,6 +100,25 @@ const submitForm = () => {
                         <Alert v-if="form.errors.password" variant="destructive" class="mt-2">
                             <AlertCircle class="h-4 w-4" />
                             <AlertDescription>{{ form.errors.password }}</AlertDescription>
+                        </Alert>
+                    </div>
+
+                    <!-- Department Field -->
+                    <div class="space-y-2">
+                        <Label for="department" class="text-slate-700 dark:text-white/80">Department</Label>
+                        <Select v-model="form.department_id">
+                            <SelectTrigger class="border-slate-300 bg-white focus:border-purple-500 focus:ring-purple-500 dark:border-white/20 dark:bg-white/5">
+                                <SelectValue placeholder="Select a department" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="dept in departments" :key="dept.id" :value="dept.id.toString()">
+                                    {{ dept.name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Alert v-if="form.errors.department_id" variant="destructive" class="mt-2">
+                            <AlertCircle class="h-4 w-4" />
+                            <AlertDescription>{{ form.errors.department_id }}</AlertDescription>
                         </Alert>
                     </div>
 

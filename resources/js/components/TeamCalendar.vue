@@ -30,6 +30,7 @@ interface VacationRequest {
 
 const props = defineProps<{
     requests: VacationRequest[];
+    totalEmployees: number;
 }>();
 
 const currentMonth = ref(new Date());
@@ -81,10 +82,10 @@ const getRequestsForDay = (date: Date) => {
 };
 
 const getTeamCoverage = (date: Date) => {
-    const totalEmployees = 15; // Mock total
+    const totalEmployees = props.totalEmployees;
     const absences = getRequestsForDay(date);
     const presentCount = totalEmployees - absences.length;
-    const coveragePercent = (presentCount / totalEmployees) * 100;
+    const coveragePercent = totalEmployees > 0 ? (presentCount / totalEmployees) * 100 : 0;
 
     return {
         absences: absences.length,
