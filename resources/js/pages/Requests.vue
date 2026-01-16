@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import RequestsTable from '@/components/RequestsTable.vue';
-import AppLayout from '@/layouts/AppLayout.vue';
-import type { BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
+import RequestActionModal from '@/components/RequestActionModal.vue';
+import PremiumSidebar from '@/components/PremiumSidebar.vue';
+import { Head, usePage } from '@inertiajs/vue3';
+
+const page = usePage();
 import { FileText, Clock, CheckCircle2, XCircle, Plus } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -20,6 +22,7 @@ interface VacationRequest {
     type: VacationRequestType;
     status: VacationRequestStatus;
     reason?: string;
+    rejectionReason?: string;
     employeeName?: string;
     department?: string;
 }
@@ -33,7 +36,7 @@ interface Props {
 const props = defineProps<Props>();
 
 // Convert props to refs for reactivity (dates need to be converted)
-const requests = ref<VacationRequest[]>(
+const requests = computed<VacationRequest[]>(() =>
     props.requests.map((req) => ({
         ...req,
         startDate: new Date(req.startDate),
@@ -43,18 +46,17 @@ const requests = ref<VacationRequest[]>(
 
 const userRole = ref<UserRole>(props.userRole as UserRole);
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Requests', href: '/requests' },
-];
+// Modal state
+const showActionModal = ref(false);
+const modalAction = ref<'approve' | 'reject' | null>(null);
+const selectedRequestId = ref<string | null>(null);
+const selectedEmployeeName = ref<string>('');
 
 const activeTab = ref('all');
 
 // Filter requests based on role
 const visibleRequests = computed(() => {
-    return userRole.value === UserRole.EMPLOYEE
-        ? requests.value.filter((r) => r.employeeName === 'John Doe')
-        : requests.value;
+    return requests.value;
 });
 
 // Filter by status
@@ -84,40 +86,53 @@ const filteredRequests = computed(() => {
     }
 });
 
-const handleApprove = (id: string) => {
-    requests.value = requests.value.map((req) =>
-        req.id === id ? { ...req, status: VacationRequestStatus.APPROVED } : req,
-    );
+const handleApprove = (id: string, employeeName: string) => {
+    selectedRequestId.value = id;
+    selectedEmployeeName.value = employeeName;
+    modalAction.value = 'approve';
+    showActionModal.value = true;
 };
 
-const handleReject = (id: string) => {
-    requests.value = requests.value.map((req) =>
-        req.id === id ? { ...req, status: VacationRequestStatus.REJECTED } : req,
-    );
+const handleReject = (id: string, employeeName: string) => {
+    selectedRequestId.value = id;
+    selectedEmployeeName.value = employeeName;
+    modalAction.value = 'reject';
+    showActionModal.value = true;
+};
+
+const closeModal = () => {
+    showActionModal.value = false;
+    setTimeout(() => {
+        modalAction.value = null;
+        selectedRequestId.value = null;
+        selectedEmployeeName.value = '';
+    }, 300);
 };
 </script>
 
 <template>
     <Head title="Requests" />
 
-    <AppLayout :breadcrumbs="breadcrumbs">
-        <!-- Gradient background - adapts to theme -->
-        <div class="absolute inset-0 -z-10 bg-gradient-to-br from-slate-50 via-orange-50 to-rose-50 dark:from-slate-950 dark:via-orange-950 dark:to-rose-950" />
+    <div class="flex min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-rose-50 dark:from-slate-950 dark:via-orange-950 dark:to-rose-950">
+        <!-- Sidebar -->
+        <PremiumSidebar :notifications="$page.props.notifications || []" />
 
-        <!-- Animated gradient orbs -->
-        <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-            <div
-                class="absolute -top-1/2 -right-1/2 h-full w-full animate-pulse rounded-full bg-gradient-to-br from-orange-500/10 via-amber-500/10 to-yellow-500/10 dark:from-orange-500/20 dark:via-amber-500/20 dark:to-yellow-500/20 blur-3xl"
-                style="animation-duration: 8s"
-            />
-            <div
-                class="absolute -bottom-1/2 -left-1/2 h-full w-full animate-pulse rounded-full bg-gradient-to-tr from-rose-500/10 via-pink-500/10 to-red-500/10 dark:from-rose-500/20 dark:via-pink-500/20 dark:to-red-500/20 blur-3xl"
-                style="animation-duration: 10s; animation-delay: 1s"
-            />
-        </div>
+        <!-- Main content area -->
+        <div class="ml-72 flex-1 p-4 transition-all duration-500 sm:p-6 lg:p-8">
+            <!-- Animated gradient orbs -->
+            <div class="pointer-events-none fixed inset-0 overflow-hidden">
+                <div
+                    class="absolute -top-1/2 -right-1/2 h-full w-full animate-pulse rounded-full bg-gradient-to-br from-orange-500/10 via-amber-500/10 to-yellow-500/10 dark:from-orange-500/20 dark:via-amber-500/20 dark:to-yellow-500/20 blur-3xl"
+                    style="animation-duration: 8s"
+                />
+                <div
+                    class="absolute -bottom-1/2 -left-1/2 h-full w-full animate-pulse rounded-full bg-gradient-to-tr from-rose-500/10 via-pink-500/10 to-red-500/10 dark:from-rose-500/20 dark:via-pink-500/20 dark:to-red-500/20 blur-3xl"
+                    style="animation-duration: 10s; animation-delay: 1s"
+                />
+            </div>
 
-        <!-- Content -->
-        <div class="relative flex h-full flex-1 flex-col gap-6 overflow-hidden p-6">
+            <!-- Content -->
+            <div class="relative mx-auto max-w-7xl space-y-6">
             <!-- Enhanced Header with Action Button -->
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
@@ -195,78 +210,187 @@ const handleReject = (id: string) => {
                 </Card>
             </div>
 
-            <!-- Tabs for filtering -->
-            <Tabs v-model="activeTab" class="flex flex-1 flex-col space-y-4">
-                <TabsList class="w-fit border border-slate-200 bg-white/90 shadow-lg backdrop-blur-xl dark:border-white/20 dark:bg-white/10">
-                    <TabsTrigger value="all" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">
-                        All ({{ visibleRequests.length }})
-                    </TabsTrigger>
-                    <TabsTrigger value="pending" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">
-                        <Clock class="mr-1.5 h-3.5 w-3.5" />
-                        Pending
-                        <Badge v-if="pendingRequests.length > 0" class="ml-1.5 bg-amber-500 text-white border-0">
-                            {{ pendingRequests.length }}
-                        </Badge>
-                    </TabsTrigger>
-                    <TabsTrigger value="approved" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">
-                        <CheckCircle2 class="mr-1.5 h-3.5 w-3.5" />
-                        Approved ({{ approvedRequests.length }})
-                    </TabsTrigger>
-                    <TabsTrigger value="rejected" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">
-                        <XCircle class="mr-1.5 h-3.5 w-3.5" />
-                        Rejected ({{ rejectedRequests.length }})
-                    </TabsTrigger>
-                </TabsList>
+            <!-- Premium Tabs for filtering -->
+            <Tabs v-model="activeTab" class="flex flex-1 flex-col space-y-6">
+                <!-- Enhanced Tab List -->
+                <div class="relative">
+                    <!-- Gradient background glow -->
+                    <div class="pointer-events-none absolute inset-0 -z-10 rounded-3xl bg-gradient-to-r from-orange-500/20 via-amber-500/20 to-rose-500/20 blur-2xl" />
 
-                <!-- All Tabs Content -->
+                    <TabsList class="relative inline-flex gap-2 rounded-2xl border border-white/40 bg-white/80 p-2 shadow-2xl backdrop-blur-2xl dark:border-white/20 dark:bg-slate-900/60">
+                        <TabsTrigger
+                            value="all"
+                            class="group relative overflow-hidden rounded-xl px-6 py-3 font-semibold text-slate-600 transition-all duration-300 hover:text-slate-900 data-[state=active]:text-white dark:text-slate-300 dark:hover:text-white dark:data-[state=active]:text-white"
+                        >
+                            <!-- Active gradient background -->
+                            <div class="absolute inset-0 bg-gradient-to-r from-slate-600 to-slate-800 opacity-0 transition-opacity duration-300 data-[state=active]:opacity-100 group-data-[state=active]:opacity-100" />
+
+                            <!-- Content -->
+                            <span class="relative z-10 flex items-center gap-2">
+                                <FileText class="h-4 w-4" />
+                                All
+                                <span class="ml-1 flex h-6 min-w-[24px] items-center justify-center rounded-full bg-slate-200 px-2 text-xs font-bold text-slate-700 transition-all group-data-[state=active]:bg-white/20 group-data-[state=active]:text-white dark:bg-slate-700 dark:text-slate-300 dark:group-data-[state=active]:bg-white/20">
+                                    {{ visibleRequests.length }}
+                                </span>
+                            </span>
+                        </TabsTrigger>
+
+                        <TabsTrigger
+                            value="pending"
+                            class="group relative overflow-hidden rounded-xl px-6 py-3 font-semibold text-slate-600 transition-all duration-300 hover:text-amber-700 data-[state=active]:text-white dark:text-slate-300 dark:hover:text-amber-400 dark:data-[state=active]:text-white"
+                        >
+                            <!-- Active gradient background -->
+                            <div class="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-600 opacity-0 shadow-lg transition-all duration-300 group-data-[state=active]:opacity-100 group-data-[state=active]:shadow-amber-500/50" />
+
+                            <!-- Content -->
+                            <span class="relative z-10 flex items-center gap-2">
+                                <Clock class="h-4 w-4" />
+                                Pending
+                                <span
+                                    v-if="pendingRequests.length > 0"
+                                    class="ml-1 flex h-6 min-w-[24px] animate-pulse items-center justify-center rounded-full bg-amber-100 px-2 text-xs font-bold text-amber-700 transition-all group-data-[state=active]:bg-white/20 group-data-[state=active]:text-white dark:bg-amber-900/50 dark:text-amber-300 dark:group-data-[state=active]:bg-white/20"
+                                    style="animation-duration: 2s"
+                                >
+                                    {{ pendingRequests.length }}
+                                </span>
+                            </span>
+                        </TabsTrigger>
+
+                        <TabsTrigger
+                            value="approved"
+                            class="group relative overflow-hidden rounded-xl px-6 py-3 font-semibold text-slate-600 transition-all duration-300 hover:text-emerald-700 data-[state=active]:text-white dark:text-slate-300 dark:hover:text-emerald-400 dark:data-[state=active]:text-white"
+                        >
+                            <!-- Active gradient background -->
+                            <div class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-600 opacity-0 shadow-lg transition-all duration-300 group-data-[state=active]:opacity-100 group-data-[state=active]:shadow-emerald-500/50" />
+
+                            <!-- Content -->
+                            <span class="relative z-10 flex items-center gap-2">
+                                <CheckCircle2 class="h-4 w-4" />
+                                Approved
+                                <span class="ml-1 flex h-6 min-w-[24px] items-center justify-center rounded-full bg-emerald-100 px-2 text-xs font-bold text-emerald-700 transition-all group-data-[state=active]:bg-white/20 group-data-[state=active]:text-white dark:bg-emerald-900/50 dark:text-emerald-300 dark:group-data-[state=active]:bg-white/20">
+                                    {{ approvedRequests.length }}
+                                </span>
+                            </span>
+                        </TabsTrigger>
+
+                        <TabsTrigger
+                            value="rejected"
+                            class="group relative overflow-hidden rounded-xl px-6 py-3 font-semibold text-slate-600 transition-all duration-300 hover:text-rose-700 data-[state=active]:text-white dark:text-slate-300 dark:hover:text-rose-400 dark:data-[state=active]:text-white"
+                        >
+                            <!-- Active gradient background -->
+                            <div class="absolute inset-0 bg-gradient-to-r from-rose-500 to-red-600 opacity-0 shadow-lg transition-all duration-300 group-data-[state=active]:opacity-100 group-data-[state=active]:shadow-rose-500/50" />
+
+                            <!-- Content -->
+                            <span class="relative z-10 flex items-center gap-2">
+                                <XCircle class="h-4 w-4" />
+                                Rejected
+                                <span class="ml-1 flex h-6 min-w-[24px] items-center justify-center rounded-full bg-rose-100 px-2 text-xs font-bold text-rose-700 transition-all group-data-[state=active]:bg-white/20 group-data-[state=active]:text-white dark:bg-rose-900/50 dark:text-rose-300 dark:group-data-[state=active]:bg-white/20">
+                                    {{ rejectedRequests.length }}
+                                </span>
+                            </span>
+                        </TabsTrigger>
+                    </TabsList>
+                </div>
+
+                <!-- All Tabs Content - Same design for all -->
                 <TabsContent
                     value="all"
-                    class="flex-1 overflow-auto rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-white/10"
+                    class="relative flex-1 overflow-hidden rounded-3xl border border-white/40 bg-white/70 shadow-2xl backdrop-blur-2xl dark:border-white/20 dark:bg-slate-900/40"
                 >
-                    <RequestsTable
-                        :requests="filteredRequests"
-                        :user-role="userRole"
-                        @approve="handleApprove"
-                        @reject="handleReject"
-                    />
+                    <!-- Animated gradient overlay -->
+                    <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
+                        <div
+                            class="absolute -top-1/4 -right-1/4 h-1/2 w-1/2 animate-pulse rounded-full bg-gradient-to-br from-orange-500/20 via-amber-500/20 to-rose-500/20 blur-3xl"
+                            style="animation-duration: 8s"
+                        />
+                    </div>
+
+                    <div class="relative p-8">
+                        <RequestsTable
+                            :requests="filteredRequests"
+                            :user-role="userRole"
+                            @approve="handleApprove"
+                            @reject="handleReject"
+                        />
+                    </div>
                 </TabsContent>
 
                 <TabsContent
                     value="pending"
-                    class="flex-1 overflow-auto rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-white/10"
+                    class="relative flex-1 overflow-hidden rounded-3xl border border-white/40 bg-white/70 shadow-2xl backdrop-blur-2xl dark:border-white/20 dark:bg-slate-900/40"
                 >
-                    <RequestsTable
-                        :requests="filteredRequests"
-                        :user-role="userRole"
-                        @approve="handleApprove"
-                        @reject="handleReject"
-                    />
+                    <!-- Animated gradient overlay -->
+                    <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
+                        <div
+                            class="absolute -top-1/4 -right-1/4 h-1/2 w-1/2 animate-pulse rounded-full bg-gradient-to-br from-amber-500/20 via-orange-500/20 to-yellow-500/20 blur-3xl"
+                            style="animation-duration: 8s"
+                        />
+                    </div>
+
+                    <div class="relative p-8">
+                        <RequestsTable
+                            :requests="filteredRequests"
+                            :user-role="userRole"
+                            @approve="handleApprove"
+                            @reject="handleReject"
+                        />
+                    </div>
                 </TabsContent>
 
                 <TabsContent
                     value="approved"
-                    class="flex-1 overflow-auto rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-white/10"
+                    class="relative flex-1 overflow-hidden rounded-3xl border border-white/40 bg-white/70 shadow-2xl backdrop-blur-2xl dark:border-white/20 dark:bg-slate-900/40"
                 >
-                    <RequestsTable
-                        :requests="filteredRequests"
-                        :user-role="userRole"
-                        @approve="handleApprove"
-                        @reject="handleReject"
-                    />
+                    <!-- Animated gradient overlay -->
+                    <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
+                        <div
+                            class="absolute -top-1/4 -right-1/4 h-1/2 w-1/2 animate-pulse rounded-full bg-gradient-to-br from-emerald-500/20 via-teal-500/20 to-green-500/20 blur-3xl"
+                            style="animation-duration: 8s"
+                        />
+                    </div>
+
+                    <div class="relative p-8">
+                        <RequestsTable
+                            :requests="filteredRequests"
+                            :user-role="userRole"
+                            @approve="handleApprove"
+                            @reject="handleReject"
+                        />
+                    </div>
                 </TabsContent>
 
                 <TabsContent
                     value="rejected"
-                    class="flex-1 overflow-auto rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-white/10"
+                    class="relative flex-1 overflow-hidden rounded-3xl border border-white/40 bg-white/70 shadow-2xl backdrop-blur-2xl dark:border-white/20 dark:bg-slate-900/40"
                 >
-                    <RequestsTable
-                        :requests="filteredRequests"
-                        :user-role="userRole"
-                        @approve="handleApprove"
-                        @reject="handleReject"
-                    />
+                    <!-- Animated gradient overlay -->
+                    <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
+                        <div
+                            class="absolute -top-1/4 -right-1/4 h-1/2 w-1/2 animate-pulse rounded-full bg-gradient-to-br from-rose-500/20 via-red-500/20 to-pink-500/20 blur-3xl"
+                            style="animation-duration: 8s"
+                        />
+                    </div>
+
+                    <div class="relative p-8">
+                        <RequestsTable
+                            :requests="filteredRequests"
+                            :user-role="userRole"
+                            @approve="handleApprove"
+                            @reject="handleReject"
+                        />
+                    </div>
                 </TabsContent>
             </Tabs>
+            </div>
         </div>
-    </AppLayout>
+
+        <!-- Action Modal -->
+        <RequestActionModal
+            :show="showActionModal"
+            :action="modalAction"
+            :request-id="selectedRequestId"
+            :employee-name="selectedEmployeeName"
+            @close="closeModal"
+        />
+    </div>
 </template>

@@ -31,7 +31,6 @@ class EmployeesController extends Controller
 
         $employees = User::query()
             ->where('company_id', $user->company_id)
-            ->with('department')
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(fn ($employee) => [
@@ -39,23 +38,11 @@ class EmployeesController extends Controller
                 'name' => $employee->name,
                 'email' => $employee->email,
                 'role' => $employee->role,
-                'department_id' => $employee->department_id,
-                'department' => $employee->department?->name ?? 'Unassigned',
                 'created_at' => $employee->created_at->format('Y-m-d H:i:s'),
-            ]);
-
-        $departments = \App\Models\Department::query()
-            ->where('company_id', $user->company_id)
-            ->orderBy('name')
-            ->get()
-            ->map(fn ($dept) => [
-                'id' => $dept->id,
-                'name' => $dept->name,
             ]);
 
         return Inertia::render('Employees', [
             'employees' => $employees,
-            'departments' => $departments,
         ]);
     }
 
@@ -70,7 +57,6 @@ class EmployeesController extends Controller
             'password' => Hash::make($request->input('password')),
             'role' => $request->input('role'),
             'company_id' => auth()->user()->company_id,
-            'department_id' => $request->input('department_id'),
         ]);
 
         return redirect()->back()->with('success', 'Employee created successfully');

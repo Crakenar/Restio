@@ -13,11 +13,13 @@ class TeamsController extends Controller
         $companyId = $user->company_id;
 
         // Fetch requests scoped to company (for team calendar view)
+        // Exclude requests from owners
         $requests = \App\Models\VacationRequest::query()
-            ->with(['user.department'])
+            ->with(['user.team'])
             ->where('company_id', $companyId)
             ->whereHas('user', function ($query) use ($companyId) {
-                $query->where('company_id', $companyId);
+                $query->where('company_id', $companyId)
+                    ->where('role', '!=', \App\Enum\UserRole::OWNER->value);
             })
             // Fetch requests for current month +/- 1 month roughly, or just all future?
             // For now, let's fetch roughly relevant requests (e.g. starting from last month) to avoid loading years of history
@@ -31,7 +33,7 @@ class TeamsController extends Controller
                     'type' => $request->type,
                     'status' => $request->status,
                     'employeeName' => $request->user->name,
-                    'department' => $request->user->department?->name ?? 'Unassigned',
+                    'department' => $request->user->team?->name ?? 'No Department',
                 ];
             });
 
@@ -42,7 +44,7 @@ class TeamsController extends Controller
         // Fetch employees
         $employees = \App\Models\User::query()
             ->where('company_id', $companyId)
-            ->with(['department', 'vacation_requests'])
+            ->with(['vacation_requests', 'team'])
             ->get()
             ->map(function ($employee) use ($annualDays) {
                 // Calculate used days from approved requests in current year
@@ -58,17 +60,24 @@ class TeamsController extends Controller
                     'id' => $employee->id,
                     'name' => $employee->name,
                     'email' => $employee->email,
-                    'department' => $employee->department?->name ?? 'Unassigned',
+                    'department' => $employee->team?->name ?? 'No Department',
                     'totalDays' => $annualDays,
                     'usedDays' => $usedDays,
                     'pendingRequests' => $employee->vacation_requests->where('status', \App\Enum\VacationRequestStatus::PENDING->value)->count(),
                 ];
             });
 
+        // Calculate total employees excluding owners
+        $totalEmployeesExcludingOwners = \App\Models\User::query()
+            ->where('company_id', $companyId)
+            ->where('role', '!=', \App\Enum\UserRole::OWNER->value)
+            ->count();
+
         return Inertia::render('Team', [
             'requests' => $requests,
             'employees' => $employees,
             'userRole' => $user->role,
+            'totalEmployeesExcludingOwners' => $totalEmployeesExcludingOwners,
         ]);
     }
 }

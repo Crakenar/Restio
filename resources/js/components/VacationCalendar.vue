@@ -4,22 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import { UserRole } from '@/enums';
 import { cn } from '@/lib/utils';
+import VacationRequestForm from '@/components/VacationRequestForm.vue';
+import { router } from '@inertiajs/vue3';
 import {
     addMonths,
     addWeeks,
@@ -62,19 +53,12 @@ const props = defineProps<{
     userRole: UserRole;
 }>();
 
-const emit = defineEmits<{
-    createRequest: [request: Omit<VacationRequest, 'id' | 'status'>];
-}>();
-
 const currentMonth = ref(new Date());
 const currentWeek = ref(new Date());
 const currentYear = ref(new Date());
 const viewMode = ref<'weekly' | 'monthly' | 'yearly'>('monthly');
 const selectedDates = ref<Date[]>([]);
 const isDialogOpen = ref(false);
-const requestType = ref<RequestType>('vacation');
-const reason = ref('');
-const document = ref<File | null>(null);
 
 const typeColors: Record<string, string> = {
     vacation: 'bg-blue-500',
@@ -109,6 +93,7 @@ const currentLabel = computed(() => {
 
 const handleDateClick = (date: Date) => {
     if (isBefore(date, startOfDay(new Date()))) return;
+    if (isWeekend(date)) return; // Don't allow selecting weekends
 
     const isSelected = selectedDates.value.some((d) => isSameDay(d, date));
 
@@ -133,24 +118,14 @@ const hasRequest = (date: Date) => {
     );
 };
 
-const handleSubmitRequest = () => {
-    if (selectedDates.value.length === 0) return;
-
-    const sortedDates = [...selectedDates.value].sort(
-        (a, b) => a.getTime() - b.getTime(),
-    );
-
-    emit('createRequest', {
-        startDate: sortedDates[0],
-        endDate: sortedDates[sortedDates.length - 1],
-        type: requestType.value,
-        reason: reason.value || undefined,
-        document: document.value || undefined,
-    });
-
+const handleRequestSuccess = () => {
     selectedDates.value = [];
-    reason.value = '';
-    document.value = null;
+    isDialogOpen.value = false;
+    router.reload();
+};
+
+const handleRequestCancel = () => {
+    selectedDates.value = [];
     isDialogOpen.value = false;
 };
 
@@ -172,15 +147,6 @@ const handleNext = () => {
     } else {
         currentYear.value = addYears(currentYear.value, 1);
     }
-};
-
-const handleFileChange = (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    document.value = target.files?.[0] || null;
-};
-
-const removeDocument = () => {
-    document.value = null;
 };
 
 // Weekly view data
@@ -295,9 +261,10 @@ const getTypeAbbreviation = (type: string) => {
                 <Button
                     v-if="selectedDates.length > 0"
                     @click="isDialogOpen = true"
+                    class="bg-gradient-to-r from-orange-500 to-rose-500 text-white hover:from-orange-600 hover:to-rose-600"
                 >
-                    Request {{ selectedDates.length }} day{{
-                        selectedDates.length > 1 ? 's' : ''
+                    Request {{ selectedDates.filter(d => !isWeekend(d)).length }} day{{
+                        selectedDates.filter(d => !isWeekend(d)).length !== 1 ? 's' : ''
                     }}
                 </Button>
             </div>
@@ -332,7 +299,8 @@ const getTypeAbbreviation = (type: string) => {
                         <button
                             :disabled="
                                 isBefore(day, startOfDay(new Date())) ||
-                                !!hasRequest(day)
+                                !!hasRequest(day) ||
+                                isWeekend(day)
                             "
                             :class="
                                 cn(
@@ -345,8 +313,9 @@ const getTypeAbbreviation = (type: string) => {
                                         `${typeColors[hasRequest(day)!.type]} border-transparent text-white`,
                                     !hasRequest(day) &&
                                         !isDateSelected(day) &&
+                                        !isWeekend(day) &&
                                         'border-slate-200/50 text-slate-900 hover:bg-white/60 dark:border-white/10 dark:text-white dark:hover:bg-white/5',
-                                    isBefore(day, startOfDay(new Date())) &&
+                                    (isBefore(day, startOfDay(new Date())) || isWeekend(day)) &&
                                         'cursor-not-allowed opacity-40',
                                     isWeekend(day) &&
                                         !hasRequest(day) &&
@@ -393,7 +362,8 @@ const getTypeAbbreviation = (type: string) => {
                             v-else
                             :disabled="
                                 isBefore(day, startOfDay(new Date())) ||
-                                !!hasRequest(day)
+                                !!hasRequest(day) ||
+                                isWeekend(day)
                             "
                             :class="
                                 cn(
@@ -408,8 +378,9 @@ const getTypeAbbreviation = (type: string) => {
                                         `${typeColors[hasRequest(day)!.type]} border-transparent text-white`,
                                     !hasRequest(day) &&
                                         !isDateSelected(day) &&
+                                        !isWeekend(day) &&
                                         'border-slate-200/50 text-slate-900 hover:bg-white/60 dark:border-white/10 dark:text-white/80 dark:hover:bg-white/5',
-                                    isBefore(day, startOfDay(new Date())) &&
+                                    (isBefore(day, startOfDay(new Date())) || isWeekend(day)) &&
                                         'cursor-not-allowed opacity-40',
                                     isWeekend(day) &&
                                         !hasRequest(day) &&
@@ -514,130 +485,15 @@ const getTypeAbbreviation = (type: string) => {
 
     <!-- Request Dialog -->
     <Dialog v-model:open="isDialogOpen">
-        <DialogContent>
+        <DialogContent class="max-w-2xl border-white/20 bg-white/90 backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/90">
             <DialogHeader>
-                <DialogTitle>Request Time Off</DialogTitle>
-                <DialogDescription>
-                    <template v-if="selectedDates.length > 0">
-                        {{ format(selectedDates[0], 'MMM d, yyyy') }}
-                        <template v-if="selectedDates.length > 1">
-                            -
-                            {{
-                                format(
-                                    selectedDates[selectedDates.length - 1],
-                                    'MMM d, yyyy',
-                                )
-                            }}
-                        </template>
-                        ({{ selectedDates.length }} day{{
-                            selectedDates.length > 1 ? 's' : ''
-                        }})
-                    </template>
-                </DialogDescription>
+                <DialogTitle class="sr-only">Request Time Off</DialogTitle>
             </DialogHeader>
-            <div class="space-y-4 py-4">
-                <div class="space-y-2">
-                    <Label for="type">Request Type</Label>
-                    <Select v-model="requestType">
-                        <SelectTrigger id="type">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem
-                                v-for="(label, value) in typeLabels"
-                                :key="value"
-                                :value="value"
-                            >
-                                {{ label }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div class="space-y-2">
-                    <Label for="reason">Reason (Optional)</Label>
-                    <Textarea
-                        id="reason"
-                        v-model="reason"
-                        placeholder="Add a note about your request..."
-                        :rows="3"
-                    />
-                </div>
-                <div class="space-y-2">
-                    <Label for="document">
-                        Upload Document
-                        <template v-if="requestType === 'sick'">
-                            (Required for sick leave)
-                        </template>
-                    </Label>
-                    <div
-                        class="rounded-lg border-2 border-dashed p-6 text-center transition-colors hover:border-blue-500"
-                    >
-                        <input
-                            id="document"
-                            type="file"
-                            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                            class="hidden"
-                            @change="handleFileChange"
-                        />
-                        <label for="document" class="cursor-pointer">
-                            <div class="space-y-2">
-                                <div
-                                    class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950"
-                                >
-                                    <svg
-                                        class="h-6 w-6 text-blue-600"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                                        />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium">
-                                        {{
-                                            document
-                                                ? document.name
-                                                : 'Click to upload or drag and drop'
-                                        }}
-                                    </p>
-                                    <p
-                                        class="mt-1 text-xs text-muted-foreground"
-                                    >
-                                        PDF, DOC, DOCX, JPG, PNG (max 10MB)
-                                    </p>
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-                    <div
-                        v-if="document"
-                        class="flex items-center justify-between rounded-lg bg-muted p-2"
-                    >
-                        <span class="truncate text-sm">{{
-                            document.name
-                        }}</span>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            @click="removeDocument"
-                        >
-                            Remove
-                        </Button>
-                    </div>
-                </div>
-            </div>
-            <DialogFooter>
-                <Button variant="outline" @click="isDialogOpen = false"
-                    >Cancel</Button
-                >
-                <Button @click="handleSubmitRequest">Submit Request</Button>
-            </DialogFooter>
+            <VacationRequestForm
+                :selected-dates="selectedDates"
+                @success="handleRequestSuccess"
+                @cancel="handleRequestCancel"
+            />
         </DialogContent>
     </Dialog>
 </template>

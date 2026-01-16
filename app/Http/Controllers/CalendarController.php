@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\VacationRequest;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class RequestsController extends Controller
+class CalendarController extends Controller
 {
     public function index(): Response
     {
         $user = auth()->user();
+        $companyId = $user->company_id;
 
-        // Fetch requests scoped to company
-        $requests = \App\Models\VacationRequest::query()
+        // Fetch vacation requests scoped to company
+        $requests = VacationRequest::query()
             ->with(['user'])
-            ->where('company_id', $user->company_id)
-            ->whereHas('user', function ($query) use ($user) {
-                $query->where('company_id', $user->company_id);
+            ->where('company_id', $companyId)
+            ->whereHas('user', function ($query) use ($companyId) {
+                $query->where('company_id', $companyId);
             })
             ->latest()
             ->get()
@@ -27,15 +29,13 @@ class RequestsController extends Controller
                     'endDate' => $request->end_date,
                     'type' => $request->type,
                     'status' => $request->status,
-                    'reason' => $request->reason,
-                    'rejectionReason' => $request->rejection_reason,
                     'employeeName' => $request->user->name,
                 ];
             });
 
-        return Inertia::render('Requests', [
+        return Inertia::render('VacationCalendarPage', [
             'requests' => $requests,
-            'userRole' => $user->role,
+            'userName' => $user->name,
         ]);
     }
 }

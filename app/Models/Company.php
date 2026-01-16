@@ -39,6 +39,11 @@ class Company extends Model
         return $this->hasMany(Department::class);
     }
 
+    public function teams(): HasMany
+    {
+        return $this->hasMany(Team::class);
+    }
+
     public function subscriptions(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(CompanySubscription::class);

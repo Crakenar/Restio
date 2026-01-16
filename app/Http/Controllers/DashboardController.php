@@ -20,7 +20,7 @@ class DashboardController extends Controller
 
         // Fetch requests scoped to company
         $requests = VacationRequest::query()
-            ->with(['user.department'])
+            ->with(['user'])
             ->where('company_id', $companyId)
             ->whereHas('user', function ($query) use ($companyId) {
                 $query->where('company_id', $companyId);
@@ -35,7 +35,6 @@ class DashboardController extends Controller
                     'type' => $request->type,
                     'status' => $request->status,
                     'employeeName' => $request->user->name,
-                    'department' => $request->user->department?->name ?? 'Unassigned',
                 ];
             });
 
@@ -48,7 +47,6 @@ class DashboardController extends Controller
         if ($user->role === UserRole::ADMIN->value) {
             $employees = User::query()
                 ->where('company_id', $companyId)
-                ->with('department')
                 ->withCount([
                     'vacation_requests as pending_requests_count' => function ($query) {
                         $query->where('status', VacationRequestStatus::PENDING);
@@ -69,7 +67,6 @@ class DashboardController extends Controller
                         'id' => $employee->id,
                         'name' => $employee->name,
                         'email' => $employee->email,
-                        'department' => $employee->department?->name ?? 'Unassigned',
                         'totalDays' => $annualDays,
                         'usedDays' => $usedDays,
                         'pendingRequests' => $employee->pending_requests_count,
@@ -77,12 +74,20 @@ class DashboardController extends Controller
                 });
         }
 
+        // Count notifications (pending requests for the user)
+        $notificationCount = VacationRequest::query()
+            ->where('company_id', $companyId)
+            ->where('user_id', $user->id)
+            ->where('status', VacationRequestStatus::PENDING)
+            ->count();
+
         return Inertia::render('Dashboard', [
             'requests' => $requests,
             'employees' => $employees,
             'userRole' => $user->role,
             'userName' => $user->name,
             'totalDaysAllowed' => $annualDays,
+            'notificationCount' => $notificationCount,
         ]);
     }
 }
