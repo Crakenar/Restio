@@ -63,6 +63,7 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\EnsureCompanyIsActiv
         ->name('vacation-requests.reject');
 
     // Notifications
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 

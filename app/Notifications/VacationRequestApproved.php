@@ -2,9 +2,11 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use App\Models\VacationRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class VacationRequestApproved extends Notification implements ShouldQueue
@@ -27,7 +29,33 @@ class VacationRequestApproved extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'mail'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     */
+    public function toMail(object $notifiable): MailMessage
+    {
+        $startDate = $this->vacationRequest->start_date->format('M d, Y');
+        $endDate = $this->vacationRequest->end_date->format('M d, Y');
+        $type = str_replace('_', ' ', ucfirst($this->vacationRequest->type->value));
+        $approver = User::find($this->vacationRequest->approved_by);
+
+        return (new MailMessage)
+            ->success()
+            ->subject('Your Time Off Request Has Been Approved!')
+            ->greeting('Great news, '.$notifiable->name.'!')
+            ->line('Your time off request has been **approved**.')
+            ->line('**Type:** '.$type)
+            ->line('**From:** '.$startDate)
+            ->line('**To:** '.$endDate)
+            ->when($approver, function ($mail) use ($approver) {
+                return $mail->line('**Approved by:** '.$approver->name);
+            })
+            ->action('View Request', url('/requests'))
+            ->line('Enjoy your time off!')
+            ->salutation('Best regards, '.config('app.name'));
     }
 
     /**

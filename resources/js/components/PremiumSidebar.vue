@@ -14,8 +14,7 @@ import {
     Settings,
     User,
 } from 'lucide-vue-next';
-import NotificationBell from './NotificationBell.vue';
-import NotificationPanel from './NotificationPanel.vue';
+import NotificationCenter from './NotificationCenter.vue';
 
 interface NavItem {
     title: string;
@@ -25,40 +24,8 @@ interface NavItem {
     roles?: string[];
 }
 
-interface Notification {
-    id: string;
-    type: string;
-    data: any;
-    read_at: string | null;
-    created_at: string;
-}
-
-interface Props {
-    notifications?: Notification[];
-}
-
-const props = withDefaults(defineProps<Props>(), {
-    notifications: () => [],
-});
-
 const page = usePage();
 const isCollapsed = ref(false);
-const showNotificationPanel = ref(false);
-
-// Use global notifications from Inertia shared data
-const notifications = computed(() => {
-    // Try prop first, then fallback to global $page.props
-    return props.notifications.length > 0
-        ? props.notifications
-        : (page.props.notifications as any[] || []);
-});
-
-// Debug: Log notifications on mount
-if (import.meta.env.DEV) {
-    console.log('PremiumSidebar - Props notifications:', props.notifications);
-    console.log('PremiumSidebar - Page notifications:', page.props.notifications);
-    console.log('PremiumSidebar - Final notifications count:', notifications.value.length);
-}
 
 const user = computed(() => page.props.auth?.user as any);
 const userRole = computed(() => user.value?.role);
@@ -256,12 +223,9 @@ const toggleSidebar = () => {
                     </Link>
 
                     <!-- Notifications -->
-                    <NotificationBell
-                        :notifications="notifications"
-                        :is-collapsed="isCollapsed"
-                        :show-panel="showNotificationPanel"
-                        @toggle-panel="showNotificationPanel = !showNotificationPanel"
-                    />
+                    <div :class="['flex', isCollapsed ? 'justify-center' : 'justify-end']">
+                        <NotificationCenter />
+                    </div>
                 </nav>
 
                 <!-- Footer - User Profile -->
@@ -373,12 +337,6 @@ const toggleSidebar = () => {
             </div>
         </div>
 
-        <!-- Notification Panel -->
-        <NotificationPanel
-            :notifications="notifications"
-            :show="showNotificationPanel"
-            @close="showNotificationPanel = false"
-        />
     </aside>
 </template>
 

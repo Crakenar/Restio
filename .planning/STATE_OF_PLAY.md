@@ -117,15 +117,15 @@ Restio is a vacation/leave management SaaS application built with Laravel 12, In
 **Status:** Basic role checks exist, but no formal policies
 
 **What's Missing:**
-- [ ] VacationRequestPolicy (view, create, update, delete, approve, reject)
-- [ ] TeamPolicy (view, create, update, delete, assignUsers)
-- [ ] UserPolicy (view, create, update, delete)
-- [ ] CompanyPolicy (view settings, manage users)
-- [ ] Manager can only approve requests from their own team
-- [ ] Admin can approve any request in their company
-- [ ] Employees can only see/edit their own requests
-- [ ] Policy registration in AuthServiceProvider
-- [ ] Middleware checks using policies
+- [✅] VacationRequestPolicy (view, create, update, delete, approve, reject)
+- [✅] TeamPolicy (view, create, update, delete, assignUsers)
+- [✅] UserPolicy (view, create, update, delete)
+- [✅] CompanyPolicy (view settings, manage users)
+- [✅] Manager can only approve requests from their own team
+- [✅] Admin can approve any request in their company
+- [✅] Employees can only see/edit their own requests
+- [✅] Policy registration in AuthServiceProvider
+- [✅] Middleware checks using policies
 
 **Priority:** CRITICAL - Security risk without this
 
