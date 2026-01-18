@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Users, Calendar, FileText, TrendingUp, User, Mail, Shield } from 'lucide-vue-next';
+import { Users, Calendar, FileText, TrendingUp, User, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 interface Employee {
@@ -33,6 +33,8 @@ const emit = defineEmits<{
 }>();
 
 const hoveredRow = ref<string | null>(null);
+const sortColumn = ref<'usedDays' | 'daysRemaining' | null>(null);
+const sortDirection = ref<'asc' | 'desc'>('asc');
 
 const getInitials = (name: string) => {
     return name
@@ -54,6 +56,48 @@ const getDaysRemainingColor = (remaining: number): string => {
     if (remaining < 5) return 'from-red-500 to-rose-600';
     if (remaining < 10) return 'from-amber-500 to-orange-600';
     return 'from-emerald-500 to-teal-600';
+};
+
+const sortedEmployees = computed(() => {
+    const employees = [...props.employees];
+
+    if (!sortColumn.value) return employees;
+
+    return employees.sort((a, b) => {
+        let valueA: number;
+        let valueB: number;
+
+        if (sortColumn.value === 'usedDays') {
+            valueA = a.usedDays;
+            valueB = b.usedDays;
+        } else {
+            // daysRemaining
+            valueA = a.totalDays - a.usedDays;
+            valueB = b.totalDays - b.usedDays;
+        }
+
+        if (sortDirection.value === 'asc') {
+            return valueA - valueB;
+        } else {
+            return valueB - valueA;
+        }
+    });
+});
+
+const handleSort = (column: 'usedDays' | 'daysRemaining') => {
+    if (sortColumn.value === column) {
+        // Toggle direction
+        sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
+    } else {
+        // New column, default to ascending
+        sortColumn.value = column;
+        sortDirection.value = 'asc';
+    }
+};
+
+const getSortIcon = (column: 'usedDays' | 'daysRemaining') => {
+    if (sortColumn.value !== column) return ArrowUpDown;
+    return sortDirection.value === 'asc' ? ArrowUp : ArrowDown;
 };
 </script>
 
@@ -166,10 +210,34 @@ const getDaysRemainingColor = (remaining: number): string => {
                         Department
                     </div>
                     <div class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                        Days Used
+                        <button
+                            @click="handleSort('usedDays')"
+                            class="flex items-center gap-1.5 transition-colors hover:text-orange-500 dark:hover:text-orange-400"
+                        >
+                            Days Used
+                            <component
+                                :is="getSortIcon('usedDays')"
+                                class="h-3.5 w-3.5"
+                                :class="{
+                                    'text-orange-500 dark:text-orange-400': sortColumn === 'usedDays',
+                                }"
+                            />
+                        </button>
                     </div>
                     <div class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                        Days Remaining
+                        <button
+                            @click="handleSort('daysRemaining')"
+                            class="flex items-center gap-1.5 transition-colors hover:text-orange-500 dark:hover:text-orange-400"
+                        >
+                            Days Remaining
+                            <component
+                                :is="getSortIcon('daysRemaining')"
+                                class="h-3.5 w-3.5"
+                                :class="{
+                                    'text-orange-500 dark:text-orange-400': sortColumn === 'daysRemaining',
+                                }"
+                            />
+                        </button>
                     </div>
                     <div class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                         Pending
@@ -178,7 +246,7 @@ const getDaysRemainingColor = (remaining: number): string => {
 
                 <!-- Employee Rows -->
                 <div
-                    v-for="(employee, index) in employees"
+                    v-for="(employee, index) in sortedEmployees"
                     :key="employee.id"
                     :style="{ animationDelay: `${index * 50}ms` }"
                     class="employee-row group relative overflow-hidden rounded-2xl border border-white/40 bg-white/60 backdrop-blur-xl transition-all duration-300 hover:scale-[1.01] hover:border-white/60 hover:shadow-2xl dark:border-white/20 dark:bg-slate-800/40 dark:hover:border-white/30"

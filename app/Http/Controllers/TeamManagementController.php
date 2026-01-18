@@ -19,6 +19,9 @@ class TeamManagementController extends Controller
         $user = auth()->user();
         $companyId = $user->company_id;
 
+        // Authorize viewing teams (only admins and owners)
+        $this->authorize('viewAny', Team::class);
+
         // Fetch teams for the company with user count
         $teams = Team::query()
             ->where('company_id', $companyId)
@@ -64,6 +67,9 @@ class TeamManagementController extends Controller
     {
         $user = auth()->user();
 
+        // Authorize team creation (only admins and owners)
+        $this->authorize('create', Team::class);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
         ]);
@@ -81,10 +87,8 @@ class TeamManagementController extends Controller
      */
     public function update(Request $request, Team $team): RedirectResponse
     {
-        // Ensure the team belongs to the user's company
-        if ($team->company_id !== auth()->user()->company_id) {
-            abort(403);
-        }
+        // Authorize team update (only admins and owners, same company)
+        $this->authorize('update', $team);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -100,10 +104,8 @@ class TeamManagementController extends Controller
      */
     public function destroy(Team $team): RedirectResponse
     {
-        // Ensure the team belongs to the user's company
-        if ($team->company_id !== auth()->user()->company_id) {
-            abort(403);
-        }
+        // Authorize team deletion (only admins and owners, same company)
+        $this->authorize('delete', $team);
 
         // Remove team assignment from users
         $team->users()->update(['team_id' => null]);
@@ -118,10 +120,8 @@ class TeamManagementController extends Controller
      */
     public function assignUsers(Request $request, Team $team): RedirectResponse
     {
-        // Ensure the team belongs to the user's company
-        if ($team->company_id !== auth()->user()->company_id) {
-            abort(403);
-        }
+        // Authorize assigning users to team (only admins and owners, same company)
+        $this->authorize('assignUsers', $team);
 
         $validated = $request->validate([
             'user_ids' => 'required|array',
@@ -141,14 +141,12 @@ class TeamManagementController extends Controller
      */
     public function removeUser(Request $request, Team $team, User $user): RedirectResponse
     {
-        // Ensure the team belongs to the user's company
-        if ($team->company_id !== auth()->user()->company_id) {
-            abort(403);
-        }
+        // Authorize removing users from team (only admins and owners, same company)
+        $this->authorize('removeUser', $team);
 
         // Ensure the user belongs to this team
         if ($user->team_id !== $team->id) {
-            abort(403);
+            abort(403, 'User does not belong to this team.');
         }
 
         $user->update(['team_id' => null]);

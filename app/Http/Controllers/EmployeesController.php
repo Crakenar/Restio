@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Actions\ImportEmployeesFromCsv;
-use App\Enum\UserRole;
 use App\Http\Requests\ImportEmployeesRequest;
 use App\Http\Requests\StoreEmployeeRequest;
 use App\Models\User;
@@ -11,7 +10,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class EmployeesController extends Controller
 {
@@ -22,12 +20,8 @@ class EmployeesController extends Controller
     {
         $user = auth()->user();
 
-        // Only admins can access employee management
-        abort_if(
-            $user->role !== UserRole::ADMIN->value,
-            HttpResponse::HTTP_FORBIDDEN,
-            'Only administrators can access employee management.'
-        );
+        // Authorize viewing employees (only admins and owners)
+        $this->authorize('viewAny', User::class);
 
         $employees = User::query()
             ->where('company_id', $user->company_id)
@@ -51,6 +45,9 @@ class EmployeesController extends Controller
      */
     public function store(StoreEmployeeRequest $request): RedirectResponse
     {
+        // Authorize employee creation (only admins and owners)
+        $this->authorize('create', User::class);
+
         User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
@@ -67,6 +64,9 @@ class EmployeesController extends Controller
      */
     public function importCsv(ImportEmployeesRequest $request, ImportEmployeesFromCsv $importAction): RedirectResponse
     {
+        // Authorize CSV import (only admins and owners)
+        $this->authorize('importCsv', User::class);
+
         $file = $request->file('file');
         $companyId = auth()->user()->company_id;
 

@@ -53,8 +53,14 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\EnsureCompanyIsActiv
     Route::post('vacation-requests', [VacationRequestController::class, 'store'])->name('vacation-requests.store');
     Route::patch('vacation-requests/{vacationRequest}', [VacationRequestController::class, 'update'])->name('vacation-requests.update');
     Route::delete('vacation-requests/{vacationRequest}', [VacationRequestController::class, 'destroy'])->name('vacation-requests.destroy');
-    Route::post('vacation-requests/{vacationRequest}/approve', [VacationRequestController::class, 'approve'])->name('vacation-requests.approve');
-    Route::post('vacation-requests/{vacationRequest}/reject', [VacationRequestController::class, 'reject'])->name('vacation-requests.reject');
+
+    // Sensitive actions with stricter rate limiting (20 requests per minute)
+    Route::post('vacation-requests/{vacationRequest}/approve', [VacationRequestController::class, 'approve'])
+        ->middleware('throttle:sensitive')
+        ->name('vacation-requests.approve');
+    Route::post('vacation-requests/{vacationRequest}/reject', [VacationRequestController::class, 'reject'])
+        ->middleware('throttle:sensitive')
+        ->name('vacation-requests.reject');
 
     // Notifications
     Route::post('notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');

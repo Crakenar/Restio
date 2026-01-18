@@ -22,6 +22,9 @@ class VacationRequestController extends Controller
     {
         $user = auth()->user();
 
+        // Authorize the creation
+        $this->authorize('create', VacationRequest::class);
+
         $vacationRequest = VacationRequest::create([
             'user_id' => $user->id,
             'company_id' => $user->company_id,
@@ -47,15 +50,8 @@ class VacationRequestController extends Controller
      */
     public function update(StoreVacationRequestRequest $request, VacationRequest $vacationRequest): RedirectResponse
     {
-        // Ensure the user owns this request
-        if ($vacationRequest->user_id !== auth()->id()) {
-            abort(403, 'You are not authorized to update this request.');
-        }
-
-        // Only allow updating pending requests
-        if ($vacationRequest->status !== VacationRequestStatus::PENDING) {
-            return redirect()->back()->with('error', 'You can only edit pending requests.');
-        }
+        // Authorize the update (checks ownership and pending status)
+        $this->authorize('update', $vacationRequest);
 
         $vacationRequest->update([
             'start_date' => $request->input('start_date'),
@@ -72,15 +68,8 @@ class VacationRequestController extends Controller
      */
     public function destroy(VacationRequest $vacationRequest): RedirectResponse
     {
-        // Ensure the user owns this request
-        if ($vacationRequest->user_id !== auth()->id()) {
-            abort(403, 'You are not authorized to cancel this request.');
-        }
-
-        // Only allow cancelling pending requests
-        if ($vacationRequest->status !== VacationRequestStatus::PENDING) {
-            return redirect()->back()->with('error', 'You can only cancel pending requests.');
-        }
+        // Authorize the deletion (checks ownership and pending status)
+        $this->authorize('delete', $vacationRequest);
 
         $vacationRequest->delete();
 
@@ -94,21 +83,8 @@ class VacationRequestController extends Controller
     {
         $user = auth()->user();
 
-        // TODO: Add proper authorization (managers can only approve their team)
-        // For now, allow managers and admins
-        if (! in_array($user->role, ['manager', 'admin', 'owner'])) {
-            abort(403, 'You are not authorized to approve requests.');
-        }
-
-        // Ensure the request is pending
-        if ($vacationRequest->status !== VacationRequestStatus::PENDING) {
-            return redirect()->back()->with('error', 'This request has already been processed.');
-        }
-
-        // Ensure the request belongs to the same company
-        if ($vacationRequest->company_id !== $user->company_id) {
-            abort(403);
-        }
+        // Authorize the approval (checks role, team membership, company, and pending status)
+        $this->authorize('approve', $vacationRequest);
 
         $vacationRequest->update([
             'status' => VacationRequestStatus::APPROVED->value,
@@ -129,21 +105,8 @@ class VacationRequestController extends Controller
     {
         $user = auth()->user();
 
-        // TODO: Add proper authorization (managers can only reject their team)
-        // For now, allow managers and admins
-        if (! in_array($user->role, ['manager', 'admin', 'owner'])) {
-            abort(403, 'You are not authorized to reject requests.');
-        }
-
-        // Ensure the request is pending
-        if ($vacationRequest->status !== VacationRequestStatus::PENDING) {
-            return redirect()->back()->with('error', 'This request has already been processed.');
-        }
-
-        // Ensure the request belongs to the same company
-        if ($vacationRequest->company_id !== $user->company_id) {
-            abort(403);
-        }
+        // Authorize the rejection (checks role, team membership, company, and pending status)
+        $this->authorize('reject', $vacationRequest);
 
         $validated = $request->validate([
             'rejection_reason' => 'nullable|string|max:500',

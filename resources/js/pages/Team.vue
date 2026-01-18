@@ -31,12 +31,18 @@ interface Employee {
     pendingRequests: number;
 }
 
+interface Team {
+    id: number;
+    name: string;
+}
+
 // Define props received from Inertia controller
 interface Props {
     requests: VacationRequest[];
     employees: Employee[];
     userRole: UserRole;
     totalEmployeesExcludingOwners: number;
+    teams: Team[];
 }
 
 const props = defineProps<Props>();
@@ -154,6 +160,7 @@ const handleSelectEmployee = (id: string) => {
                             <TeamCalendar
                                 :requests="requests"
                                 :total-employees="totalEmployeesExcludingOwners"
+                                :teams="teams"
                             />
                         </div>
                     </TabsContent>
@@ -198,6 +205,7 @@ const handleSelectEmployee = (id: string) => {
                         <TeamCalendar
                             :requests="requests"
                             :total-employees="totalEmployeesExcludingOwners"
+                            :teams="teams"
                         />
                     </div>
                 </div>

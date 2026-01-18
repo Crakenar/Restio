@@ -73,11 +73,24 @@ class TeamsController extends Controller
             ->where('role', '!=', \App\Enum\UserRole::OWNER->value)
             ->count();
 
+        // Fetch all teams for the company
+        $teams = \App\Models\Team::query()
+            ->where('company_id', $companyId)
+            ->orderBy('name')
+            ->get()
+            ->map(function ($team) {
+                return [
+                    'id' => $team->id,
+                    'name' => $team->name,
+                ];
+            });
+
         return Inertia::render('Team', [
             'requests' => $requests,
             'employees' => $employees,
             'userRole' => $user->role,
             'totalEmployeesExcludingOwners' => $totalEmployeesExcludingOwners,
+            'teams' => $teams,
         ]);
     }
 }

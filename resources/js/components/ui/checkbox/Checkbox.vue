@@ -12,6 +12,13 @@ const emits = defineEmits<CheckboxRootEmits>()
 const delegatedProps = reactiveOmit(props, "class")
 
 const forwarded = useForwardPropsEmits(delegatedProps, emits)
+
+// Debug: intercept the update:checked event
+const handleUpdateChecked = (value: boolean | 'indeterminate') => {
+  console.log('Checkbox internal update:checked', value)
+  emits('update:modelValue', value)
+}
+
 </script>
 
 <template>

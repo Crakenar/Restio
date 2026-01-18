@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import AdminDashboard from '@/components/AdminDashboard.vue';
 import RequestsTable from '@/components/RequestsTable.vue';
-import TeamCalendar from '@/components/TeamCalendar.vue';
 import { Badge } from '@/components/ui/badge';
 import {
     Card,
@@ -520,7 +519,7 @@ const getTypeColor = (type: string) => {
             </TabsList>
 
             <TabsContent value="calendar">
-                <TeamCalendar :requests="requests" />
+                <!--                <TeamCalendar :requests="requests" />-->
             </TabsContent>
 
             <TabsContent value="employees">

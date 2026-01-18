@@ -21,6 +21,11 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
+
+        // Apply global rate limiting to all web routes
+        $middleware->web(prepend: [
+            'throttle:global',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
