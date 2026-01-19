@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { useToast } from '@/composables/useToast';
-import { Bell, CheckCheck, Clock, XCircle, CheckCircle, Calendar } from 'lucide-vue-next';
+import { Bell, CheckCheck, Clock, XCircle, CheckCircle, Calendar, Sparkles } from 'lucide-vue-next';
 
 interface Notification {
     id: string;
@@ -39,13 +39,11 @@ const emit = defineEmits<{
 const toast = useToast();
 const panelRef = ref<HTMLElement | null>(null);
 
-// Click outside to close (with small delay to prevent immediate close)
+// Click outside to close
 const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as Node;
 
-    // Check if click is outside the panel
     if (panelRef.value && !panelRef.value.contains(target)) {
-        // Also check if click is not on the notification bell button
         const bellButton = document.querySelector('[data-notification-bell]');
         if (bellButton && !bellButton.contains(target)) {
             emit('close');
@@ -54,7 +52,6 @@ const handleClickOutside = (event: MouseEvent) => {
 };
 
 onMounted(() => {
-    // Add click listener with a small delay to prevent immediate close on open
     setTimeout(() => {
         document.addEventListener('click', handleClickOutside);
     }, 100);
@@ -66,33 +63,40 @@ onUnmounted(() => {
 
 // Mark notification as read
 const markAsRead = (notificationId: string) => {
-    router.post(`/notifications/${notificationId}/read`, {}, {
-        preserveScroll: true,
-        only: ['notifications'],
-    });
+    router.post(
+        `/notifications/${notificationId}/read`,
+        {},
+        {
+            preserveScroll: true,
+            only: ['notifications'],
+        },
+    );
 };
 
 // Mark all as read
 const markAllAsRead = () => {
-    router.post('/notifications/read-all', {}, {
-        preserveScroll: true,
-        only: ['notifications'],
-        onSuccess: () => {
-            toast.success('All notifications marked as read!');
+    router.post(
+        '/notifications/read-all',
+        {},
+        {
+            preserveScroll: true,
+            only: ['notifications'],
+            onSuccess: () => {
+                toast.success('All notifications marked as read!');
+            },
+            onError: () => {
+                toast.error('Failed to mark notifications as read.');
+            },
         },
-        onError: () => {
-            toast.error('Failed to mark notifications as read.');
-        },
-    });
+    );
 };
 
-// View notification (marks as read and navigates)
+// View notification
 const viewNotification = (notification: Notification) => {
     if (!notification.read_at) {
         markAsRead(notification.id);
     }
 
-    // Navigate to requests page
     router.visit('/requests');
     emit('close');
 };
@@ -110,37 +114,33 @@ const timeAgo = (dateString: string): string => {
     return date.toLocaleDateString();
 };
 
-// Get notification icon and color based on type
+// Get notification styling
 const getNotificationStyle = (notification: Notification) => {
     const notifType = notification.type.split('\\').pop()?.toLowerCase() || '';
 
     if (notifType.includes('approved')) {
         return {
             icon: CheckCircle,
-            gradient: 'from-emerald-500 to-teal-600',
-            bgGradient: 'from-emerald-500/10 to-teal-600/10',
-            iconBg: 'bg-emerald-500/20',
             iconColor: 'text-emerald-600 dark:text-emerald-400',
+            iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
+            accentColor: 'bg-emerald-500',
         };
     }
 
     if (notifType.includes('rejected')) {
         return {
             icon: XCircle,
-            gradient: 'from-red-500 to-rose-600',
-            bgGradient: 'from-red-500/10 to-rose-600/10',
-            iconBg: 'bg-red-500/20',
-            iconColor: 'text-red-600 dark:text-red-400',
+            iconColor: 'text-rose-600 dark:text-rose-400',
+            iconBg: 'bg-rose-500/10 dark:bg-rose-500/20',
+            accentColor: 'bg-rose-500',
         };
     }
 
-    // Submitted (default)
     return {
         icon: Clock,
-        gradient: 'from-blue-500 to-indigo-600',
-        bgGradient: 'from-blue-500/10 to-indigo-600/10',
-        iconBg: 'bg-blue-500/20',
         iconColor: 'text-blue-600 dark:text-blue-400',
+        iconBg: 'bg-blue-500/10 dark:bg-blue-500/20',
+        accentColor: 'bg-blue-500',
     };
 };
 
@@ -151,41 +151,33 @@ const readNotifications = computed(() => props.notifications.filter((n) => n.rea
 
 <template>
     <!-- Backdrop -->
-    <Transition name="fade">
-        <div
-            v-if="show"
-            class="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
-            @click="emit('close')"
-        />
+    <Transition name="backdrop-fade">
+        <div v-if="show" class="fixed inset-0 z-40" @click="emit('close')" />
     </Transition>
 
     <!-- Panel -->
-    <Transition name="slide-fade">
+    <Transition name="dropdown-slide">
         <div
             v-if="show"
             ref="panelRef"
-            class="fixed left-72 top-4 z-50 w-[420px] max-h-[calc(100vh-2rem)] overflow-hidden rounded-3xl border border-white/20 bg-white/80 shadow-2xl backdrop-blur-3xl dark:border-white/10 dark:bg-slate-900/80"
+            class="fixed right-4 top-20 z-50 w-[420px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-2xl dark:border-slate-700/80 dark:bg-slate-900"
         >
-            <!-- Animated gradient overlay -->
-            <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-50">
+            <!-- Ambient gradient overlay -->
+            <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
                 <div
-                    class="absolute -top-20 -right-20 h-40 w-40 animate-pulse rounded-full bg-gradient-to-br from-orange-500/30 via-rose-500/30 to-pink-500/30 blur-3xl"
-                    style="animation-duration: 8s"
+                    class="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 blur-3xl animate-ambient-float"
                 />
                 <div
-                    class="absolute -bottom-20 -left-20 h-40 w-40 animate-pulse rounded-full bg-gradient-to-tr from-blue-500/30 via-indigo-500/30 to-purple-500/30 blur-3xl"
-                    style="animation-duration: 10s; animation-delay: 2s"
+                    class="absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-gradient-to-tr from-blue-400 to-indigo-500 blur-3xl animate-ambient-float-delayed"
                 />
             </div>
 
             <!-- Header -->
-            <div class="relative border-b border-white/20 p-6 dark:border-white/10">
+            <div class="relative border-b border-slate-200 bg-slate-50/50 p-5 backdrop-blur-xl dark:border-slate-700 dark:bg-slate-800/50">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h3 class="text-lg font-bold text-slate-800 dark:text-white">
-                            Notifications
-                        </h3>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Notifications</h3>
+                        <p class="mt-0.5 text-sm text-slate-600 dark:text-slate-400">
                             {{ unreadNotifications.length }} unread
                         </p>
                     </div>
@@ -194,170 +186,162 @@ const readNotifications = computed(() => props.notifications.filter((n) => n.rea
                     <button
                         v-if="hasUnread"
                         @click="markAllAsRead"
-                        class="group flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-all duration-300 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"
+                        class="group flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-all duration-200 hover:bg-white dark:text-slate-300 dark:hover:bg-slate-800"
                     >
                         <CheckCheck class="h-4 w-4 transition-transform group-hover:scale-110" />
-                        <span>Mark all read</span>
+                        <span class="hidden sm:inline">Mark all read</span>
                     </button>
                 </div>
             </div>
 
             <!-- Notifications List -->
-            <div class="relative max-h-[calc(100vh-10rem)] overflow-y-auto p-4">
+            <div class="relative max-h-[calc(100vh-12rem)] overflow-y-auto bg-gradient-to-b from-slate-50/50 to-white dark:from-slate-800/50 dark:to-slate-900">
                 <!-- Empty state -->
                 <div
                     v-if="notifications.length === 0"
-                    class="flex flex-col items-center justify-center py-16 text-center"
+                    class="flex flex-col items-center justify-center py-12 text-center"
                 >
                     <div
-                        class="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800"
+                        class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800"
                     >
-                        <Bell class="h-10 w-10 text-slate-400 dark:text-slate-500" />
+                        <Bell class="h-8 w-8 text-slate-400 dark:text-slate-500" />
                     </div>
-                    <h4 class="mb-2 text-lg font-bold text-slate-800 dark:text-white">
-                        No notifications
-                    </h4>
+                    <h4 class="mb-1 text-base font-bold text-slate-900 dark:text-white">All caught up!</h4>
                     <p class="text-sm text-slate-600 dark:text-slate-400">
-                        You're all caught up!
+                        You have no notifications
                     </p>
                 </div>
 
-                <!-- Unread Notifications -->
-                <div v-if="unreadNotifications.length > 0" class="mb-4">
-                    <h4 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                        New
-                    </h4>
-                    <div class="space-y-2">
+                <div v-else class="p-2">
+                    <!-- Unread Notifications -->
+                    <div v-if="unreadNotifications.length > 0" class="mb-3">
                         <div
-                            v-for="(notification, index) in unreadNotifications"
-                            :key="notification.id"
-                            @click="viewNotification(notification)"
-                            :style="{ animationDelay: `${index * 50}ms` }"
-                            class="notification-item group relative cursor-pointer overflow-hidden rounded-2xl border border-white/40 bg-white/60 p-4 backdrop-blur-xl transition-all duration-300 hover:scale-[1.02] hover:border-white/60 hover:shadow-lg dark:border-white/20 dark:bg-slate-800/60 dark:hover:border-white/30"
+                            class="mb-2 flex items-center gap-2 px-3 py-1"
                         >
-                            <!-- Gradient border animation -->
+                            <Sparkles class="h-3.5 w-3.5 text-orange-500" />
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                New
+                            </h4>
+                        </div>
+                        <div class="space-y-1.5">
                             <div
-                                :class="[
-                                    'absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100',
-                                    'bg-gradient-to-r',
-                                    getNotificationStyle(notification).gradient,
-                                ]"
-                                style="
-                                    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-                                    -webkit-mask-composite: xor;
-                                    mask-composite: exclude;
-                                    padding: 2px;
-                                "
-                            />
-
-                            <!-- Content -->
-                            <div class="relative flex gap-3">
-                                <!-- Icon -->
+                                v-for="(notification, index) in unreadNotifications"
+                                :key="notification.id"
+                                @click="viewNotification(notification)"
+                                :style="{ animationDelay: `${index * 30}ms` }"
+                                class="notification-item group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-white p-3.5 transition-all duration-200 hover:scale-[1.01] hover:border-orange-200 hover:shadow-md dark:border-slate-700 dark:bg-slate-800 dark:hover:border-orange-900/50"
+                            >
+                                <!-- Left accent bar -->
                                 <div
                                     :class="[
-                                        'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-110',
-                                        getNotificationStyle(notification).iconBg,
+                                        'absolute left-0 top-0 h-full w-1 transition-all duration-200 group-hover:w-1.5',
+                                        getNotificationStyle(notification).accentColor,
                                     ]"
-                                >
-                                    <component
-                                        :is="getNotificationStyle(notification).icon"
-                                        :class="[
-                                            'h-5 w-5',
-                                            getNotificationStyle(notification).iconColor,
-                                        ]"
-                                    />
-                                </div>
+                                />
 
-                                <!-- Text -->
-                                <div class="flex-1 overflow-hidden">
-                                    <p class="text-sm font-semibold text-slate-800 dark:text-white">
-                                        {{ notification.data.message }}
-                                    </p>
-
-                                    <!-- Employee name if submitted -->
-                                    <p
-                                        v-if="notification.data.employee_name"
-                                        class="mt-1 text-xs text-slate-600 dark:text-slate-400"
-                                    >
-                                        {{ notification.data.employee_name }}
-                                    </p>
-
-                                    <!-- Dates -->
+                                <!-- Content -->
+                                <div class="flex gap-3 pl-2">
+                                    <!-- Icon -->
                                     <div
-                                        v-if="notification.data.start_date"
-                                        class="mt-2 flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400"
+                                        :class="[
+                                            'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-200 group-hover:scale-105',
+                                            getNotificationStyle(notification).iconBg,
+                                        ]"
                                     >
-                                        <Calendar class="h-3 w-3" />
-                                        <span>
-                                            {{ new Date(notification.data.start_date).toLocaleDateString() }}
-                                            -
-                                            {{ new Date(notification.data.end_date!).toLocaleDateString() }}
-                                        </span>
+                                        <component
+                                            :is="getNotificationStyle(notification).icon"
+                                            :class="['h-5 w-5', getNotificationStyle(notification).iconColor]"
+                                        />
                                     </div>
 
-                                    <!-- Time ago -->
-                                    <p class="mt-2 text-xs font-medium text-slate-500 dark:text-slate-500">
-                                        {{ timeAgo(notification.created_at) }}
-                                    </p>
-                                </div>
+                                    <!-- Text -->
+                                    <div class="flex-1 overflow-hidden">
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">
+                                            {{ notification.data.message }}
+                                        </p>
 
-                                <!-- Unread dot -->
-                                <div class="flex h-10 items-center">
-                                    <div class="h-2 w-2 rounded-full bg-gradient-to-r from-orange-500 to-rose-600 shadow-lg" />
+                                        <p
+                                            v-if="notification.data.employee_name"
+                                            class="mt-1 text-xs text-slate-600 dark:text-slate-400"
+                                        >
+                                            {{ notification.data.employee_name }}
+                                        </p>
+
+                                        <!-- Dates -->
+                                        <div
+                                            v-if="notification.data.start_date"
+                                            class="mt-2 flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400"
+                                        >
+                                            <Calendar class="h-3 w-3" />
+                                            <span>
+                                                {{ new Date(notification.data.start_date).toLocaleDateString() }}
+                                                -
+                                                {{ new Date(notification.data.end_date!).toLocaleDateString() }}
+                                            </span>
+                                        </div>
+
+                                        <p class="mt-2 text-xs font-medium text-slate-500">
+                                            {{ timeAgo(notification.created_at) }}
+                                        </p>
+                                    </div>
+
+                                    <!-- Unread indicator -->
+                                    <div class="flex items-start pt-1">
+                                        <div
+                                            class="h-2 w-2 rounded-full bg-gradient-to-br from-orange-500 to-rose-600 shadow-lg"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Read Notifications -->
-                <div v-if="readNotifications.length > 0">
-                    <h4 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                        Earlier
-                    </h4>
-                    <div class="space-y-2">
-                        <div
-                            v-for="notification in readNotifications"
-                            :key="notification.id"
-                            @click="viewNotification(notification)"
-                            class="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/20 bg-white/40 p-4 opacity-60 backdrop-blur-xl transition-all duration-300 hover:scale-[1.02] hover:border-white/40 hover:opacity-100 hover:shadow-lg dark:border-white/10 dark:bg-slate-800/40 dark:hover:border-white/20"
+                    <!-- Read Notifications -->
+                    <div v-if="readNotifications.length > 0">
+                        <h4
+                            class="mb-2 px-3 py-1 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400"
                         >
-                            <!-- Content -->
-                            <div class="relative flex gap-3">
-                                <!-- Icon -->
-                                <div
-                                    :class="[
-                                        'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl',
-                                        getNotificationStyle(notification).iconBg,
-                                    ]"
-                                >
-                                    <component
-                                        :is="getNotificationStyle(notification).icon"
+                            Earlier
+                        </h4>
+                        <div class="space-y-1.5">
+                            <div
+                                v-for="notification in readNotifications"
+                                :key="notification.id"
+                                @click="viewNotification(notification)"
+                                class="group relative cursor-pointer overflow-hidden rounded-xl border border-slate-200/50 bg-slate-50/50 p-3.5 opacity-70 transition-all duration-200 hover:scale-[1.01] hover:border-slate-300 hover:opacity-100 hover:shadow-md dark:border-slate-700/50 dark:bg-slate-800/50 dark:hover:border-slate-600"
+                            >
+                                <!-- Content -->
+                                <div class="flex gap-3">
+                                    <!-- Icon -->
+                                    <div
                                         :class="[
-                                            'h-5 w-5',
-                                            getNotificationStyle(notification).iconColor,
+                                            'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl',
+                                            getNotificationStyle(notification).iconBg,
                                         ]"
-                                    />
-                                </div>
-
-                                <!-- Text -->
-                                <div class="flex-1 overflow-hidden">
-                                    <p class="text-sm font-semibold text-slate-800 dark:text-white">
-                                        {{ notification.data.message }}
-                                    </p>
-
-                                    <!-- Employee name if submitted -->
-                                    <p
-                                        v-if="notification.data.employee_name"
-                                        class="mt-1 text-xs text-slate-600 dark:text-slate-400"
                                     >
-                                        {{ notification.data.employee_name }}
-                                    </p>
+                                        <component
+                                            :is="getNotificationStyle(notification).icon"
+                                            :class="['h-5 w-5', getNotificationStyle(notification).iconColor]"
+                                        />
+                                    </div>
 
-                                    <!-- Time ago -->
-                                    <p class="mt-2 text-xs font-medium text-slate-500 dark:text-slate-500">
-                                        {{ timeAgo(notification.created_at) }}
-                                    </p>
+                                    <!-- Text -->
+                                    <div class="flex-1 overflow-hidden">
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white">
+                                            {{ notification.data.message }}
+                                        </p>
+
+                                        <p
+                                            v-if="notification.data.employee_name"
+                                            class="mt-1 text-xs text-slate-600 dark:text-slate-400"
+                                        >
+                                            {{ notification.data.employee_name }}
+                                        </p>
+
+                                        <p class="mt-2 text-xs font-medium text-slate-500">
+                                            {{ timeAgo(notification.created_at) }}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -369,55 +353,90 @@ const readNotifications = computed(() => props.notifications.filter((n) => n.rea
 </template>
 
 <style scoped>
-/* Slide fade transition */
-.slide-fade-enter-active {
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+/* Backdrop fade */
+.backdrop-fade-enter-active,
+.backdrop-fade-leave-active {
+    transition: opacity 0.2s ease;
 }
 
-.slide-fade-leave-active {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.slide-fade-enter-from {
-    transform: translateY(-20px) scale(0.95);
+.backdrop-fade-enter-from,
+.backdrop-fade-leave-to {
     opacity: 0;
 }
 
-.slide-fade-leave-to {
-    transform: translateY(-10px) scale(0.98);
-    opacity: 0;
+/* Dropdown slide animation */
+.dropdown-slide-enter-active {
+    animation: dropdown-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Fade transition for backdrop */
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.3s ease;
+.dropdown-slide-leave-active {
+    animation: dropdown-slide-out 0.2s cubic-bezier(0.4, 0, 1, 1);
 }
 
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
-}
-
-/* Notification item entrance animation */
-.notification-item {
-    animation: slideInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-@keyframes slideInUp {
+@keyframes dropdown-slide-in {
     from {
-        transform: translateY(20px);
         opacity: 0;
+        transform: translateY(-12px) scale(0.96);
     }
     to {
-        transform: translateY(0);
         opacity: 1;
+        transform: translateY(0) scale(1);
     }
+}
+
+@keyframes dropdown-slide-out {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+    }
+}
+
+/* Notification item entrance */
+.notification-item {
+    animation: notification-fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes notification-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Ambient float animations */
+@keyframes ambient-float {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+    33% {
+        transform: translate(30px, -30px) scale(1.1);
+    }
+    66% {
+        transform: translate(-20px, 20px) scale(0.9);
+    }
+}
+
+.animate-ambient-float {
+    animation: ambient-float 20s ease-in-out infinite;
+}
+
+.animate-ambient-float-delayed {
+    animation: ambient-float 25s ease-in-out infinite;
+    animation-delay: -10s;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -425,11 +444,19 @@ const readNotifications = computed(() => props.notifications.filter((n) => n.rea
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, rgba(251, 146, 60, 0.5), rgba(251, 113, 133, 0.5));
+    background: linear-gradient(to bottom, rgba(148, 163, 184, 0.3), rgba(100, 116, 139, 0.3));
     border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(to bottom, rgba(251, 146, 60, 0.8), rgba(251, 113, 133, 0.8));
+    background: linear-gradient(to bottom, rgba(148, 163, 184, 0.5), rgba(100, 116, 139, 0.5));
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, rgba(71, 85, 105, 0.3), rgba(51, 65, 85, 0.3));
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, rgba(71, 85, 105, 0.5), rgba(51, 65, 85, 0.5));
 }
 </style>

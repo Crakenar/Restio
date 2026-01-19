@@ -14,7 +14,8 @@ import {
     Settings,
     User,
 } from 'lucide-vue-next';
-import NotificationCenter from './NotificationCenter.vue';
+import NotificationBell from './NotificationBell.vue';
+import NotificationPanel from './NotificationPanel.vue';
 
 interface NavItem {
     title: string;
@@ -24,8 +25,33 @@ interface NavItem {
     roles?: string[];
 }
 
+interface Notification {
+    id: string;
+    type: string;
+    data: {
+        message: string;
+        vacation_request_id?: number;
+        employee_name?: string;
+        type?: string;
+        start_date?: string;
+        end_date?: string;
+        [key: string]: any;
+    };
+    read_at: string | null;
+    created_at: string;
+}
+
+interface Props {
+    notifications?: Notification[];
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    notifications: () => [],
+});
+
 const page = usePage();
 const isCollapsed = ref(false);
+const showNotificationPanel = ref(false);
 
 const user = computed(() => page.props.auth?.user as any);
 const userRole = computed(() => user.value?.role);
@@ -92,6 +118,14 @@ const isActive = (href: string) => {
 
 const toggleSidebar = () => {
     isCollapsed.value = !isCollapsed.value;
+};
+
+const toggleNotificationPanel = () => {
+    showNotificationPanel.value = !showNotificationPanel.value;
+};
+
+const closeNotificationPanel = () => {
+    showNotificationPanel.value = false;
 };
 </script>
 
@@ -221,11 +255,6 @@ const toggleSidebar = () => {
                             {{ item.badge }}
                         </div>
                     </Link>
-
-                    <!-- Notifications -->
-                    <div :class="['flex', isCollapsed ? 'justify-center' : 'justify-end']">
-                        <NotificationCenter />
-                    </div>
                 </nav>
 
                 <!-- Footer - User Profile -->
@@ -336,8 +365,23 @@ const toggleSidebar = () => {
                 </button>
             </div>
         </div>
-
     </aside>
+
+    <!-- Floating Notification Bell - Top Right -->
+    <div class="fixed right-6 top-6 z-50">
+        <NotificationBell
+            :notifications="notifications"
+            :show-panel="showNotificationPanel"
+            @toggle-panel="toggleNotificationPanel"
+        />
+    </div>
+
+    <!-- Notification Panel -->
+    <NotificationPanel
+        :notifications="notifications"
+        :show="showNotificationPanel"
+        @close="closeNotificationPanel"
+    />
 </template>
 
 <style scoped>

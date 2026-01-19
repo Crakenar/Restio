@@ -5,8 +5,10 @@ import ManagerDashboard from '@/components/dashboards/ManagerDashboard.vue';
 import PremiumSidebar from '@/components/PremiumSidebar.vue';
 import type { BreadcrumbItem } from '@/types';
 import { Employee, UserRole, VacationRequest } from '@/types/vacation';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+
+const page = usePage();
 
 // Define props received from Inertia controller
 interface Props {
@@ -102,7 +104,7 @@ const pageTitle = computed(() => {
     <!-- Manager and Admin Views - use Premium Sidebar -->
     <div v-else class="flex min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-rose-50 dark:from-slate-950 dark:via-orange-950 dark:to-rose-950">
         <!-- Sidebar -->
-        <PremiumSidebar />
+        <PremiumSidebar :notifications="page.props.notifications || []" />
 
         <!-- Main content area -->
         <div class="ml-72 flex-1 p-4 transition-all duration-500 sm:p-6 lg:p-8">
