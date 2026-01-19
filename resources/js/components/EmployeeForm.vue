@@ -6,12 +6,15 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useForm } from '@inertiajs/vue3';
+import { useToast } from '@/composables/useToast';
 import { UserPlus, AlertCircle } from 'lucide-vue-next';
 import { UserRole } from '@/enums/UserRole';
 
 const emit = defineEmits<{
     success: [];
 }>();
+
+const toast = useToast();
 
 const form = useForm({
     name: '',
@@ -24,7 +27,11 @@ const submitForm = () => {
     form.post('/employees', {
         onSuccess: () => {
             form.reset();
+            toast.success('Employee created successfully!');
             emit('success');
+        },
+        onError: () => {
+            toast.error('Failed to create employee. Please check your inputs.');
         },
     });
 };

@@ -2,6 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
+import { useToast } from '@/composables/useToast';
 import {
     Building2,
     Calendar,
@@ -55,6 +56,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
+const toast = useToast();
 const selectedPlan = ref<number | null>(null);
 const processing = ref(false);
 const showCancelConfirm = ref(false);
@@ -140,7 +142,7 @@ const handleChangePlan = async () => {
         const message =
             error.response?.data?.message ||
             'Failed to change plan. Please try again.';
-        alert(message);
+        toast.error(message);
     }
 };
 
@@ -153,10 +155,11 @@ const handleCancelSubscription = async () => {
             onSuccess: () => {
                 showCancelConfirm.value = false;
                 processing.value = false;
+                toast.success('Subscription cancelled successfully!');
             },
             onError: () => {
                 processing.value = false;
-                alert('Failed to cancel subscription. Please try again.');
+                toast.error('Failed to cancel subscription. Please try again.');
             },
         });
     } catch (error) {

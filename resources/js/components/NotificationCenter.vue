@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { router } from '@inertiajs/vue3'
+import { useToast } from '@/composables/useToast'
 import { Bell, Check } from 'lucide-vue-next'
 import {
   DropdownMenu,
@@ -33,6 +34,7 @@ interface NotificationsResponse {
   unread_count: number
 }
 
+const toast = useToast()
 const notifications = ref<Notification[]>([])
 const unreadCount = ref(0)
 const isOpen = ref(false)
@@ -75,6 +77,10 @@ async function markAllAsRead() {
       preserveScroll: true,
       onSuccess: () => {
         fetchNotifications()
+        toast.success('All notifications marked as read!')
+      },
+      onError: () => {
+        toast.error('Failed to mark notifications as read.')
       },
     })
   } catch (error) {

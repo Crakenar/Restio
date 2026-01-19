@@ -665,14 +665,14 @@ Restio is a vacation/leave management SaaS application built with Laravel 12, In
 7. ✅ Authorization prevents unauthorized actions (policies implemented)
 8. ✅ UI is polished and responsive
 9. ✅ Balance tracking prevents over-booking (VacationBalanceService implemented)
-10. ❌ Settings pages allow customization (needs overhaul)
+10. ✅ Settings pages allow customization (premium unified settings complete)
 
-**Current MVP Completion:** ~75%
-- Frontend/Design: 95% complete ✅
-- Backend/Logic: 85% complete ✅
-- Integration: 75% complete ✅ (Calendar integration complete)
-- Security: 85% complete ✅
-- Testing: 50% complete ⚠️ (18 tests passing - vacation + calendar)
+**Current MVP Completion:** ~85%
+- Frontend/Design: 98% complete ✅ (Premium settings with glass morphism)
+- Backend/Logic: 90% complete ✅
+- Integration: 85% complete ✅ (All major features connected)
+- Security: 90% complete ✅
+- Testing: 55% complete ⚠️ (29 tests passing - vacation + calendar + settings)
 
 ---
 
@@ -708,8 +708,8 @@ Restio is a vacation/leave management SaaS application built with Laravel 12, In
 ## 📞 Quick Reference
 
 **Last Session:** 2026-01-19
-**Last Action:** Calendar Integration Complete - All calendar tests passing (18/18 ✅)
-**Next Action:** Settings Pages Overhaul
+**Last Action:** Settings Page Overhaul Complete - Premium unified settings with glass morphism ✅
+**Next Action:** Team Management / Employee Management enhancements OR Performance optimization
 **Estimated MVP Timeline:** 8-12 working days remaining
 
 **Blocking Issues:** None - Critical security and balance tracking complete ✅
@@ -722,6 +722,7 @@ Restio is a vacation/leave management SaaS application built with Laravel 12, In
 - ✅ Phase 3: Notification System (2026-01-18)
 - ✅ Test Suite Fixes (2026-01-19) - All vacation tests passing
 - ✅ Calendar Integration (2026-01-19) - Real data with status-based colors
+- ✅ Settings Page Overhaul (2026-01-19) - Premium unified settings interface
 
 **2026-01-19 Calendar Integration Detail:**
 1. Fixed `VacationCalendarPage` - Added `userRole` prop from controller
@@ -729,6 +730,22 @@ Restio is a vacation/leave management SaaS application built with Laravel 12, In
 3. Updated TeamCalendar legend - Clarified "Approved Time Off" status
 4. Created `CalendarControllerTest.php` - 5 comprehensive tests
 5. **Result:** 18/18 tests passing (84 assertions) ✅ [5 calendar + 13 vacation tests]
+
+**2026-01-19 Settings Page Overhaul Detail:**
+1. Fixed `EmployeesController` - Corrected return type from `Responsep` to `Response`
+2. Created unified premium Settings page - Combined personal + company settings
+3. Updated `Profile.vue` - Complete redesign with glass morphism and animations
+4. Updated `ProfileController` - Added company data for owners/admins
+5. Features:
+   - Personal Settings (all users): name, email, verification status, delete account
+   - Company Settings (owners/admins only): company name, annual days, approval toggle, timezone
+   - Glass morphism cards with gradient orbs background
+   - Icon-coded sections (User icon for personal, Building2 for company)
+   - Smooth animations with staggered delays
+   - Success indicators for form submissions
+   - Save buttons disabled when unchanged
+   - Fully responsive and mobile-friendly
+6. **Result:** All 29 tests still passing ✅
 
 ---
 
@@ -750,6 +767,11 @@ Restio is a vacation/leave management SaaS application built with Laravel 12, In
 13. ✅ `/resources/js/components/VacationCalendar.vue` - Status-based colors
 14. ✅ `/resources/js/components/TeamCalendar.vue` - Updated to status-based colors
 15. ✅ `/tests/Feature/CalendarControllerTest.php` - All 5 tests passing
+16. ✅ `/resources/js/pages/settings/Profile.vue` - Premium unified settings page
+17. ✅ `/resources/js/pages/settings/CompanySettings.vue` - Standalone company settings
+18. ✅ `/app/Http/Controllers/Settings/ProfileController.php` - Updated with company data
+19. ✅ `/app/Http/Controllers/Settings/CompanySettingsController.php` - Company settings backend
+20. ✅ `/tests/Feature/Settings/CompanySettingsTest.php` - All 11 tests passing
 
 ### **Key Files to Work On Next:**
 1. `/resources/js/components/VacationCalendar.vue` (integrate real data)

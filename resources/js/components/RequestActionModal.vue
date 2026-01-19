@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
+import { useToast } from '@/composables/useToast';
 import { X, Check, AlertTriangle } from 'lucide-vue-next';
 
 interface Props {
@@ -21,6 +22,7 @@ const emit = defineEmits<{
     close: [];
 }>();
 
+const toast = useToast();
 const rejectionReason = ref('');
 const processing = ref(false);
 
@@ -70,9 +72,17 @@ const handleConfirm = () => {
     router.post(endpoint, data, {
         preserveScroll: true,
         onSuccess: () => {
+            const message = props.action === 'approve'
+                ? 'Request approved successfully!'
+                : 'Request rejected successfully!';
+            toast.success(message);
             emit('close');
         },
         onError: () => {
+            const message = props.action === 'approve'
+                ? 'Failed to approve request. Please try again.'
+                : 'Failed to reject request. Please try again.';
+            toast.error(message);
             processing.value = false;
         },
         onFinish: () => {

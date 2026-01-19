@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { useToast } from '@/composables/useToast';
 import PremiumSidebar from '@/components/PremiumSidebar.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,6 +32,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const page = usePage();
+const toast = useToast();
 
 const form = useForm({
     name: props.company.name,
@@ -74,6 +76,12 @@ const timezones = [
 const handleSubmit = () => {
     form.post('/settings/company', {
         preserveScroll: true,
+        onSuccess: () => {
+            toast.success('Company settings saved successfully!');
+        },
+        onError: () => {
+            toast.error('Failed to save settings. Please check your inputs.');
+        },
     });
 };
 </script>

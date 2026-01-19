@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import PremiumSidebar from '@/components/PremiumSidebar.vue';
 import { Head, useForm, router, usePage } from '@inertiajs/vue3';
+import { useToast } from '@/composables/useToast';
 
 const page = usePage();
+const toast = useToast();
 import { Users, Plus, Edit2, Trash2, UserPlus, UserMinus } from 'lucide-vue-next';
 import { ref, computed } from 'vue';
 import { Card, CardContent } from '@/components/ui/card';
@@ -60,6 +62,10 @@ const handleCreateTeam = () => {
         onSuccess: () => {
             createForm.reset();
             isCreateDialogOpen.value = false;
+            toast.success('Team created successfully!');
+        },
+        onError: () => {
+            toast.error('Failed to create team. Please check your inputs.');
         },
     });
 };
@@ -72,13 +78,24 @@ const handleEditTeam = () => {
             editForm.reset();
             isEditDialogOpen.value = false;
             selectedTeam.value = null;
+            toast.success('Team updated successfully!');
+        },
+        onError: () => {
+            toast.error('Failed to update team. Please try again.');
         },
     });
 };
 
 const handleDeleteTeam = (teamId: number) => {
     if (confirm('Are you sure you want to delete this team? Users will be unassigned.')) {
-        router.delete(`/team-management/${teamId}`);
+        router.delete(`/team-management/${teamId}`, {
+            onSuccess: () => {
+                toast.success('Team deleted successfully!');
+            },
+            onError: () => {
+                toast.error('Failed to delete team. Please try again.');
+            },
+        });
     }
 };
 
@@ -97,6 +114,8 @@ const openAssignDialog = (team: Team) => {
 const handleAssignUsers = () => {
     if (!selectedTeam.value || selectedUserIds.value.length === 0) return;
 
+    const userCount = selectedUserIds.value.length;
+
     router.post(
         `/team-management/${selectedTeam.value.id}/assign-users`,
         {
@@ -107,6 +126,10 @@ const handleAssignUsers = () => {
                 selectedUserIds.value = [];
                 isAssignDialogOpen.value = false;
                 selectedTeam.value = null;
+                toast.success(`Successfully assigned ${userCount} user(s) to team!`);
+            },
+            onError: () => {
+                toast.error('Failed to assign users to team. Please try again.');
             },
         },
     );
@@ -114,7 +137,14 @@ const handleAssignUsers = () => {
 
 const handleRemoveUser = (teamId: number, userId: number) => {
     if (confirm('Are you sure you want to remove this user from the team?')) {
-        router.delete(`/team-management/${teamId}/users/${userId}`);
+        router.delete(`/team-management/${teamId}/users/${userId}`, {
+            onSuccess: () => {
+                toast.success('User removed from team successfully!');
+            },
+            onError: () => {
+                toast.error('Failed to remove user from team. Please try again.');
+            },
+        });
     }
 };
 

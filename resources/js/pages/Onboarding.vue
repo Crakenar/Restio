@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
+import { useToast } from '@/composables/useToast';
 import { Building2, Check, CreditCard, Shield } from 'lucide-vue-next';
 import { ref } from 'vue';
 import { logout } from '@/routes';
@@ -20,6 +21,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
+const toast = useToast();
 const selectedPlan = ref<number | null>(null);
 const processing = ref(false);
 
@@ -78,7 +80,7 @@ const handlePayment = async () => {
     } catch (error) {
         console.error('Payment error:', error);
         processing.value = false;
-        alert('Failed to create checkout session. Please try again.');
+        toast.error('Failed to create checkout session. Please try again.');
     }
 };
 

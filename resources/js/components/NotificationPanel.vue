@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { router } from '@inertiajs/vue3';
+import { useToast } from '@/composables/useToast';
 import { Bell, CheckCheck, Clock, XCircle, CheckCircle, Calendar } from 'lucide-vue-next';
 
 interface Notification {
@@ -35,6 +36,7 @@ const emit = defineEmits<{
     close: [];
 }>();
 
+const toast = useToast();
 const panelRef = ref<HTMLElement | null>(null);
 
 // Click outside to close (with small delay to prevent immediate close)
@@ -75,6 +77,12 @@ const markAllAsRead = () => {
     router.post('/notifications/read-all', {}, {
         preserveScroll: true,
         only: ['notifications'],
+        onSuccess: () => {
+            toast.success('All notifications marked as read!');
+        },
+        onError: () => {
+            toast.error('Failed to mark notifications as read.');
+        },
     });
 };
 

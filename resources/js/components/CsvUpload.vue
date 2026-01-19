@@ -3,12 +3,15 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useForm } from '@inertiajs/vue3';
+import { useToast } from '@/composables/useToast';
 import { Upload, FileText, Download, AlertCircle, CheckCircle2 } from 'lucide-vue-next';
 import { ref, computed } from 'vue';
 
 const emit = defineEmits<{
     success: [];
 }>();
+
+const toast = useToast();
 
 const form = useForm({
     file: null as File | null,
@@ -42,7 +45,11 @@ const submitImport = () => {
     form.post('/employees/import', {
         onSuccess: () => {
             form.reset();
+            toast.success('Employees imported successfully!');
             emit('success');
+        },
+        onError: () => {
+            toast.error('Failed to import employees. Please check your CSV file and try again.');
         },
     });
 };

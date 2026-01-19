@@ -18,10 +18,30 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
-        return Inertia::render('settings/Profile', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+        $user = $request->user();
+        $data = [
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
-        ]);
+            'userRole' => $user->role,
+        ];
+
+        // Add company settings for owners and admins
+        if (in_array($user->role, ['owner', 'admin'])) {
+            $company = $user->company()->with('company_settings')->first();
+
+            $data['company'] = [
+                'name' => $company->name,
+            ];
+
+            $settings = $company->company_settings;
+            $data['companySettings'] = [
+                'annual_days' => $settings?->annual_days ?? 20,
+                'approval_required' => (bool) ($settings?->approval_required ?? true),
+                'timezone' => $company->timezone ?? 'UTC',
+            ];
+        }
+
+        return Inertia::render('settings/Profile', $data);
     }
 
     /**

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, onMounted } from 'vue';
 import { useForm } from '@inertiajs/vue3';
+import { useToast } from '@/composables/useToast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -31,6 +32,8 @@ const emit = defineEmits<{
     success: [];
     cancel: [];
 }>();
+
+const toast = useToast();
 
 const form = useForm({
     start_date: '',
@@ -175,6 +178,7 @@ const submitForm = async () => {
                     },
                     onError: () => {
                         allSuccessful = false;
+                        toast.error('Failed to create one or more vacation requests. Please try again.');
                         resolve();
                     },
                     preserveScroll: true,
@@ -186,6 +190,7 @@ const submitForm = async () => {
 
         if (allSuccessful) {
             form.reset();
+            toast.success(`Successfully created ${dateRanges.value.length} vacation requests!`);
             emit('success');
         }
     } else {
@@ -193,7 +198,11 @@ const submitForm = async () => {
         form.post('/vacation-requests', {
             onSuccess: () => {
                 form.reset();
+                toast.success('Vacation request submitted successfully!');
                 emit('success');
+            },
+            onError: () => {
+                toast.error('Failed to submit vacation request. Please check your inputs.');
             },
         });
     }

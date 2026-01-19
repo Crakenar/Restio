@@ -9,13 +9,14 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class EmployeesController extends Controller
 {
     /**
      * Display the employees management page.
      */
-    public function index(): Responsep
+    public function index(): Response
     {
         $user = auth()->user();
 
