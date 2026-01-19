@@ -10,6 +10,7 @@ import { Calendar } from 'lucide-vue-next';
 interface Props {
     requests: VacationRequest[];
     userName: string;
+    userRole: string;
 }
 
 const props = defineProps<Props>();
@@ -84,7 +85,7 @@ const myRequests = computed(() =>
                     >
                         <VacationCalendar
                             :existing-requests="myRequests"
-                            user-role="employee"
+                            :user-role="userRole"
                         />
                     </div>
             </div>

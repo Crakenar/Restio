@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\CompanySettingsController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\TwoFactorAuthenticationController;
@@ -25,4 +26,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('settings/two-factor', [TwoFactorAuthenticationController::class, 'show'])
         ->name('two-factor.show');
+
+    // Company settings (only for owners and admins)
+    Route::get('settings/company', [CompanySettingsController::class, 'edit'])->name('company-settings.edit');
+    Route::post('settings/company', [CompanySettingsController::class, 'update'])->name('company-settings.update');
 });

@@ -92,20 +92,25 @@ watch(
     { immediate: true },
 );
 
+// STATUS-based colors (all requests shown here are approved)
+const statusColor = 'bg-emerald-500';
+const statusGradient = 'from-emerald-500 to-teal-600';
+
+// Type colors for subtle differentiation within approved requests
 const typeColors: Record<string, string> = {
-    vacation: 'bg-blue-500',
-    sick: 'bg-red-500',
-    personal: 'bg-green-500',
-    unpaid: 'bg-gray-500',
-    wfh: 'bg-purple-500',
+    vacation: 'bg-emerald-500',
+    sick: 'bg-emerald-600',
+    personal: 'bg-teal-500',
+    unpaid: 'bg-emerald-400',
+    wfh: 'bg-teal-600',
 };
 
 const typeGradients: Record<string, string> = {
-    vacation: 'from-blue-500 to-cyan-600',
-    sick: 'from-red-500 to-rose-600',
-    personal: 'from-green-500 to-emerald-600',
-    unpaid: 'from-gray-500 to-slate-600',
-    wfh: 'from-purple-500 to-indigo-600',
+    vacation: 'from-emerald-500 to-teal-600',
+    sick: 'from-emerald-600 to-green-700',
+    personal: 'from-teal-500 to-cyan-600',
+    unpaid: 'from-emerald-400 to-green-500',
+    wfh: 'from-teal-600 to-cyan-700',
 };
 
 const typeLabels: Record<string, string> = {
@@ -438,17 +443,18 @@ const goToNextMonth = () => {
                 <!-- Legend -->
                 <div class="space-y-3">
                     <div
-                        class="flex flex-wrap gap-4 text-sm text-slate-600 dark:text-white/80"
+                        class="flex flex-wrap gap-6 rounded-lg border border-slate-200/50 bg-white/40 p-4 text-sm text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-white/80"
                     >
+                        <div class="flex items-center gap-2">
+                            <div class="flex h-6 w-6 items-center justify-center rounded bg-emerald-500 shadow-sm">
+                                <div class="h-3 w-3 rounded-full bg-white"></div>
+                            </div>
+                            <span class="font-medium">Approved Time Off</span>
+                        </div>
                         <div
-                            v-for="(label, type) in typeLabels"
-                            :key="type"
-                            class="flex items-center gap-2"
+                            class="flex items-center gap-2 text-slate-500 dark:text-white/60"
                         >
-                            <div
-                                :class="cn('h-4 w-4 rounded', typeColors[type])"
-                            />
-                            <span>{{ label }}</span>
+                            <span class="text-xs">All displayed requests are approved and confirmed</span>
                         </div>
                     </div>
                     <div
