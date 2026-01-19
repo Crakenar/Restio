@@ -99,6 +99,9 @@ class SubscriptionManagementController extends Controller
             return back()->with('error', 'You are already on this plan.');
         }
 
+        // Create or retrieve Stripe customer for the company
+        $customerId = $this->paymentService->createOrRetrieveCustomer($company);
+
         // Create checkout session for plan change
         $successUrl = route('subscription.upgrade.complete', ['plan_id' => $subscription->id]);
         $cancelUrl = route('subscription.index');
@@ -106,7 +109,8 @@ class SubscriptionManagementController extends Controller
         $session = $this->paymentService->createCheckoutSession(
             $subscription,
             $successUrl,
-            $cancelUrl
+            $cancelUrl,
+            $customerId
         );
 
         return response()->json([
@@ -138,6 +142,15 @@ class SubscriptionManagementController extends Controller
         $subscription = Subscription::find($request->plan_id);
         $company = $user->company;
 
+        // Get checkout session details (Stripe subscription and invoice IDs)
+        $sessionDetails = $this->paymentService->getCheckoutSessionDetails($request->session_id);
+
+        // Get invoice URL if available
+        $invoiceUrl = null;
+        if ($sessionDetails && isset($sessionDetails['invoice_id'])) {
+            $invoiceUrl = $this->paymentService->getInvoiceUrl($sessionDetails['invoice_id']);
+        }
+
         // Cancel current active subscription
         $company->subscriptions()
             ->where('status', SubscriptionStatus::ACTIVE)
@@ -151,6 +164,9 @@ class SubscriptionManagementController extends Controller
             'ends_at' => $subscription->interval === \App\Enum\SubscriptionInterval::ONE_TIME
                 ? null
                 : now()->add(1, $subscription->interval->value),
+            'stripe_subscription_id' => $sessionDetails['subscription_id'] ?? null,
+            'stripe_invoice_id' => $sessionDetails['invoice_id'] ?? null,
+            'invoice_url' => $invoiceUrl,
         ]);
 
         return redirect()->route('subscription.index')->with('success', 'Subscription upgraded successfully!');

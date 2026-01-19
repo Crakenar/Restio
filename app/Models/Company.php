@@ -20,6 +20,7 @@ class Company extends Model
         'name',
         'slug',
         'timezone',
+        'stripe_customer_id',
     ];
 
     public function users(): HasMany
