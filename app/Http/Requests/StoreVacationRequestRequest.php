@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Enum\VacationRequestStatus;
 use App\Enum\VacationRequestType;
-use App\Models\CompanySetting;
-use App\Models\VacationRequest;
+use App\Services\VacationBalanceService;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -75,68 +74,34 @@ class StoreVacationRequestRequest extends FormRequest
             $endDate = $this->input('end_date');
             $type = $this->input('type');
 
-            // Check for overlapping requests
-            if ($startDate && $endDate) {
-                $overlapping = VacationRequest::query()
-                    ->where('user_id', $user->id)
-                    ->where('status', '!=', VacationRequestStatus::REJECTED->value)
-                    ->where(function ($query) use ($startDate, $endDate) {
-                        $query->whereBetween('start_date', [$startDate, $endDate])
-                            ->orWhereBetween('end_date', [$startDate, $endDate])
-                            ->orWhere(function ($q) use ($startDate, $endDate) {
-                                $q->where('start_date', '<=', $startDate)
-                                    ->where('end_date', '>=', $endDate);
-                            });
-                    })
-                    ->exists();
-
-                if ($overlapping) {
-                    $validator->errors()->add(
-                        'start_date',
-                        'You already have a time off request for these dates. Please choose different dates.'
-                    );
-                }
+            if (! $startDate || ! $endDate || ! $type) {
+                return;
             }
 
-            // Check annual days limit (only for vacation type)
-            if ($type === VacationRequestType::VACATION->value && $startDate && $endDate) {
-                $settings = CompanySetting::where('company_id', $user->company_id)->first();
-                $annualDays = $settings ? $settings->annual_days : 25;
+            $balanceService = app(VacationBalanceService::class);
+            $startCarbon = Carbon::parse($startDate);
+            $endCarbon = Carbon::parse($endDate);
+            $typeEnum = VacationRequestType::from($type);
 
-                // Calculate days for this request
-                $requestDays = $this->calculateDays($startDate, $endDate);
+            // Check for overlapping requests
+            $excludeId = $this->route('vacationRequest')?->id;
+            if ($balanceService->hasOverlappingRequests($user, $startCarbon, $endCarbon, $excludeId)) {
+                $validator->errors()->add(
+                    'start_date',
+                    'You already have a time off request for these dates. Please choose different dates.'
+                );
+            }
 
-                // Calculate already used days this year
-                $usedDays = VacationRequest::query()
-                    ->where('user_id', $user->id)
-                    ->where('status', VacationRequestStatus::APPROVED->value)
-                    ->where('type', VacationRequestType::VACATION->value)
-                    ->whereYear('start_date', now()->year)
-                    ->get()
-                    ->sum(function ($request) {
-                        return $this->calculateDays($request->start_date, $request->end_date);
-                    });
+            // Check if user has sufficient balance
+            if (! $balanceService->hasSufficientBalance($user, $startCarbon, $endCarbon, $typeEnum, $excludeId)) {
+                $requestDays = $balanceService->calculateBusinessDays($startCarbon, $endCarbon);
+                $balance = $balanceService->getBalanceSummary($user);
 
-                // Check if this request would exceed annual allowance
-                if (($usedDays + $requestDays) > $annualDays) {
-                    $remaining = $annualDays - $usedDays;
-                    $validator->errors()->add(
-                        'end_date',
-                        "This request ({$requestDays} days) would exceed your annual allowance. You have {$remaining} days remaining."
-                    );
-                }
+                $validator->errors()->add(
+                    'end_date',
+                    "Insufficient vacation balance. This request requires {$requestDays} business days, but you only have {$balance['available_balance']} days available (including pending requests)."
+                );
             }
         });
-    }
-
-    /**
-     * Calculate the number of days between two dates (inclusive).
-     */
-    private function calculateDays(string|\DateTime $startDate, string|\DateTime $endDate): int
-    {
-        $start = is_string($startDate) ? new \DateTime($startDate) : $startDate;
-        $end = is_string($endDate) ? new \DateTime($endDate) : $endDate;
-
-        return $start->diff($end)->days + 1;
     }
 }

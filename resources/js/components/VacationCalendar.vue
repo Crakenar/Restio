@@ -33,7 +33,7 @@ import {
     subWeeks,
     subYears,
 } from 'date-fns';
-import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
+import { ChevronLeft, ChevronRight, Clock, CheckCircle2, XCircle } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 interface VacationRequest {
@@ -60,12 +60,23 @@ const viewMode = ref<'weekly' | 'monthly' | 'yearly'>('monthly');
 const selectedDates = ref<Date[]>([]);
 const isDialogOpen = ref(false);
 
-const typeColors: Record<string, string> = {
-    vacation: 'bg-blue-500',
-    sick: 'bg-red-500',
-    personal: 'bg-green-500',
-    unpaid: 'bg-gray-500',
-    wfh: 'bg-purple-500',
+// STATUS-based colors (not type-based)
+const statusColors: Record<string, string> = {
+    pending: 'bg-amber-500',
+    approved: 'bg-emerald-500',
+    rejected: 'bg-rose-500',
+};
+
+const statusBorders: Record<string, string> = {
+    pending: 'border-amber-500',
+    approved: 'border-emerald-500',
+    rejected: 'border-rose-500',
+};
+
+const statusLabels: Record<string, string> = {
+    pending: 'Pending Requests',
+    approved: 'Approved Requests',
+    rejected: 'Rejected Requests',
 };
 
 const typeLabels: Record<string, string> = {
@@ -310,7 +321,7 @@ const getTypeAbbreviation = (type: string) => {
                                     isDateSelected(day) &&
                                         'border-blue-500 bg-blue-100/50 dark:border-blue-400 dark:bg-blue-500/20',
                                     hasRequest(day) &&
-                                        `${typeColors[hasRequest(day)!.type]} border-transparent text-white`,
+                                        `${statusColors[hasRequest(day)!.status]} border-transparent text-white`,
                                     !hasRequest(day) &&
                                         !isDateSelected(day) &&
                                         !isWeekend(day) &&
@@ -326,9 +337,10 @@ const getTypeAbbreviation = (type: string) => {
                         >
                             <div
                                 v-if="hasRequest(day)"
-                                class="text-sm font-medium"
+                                class="flex flex-col gap-1 text-sm font-medium"
                             >
-                                {{ typeLabels[hasRequest(day)!.type] }}
+                                <span>{{ typeLabels[hasRequest(day)!.type] }}</span>
+                                <span class="text-xs opacity-90">{{ hasRequest(day)!.status }}</span>
                             </div>
                             <div
                                 v-if="!hasRequest(day) && isDateSelected(day)"
@@ -375,7 +387,7 @@ const getTypeAbbreviation = (type: string) => {
                                     isDateSelected(day) &&
                                         'border-blue-500 bg-blue-100/50 text-slate-900 dark:border-blue-400 dark:bg-blue-500/20 dark:text-white',
                                     hasRequest(day) &&
-                                        `${typeColors[hasRequest(day)!.type]} border-transparent text-white`,
+                                        `${statusColors[hasRequest(day)!.status]} border-transparent text-white`,
                                     !hasRequest(day) &&
                                         !isDateSelected(day) &&
                                         !isWeekend(day) &&
@@ -396,6 +408,7 @@ const getTypeAbbreviation = (type: string) => {
                                 <span
                                     v-if="hasRequest(day)"
                                     class="mt-1 text-[10px] opacity-90"
+                                    :title="`${typeLabels[hasRequest(day)!.type]} - ${hasRequest(day)!.status}`"
                                 >
                                     {{
                                         getTypeAbbreviation(
@@ -442,11 +455,12 @@ const getTypeAbbreviation = (type: string) => {
                                         isSameDay(day, new Date()) &&
                                             'font-bold text-blue-600 ring-1 ring-blue-500 dark:text-blue-400 dark:ring-blue-400',
                                         hasRequest(day) &&
-                                            `${typeColors[hasRequest(day)!.type]} text-white`,
+                                            `${statusColors[hasRequest(day)!.status]} text-white`,
                                         !hasRequest(day) &&
                                             'text-slate-500 dark:text-white/70',
                                     )
                                 "
+                                :title="hasRequest(day) ? `${typeLabels[hasRequest(day)!.type]} - ${hasRequest(day)!.status}` : ''"
                             >
                                 {{ format(day, 'd') }}
                             </div>
@@ -455,29 +469,27 @@ const getTypeAbbreviation = (type: string) => {
                 </div>
             </div>
 
-            <!-- Legend -->
+            <!-- Legend - Status-Based -->
             <div
-                class="mt-6 flex flex-wrap gap-4 text-sm text-slate-600 dark:text-white/80"
+                class="mt-6 flex flex-wrap gap-6 text-sm text-slate-600 dark:text-white/80"
             >
                 <div class="flex items-center gap-2">
-                    <div class="h-4 w-4 rounded bg-blue-500" />
-                    <span>Paid Leave</span>
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500 shadow-md">
+                        <Clock class="h-4 w-4 text-white" />
+                    </div>
+                    <span class="font-medium">Pending Requests</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <div class="h-4 w-4 rounded bg-red-500" />
-                    <span>Sick Leave</span>
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500 shadow-md">
+                        <CheckCircle2 class="h-4 w-4 text-white" />
+                    </div>
+                    <span class="font-medium">Approved Requests</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <div class="h-4 w-4 rounded bg-green-500" />
-                    <span>Personal Day</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <div class="h-4 w-4 rounded bg-purple-500" />
-                    <span>Work From Home</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <div class="h-4 w-4 rounded bg-gray-500" />
-                    <span>Unpaid Leave</span>
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-500 shadow-md">
+                        <XCircle class="h-4 w-4 text-white" />
+                    </div>
+                    <span class="font-medium">Rejected Requests</span>
                 </div>
             </div>
         </CardContent>

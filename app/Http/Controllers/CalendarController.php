@@ -13,10 +13,11 @@ class CalendarController extends Controller
         $user = auth()->user();
         $companyId = $user->company_id;
 
-        // Fetch vacation requests scoped to company
+        // Fetch vacation requests scoped to company - only user's own requests for employee role
         $requests = VacationRequest::query()
-            ->with(['user'])
+            ->with(['user.team'])
             ->where('company_id', $companyId)
+            ->where('user_id', $user->id) // Only show user's own requests
             ->whereHas('user', function ($query) use ($companyId) {
                 $query->where('company_id', $companyId);
             })
@@ -30,12 +31,16 @@ class CalendarController extends Controller
                     'type' => $request->type,
                     'status' => $request->status,
                     'employeeName' => $request->user->name,
+                    'department' => $request->user->team?->name,
+                    'days' => $request->days,
+                    'reason' => $request->reason,
                 ];
             });
 
         return Inertia::render('VacationCalendarPage', [
             'requests' => $requests,
             'userName' => $user->name,
+            'userRole' => $user->role,
         ]);
     }
 }

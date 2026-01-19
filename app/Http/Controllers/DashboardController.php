@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Enum\UserRole;
 use App\Enum\VacationRequestStatus;
-use App\Enum\VacationRequestType;
 use App\Models\CompanySetting;
 use App\Models\User;
 use App\Models\VacationRequest;
+use App\Services\VacationBalanceService;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -17,6 +17,10 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
         $companyId = $user->company_id;
+        $balanceService = app(VacationBalanceService::class);
+
+        // Get current user's balance summary
+        $userBalance = $balanceService->getBalanceSummary($user);
 
         // Fetch requests scoped to company
         $requests = VacationRequest::query()
@@ -35,6 +39,7 @@ class DashboardController extends Controller
                     'type' => $request->type,
                     'status' => $request->status,
                     'employeeName' => $request->user->name,
+                    'days' => $request->days,
                 ];
             });
 
@@ -44,7 +49,7 @@ class DashboardController extends Controller
 
         // Fetch employees for admin dashboard
         $employees = [];
-        if ($user->role === UserRole::ADMIN->value) {
+        if ($user->role === UserRole::ADMIN->value || $user->role === UserRole::OWNER->value) {
             $employees = User::query()
                 ->where('company_id', $companyId)
                 ->withCount([
@@ -53,23 +58,20 @@ class DashboardController extends Controller
                     },
                 ])
                 ->get()
-                ->map(function ($employee) use ($annualDays) {
-                    // Calculate used days from approved requests in current year
-                    $usedDays = $employee->vacation_requests
-                        ->where('status', VacationRequestStatus::APPROVED)
-                        ->where('type', VacationRequestType::VACATION)
-                        ->where('start_date', '>=', now()->startOfYear())
-                        ->sum(function ($req) {
-                            return $req->start_date->diffInDays($req->end_date) + 1;
-                        });
+                ->map(function ($employee) use ($balanceService) {
+                    $balance = $balanceService->getBalanceSummary($employee);
 
                     return [
                         'id' => $employee->id,
                         'name' => $employee->name,
                         'email' => $employee->email,
-                        'totalDays' => $annualDays,
-                        'usedDays' => $usedDays,
+                        'department' => $employee->team?->name ?? 'Unassigned',
+                        'totalDays' => $balance['annual_days'],
+                        'usedDays' => $balance['used_days'],
                         'pendingRequests' => $employee->pending_requests_count,
+                        'remainingDays' => $balance['remaining_balance'],
+                        'availableDays' => $balance['available_balance'],
+                        'pendingDays' => $balance['pending_days'],
                     ];
                 });
         }
@@ -88,6 +90,7 @@ class DashboardController extends Controller
             'userName' => $user->name,
             'totalDaysAllowed' => $annualDays,
             'notificationCount' => $notificationCount,
+            'userBalance' => $userBalance,
         ]);
     }
 }

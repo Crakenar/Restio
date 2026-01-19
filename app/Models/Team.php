@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Policies\TeamPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[UsePolicy(TeamPolicy::class)]
 class Team extends Model
 {
     protected $fillable = [

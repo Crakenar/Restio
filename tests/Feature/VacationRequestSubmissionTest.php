@@ -145,22 +145,22 @@ class VacationRequestSubmissionTest extends TestCase
         ]);
         $user = User::factory()->create(['company_id' => $company->id]);
 
-        // Create approved request using 8 days
+        // Create approved request using 7 business days (Mon-Sun, excluding weekend = 5 weekdays + Mon-Tue = 7)
         VacationRequest::factory()->create([
             'user_id' => $user->id,
             'company_id' => $company->id,
-            'start_date' => now()->startOfYear()->addDays(10),
-            'end_date' => now()->startOfYear()->addDays(17),
+            'start_date' => now()->startOfYear()->setDay(5),  // Jan 5, 2026 (Monday)
+            'end_date' => now()->startOfYear()->setDay(13),    // Jan 13, 2026 (Tuesday next week)
             'type' => VacationRequestType::VACATION,
             'status' => VacationRequestStatus::APPROVED,
         ]);
 
         $this->actingAs($user);
 
-        // Try to request 5 more days (total would be 13, exceeds 10)
+        // Try to request 5 more business days (Mon-Fri, total would be 12, exceeds 10)
         $response = $this->post('/vacation-requests', [
-            'start_date' => now()->addDays(20)->format('Y-m-d'),
-            'end_date' => now()->addDays(24)->format('Y-m-d'),
+            'start_date' => now()->addDays(30)->startOfWeek()->format('Y-m-d'),  // Start of a week (Monday)
+            'end_date' => now()->addDays(30)->startOfWeek()->addDays(4)->format('Y-m-d'),  // Friday of same week
             'type' => VacationRequestType::VACATION->value,
         ]);
 

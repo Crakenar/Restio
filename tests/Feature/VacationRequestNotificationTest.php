@@ -112,7 +112,7 @@ class VacationRequestNotificationTest extends TestCase
 
         $company = $this->createCompanyWithSubscription();
         $employee = User::factory()->create(['company_id' => $company->id, 'role' => 'employee']);
-        $manager = User::factory()->create(['company_id' => $company->id, 'role' => 'manager']);
+        $admin = User::factory()->create(['company_id' => $company->id, 'role' => 'admin']);
 
         $vacationRequest = VacationRequest::factory()->create([
             'user_id' => $employee->id,
@@ -120,7 +120,7 @@ class VacationRequestNotificationTest extends TestCase
             'status' => VacationRequestStatus::PENDING,
         ]);
 
-        $this->actingAs($manager);
+        $this->actingAs($admin);
 
         $this->post("/vacation-requests/{$vacationRequest->id}/approve");
 
@@ -137,7 +137,7 @@ class VacationRequestNotificationTest extends TestCase
 
         $company = $this->createCompanyWithSubscription();
         $employee = User::factory()->create(['company_id' => $company->id, 'role' => 'employee']);
-        $manager = User::factory()->create(['company_id' => $company->id, 'role' => 'manager']);
+        $admin = User::factory()->create(['company_id' => $company->id, 'role' => 'admin']);
 
         $vacationRequest = VacationRequest::factory()->create([
             'user_id' => $employee->id,
@@ -145,7 +145,7 @@ class VacationRequestNotificationTest extends TestCase
             'status' => VacationRequestStatus::PENDING,
         ]);
 
-        $this->actingAs($manager);
+        $this->actingAs($admin);
 
         $this->post("/vacation-requests/{$vacationRequest->id}/reject", [
             'rejection_reason' => 'Not enough staff coverage',
