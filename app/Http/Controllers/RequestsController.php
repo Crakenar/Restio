@@ -11,7 +11,7 @@ class RequestsController extends Controller
     {
         $user = auth()->user();
 
-        // Fetch requests scoped to company
+        // Fetch requests scoped to company with pagination
         $requests = \App\Models\VacationRequest::query()
             ->with(['user'])
             ->where('company_id', $user->company_id)
@@ -19,8 +19,8 @@ class RequestsController extends Controller
                 $query->where('company_id', $user->company_id);
             })
             ->latest()
-            ->get()
-            ->map(function ($request) {
+            ->paginate(50) // 50 items per page
+            ->through(function ($request) {
                 return [
                     'id' => $request->id,
                     'startDate' => $request->start_date,

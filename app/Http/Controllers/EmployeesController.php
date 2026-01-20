@@ -26,8 +26,8 @@ class EmployeesController extends Controller
         $employees = User::query()
             ->where('company_id', $user->company_id)
             ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(fn ($employee) => [
+            ->paginate(50) // 50 items per page
+            ->through(fn ($employee) => [
                 'id' => $employee->id,
                 'name' => $employee->name,
                 'email' => $employee->email,

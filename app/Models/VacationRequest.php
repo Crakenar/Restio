@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enum\VacationRequestStatus;
 use App\Enum\VacationRequestType;
+use App\Models\Concerns\Auditable;
 use App\Policies\VacationRequestPolicy;
 use App\Services\VacationBalanceService;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[UsePolicy(VacationRequestPolicy::class)]
 class VacationRequest extends Model
 {
+    use Auditable;
     use HasFactory;
 
     protected $table = 'vacation_requests';

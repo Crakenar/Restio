@@ -38,16 +38,30 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\EnsureCompanyIsActiv
     Route::get('requests', [RequestsController::class, 'index'])->name('requests');
     Route::get('teams', [TeamsController::class, 'index'])->name('teams');
     Route::get('employees', [EmployeesController::class, 'index'])->name('employees');
-    Route::post('employees', [EmployeesController::class, 'store'])->name('employees.store');
-    Route::post('employees/import', [EmployeesController::class, 'importCsv'])->name('employees.import');
+    Route::post('employees', [EmployeesController::class, 'store'])
+        ->middleware('throttle:admin')
+        ->name('employees.store');
+    Route::post('employees/import', [EmployeesController::class, 'importCsv'])
+        ->middleware('throttle:import')
+        ->name('employees.import');
 
     // Team Management (Admin/Owner only)
     Route::get('team-management', [TeamManagementController::class, 'index'])->name('team-management');
-    Route::post('team-management', [TeamManagementController::class, 'store'])->name('team-management.store');
-    Route::patch('team-management/{team}', [TeamManagementController::class, 'update'])->name('team-management.update');
-    Route::delete('team-management/{team}', [TeamManagementController::class, 'destroy'])->name('team-management.destroy');
-    Route::post('team-management/{team}/assign-users', [TeamManagementController::class, 'assignUsers'])->name('team-management.assign-users');
-    Route::delete('team-management/{team}/users/{user}', [TeamManagementController::class, 'removeUser'])->name('team-management.remove-user');
+    Route::post('team-management', [TeamManagementController::class, 'store'])
+        ->middleware('throttle:admin')
+        ->name('team-management.store');
+    Route::patch('team-management/{team}', [TeamManagementController::class, 'update'])
+        ->middleware('throttle:admin')
+        ->name('team-management.update');
+    Route::delete('team-management/{team}', [TeamManagementController::class, 'destroy'])
+        ->middleware('throttle:admin')
+        ->name('team-management.destroy');
+    Route::post('team-management/{team}/assign-users', [TeamManagementController::class, 'assignUsers'])
+        ->middleware('throttle:admin')
+        ->name('team-management.assign-users');
+    Route::delete('team-management/{team}/users/{user}', [TeamManagementController::class, 'removeUser'])
+        ->middleware('throttle:admin')
+        ->name('team-management.remove-user');
 
     // Vacation Requests
     Route::post('vacation-requests', [VacationRequestController::class, 'store'])->name('vacation-requests.store');
@@ -69,9 +83,13 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\EnsureCompanyIsActiv
 
     // Subscription Management (Owner only)
     Route::get('subscription', [SubscriptionManagementController::class, 'index'])->name('subscription.index');
-    Route::post('subscription/change', [SubscriptionManagementController::class, 'changePlan'])->name('subscription.change');
+    Route::post('subscription/change', [SubscriptionManagementController::class, 'changePlan'])
+        ->middleware('throttle:billing')
+        ->name('subscription.change');
     Route::get('subscription/upgrade/complete', [SubscriptionManagementController::class, 'completeUpgrade'])->name('subscription.upgrade.complete');
-    Route::post('subscription/cancel', [SubscriptionManagementController::class, 'cancelSubscription'])->name('subscription.cancel');
+    Route::post('subscription/cancel', [SubscriptionManagementController::class, 'cancelSubscription'])
+        ->middleware('throttle:billing')
+        ->name('subscription.cancel');
 });
 
 require __DIR__.'/settings.php';

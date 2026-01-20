@@ -8,6 +8,7 @@ use App\Models\CompanySetting;
 use App\Models\User;
 use App\Models\VacationRequest;
 use App\Services\VacationBalanceService;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -19,47 +20,60 @@ class DashboardController extends Controller
         $companyId = $user->company_id;
         $balanceService = app(VacationBalanceService::class);
 
-        // Get current user's balance summary
-        $userBalance = $balanceService->getBalanceSummary($user);
+        // Cache key for this user's dashboard
+        $cacheKey = "dashboard.{$user->id}.{$user->role}";
 
-        // Fetch requests scoped to company
-        $requests = VacationRequest::query()
-            ->with(['user'])
-            ->where('company_id', $companyId)
-            ->whereHas('user', function ($query) use ($companyId) {
-                $query->where('company_id', $companyId);
-            })
-            ->latest()
-            ->get()
-            ->map(function ($request) {
-                return [
-                    'id' => $request->id,
-                    'startDate' => $request->start_date,
-                    'endDate' => $request->end_date,
-                    'type' => $request->type,
-                    'status' => $request->status,
-                    'employeeName' => $request->user->name,
-                    'days' => $request->days,
-                ];
+        // Cache dashboard data for 5 minutes
+        $dashboardData = Cache::remember($cacheKey, now()->addMinutes(5), function () use ($user, $companyId, $balanceService) {
+            // Get current user's balance summary
+            $userBalance = $balanceService->getBalanceSummary($user);
+
+            // Fetch requests scoped to company
+            $requests = VacationRequest::query()
+                ->with(['user'])
+                ->where('company_id', $companyId)
+                ->whereHas('user', function ($query) use ($companyId) {
+                    $query->where('company_id', $companyId);
+                })
+                ->latest()
+                ->get()
+                ->map(function ($request) {
+                    return [
+                        'id' => $request->id,
+                        'startDate' => $request->start_date,
+                        'endDate' => $request->end_date,
+                        'type' => $request->type,
+                        'status' => $request->status,
+                        'employeeName' => $request->user->name,
+                        'days' => $request->days,
+                    ];
+                });
+
+            // Fetch company settings for annual days (with caching)
+            $annualDays = Cache::remember("company.{$companyId}.annual_days", now()->addHours(1), function () use ($companyId) {
+                $settings = CompanySetting::query()->where('company_id', $companyId)->first();
+
+                return $settings ? $settings->annual_days : 25;
             });
 
-        // Fetch company settings for annual days
-        $settings = CompanySetting::query()->where('company_id', $companyId)->first();
-        $annualDays = $settings ? $settings->annual_days : 25;
+            // Fetch employees for admin dashboard
+            $employees = [];
+            if ($user->role === UserRole::ADMIN->value || $user->role === UserRole::OWNER->value) {
+                $employeeModels = User::query()
+                    ->where('company_id', $companyId)
+                    ->with('team') // Eager load team to avoid N+1
+                    ->withCount([
+                        'vacation_requests as pending_requests_count' => function ($query) {
+                            $query->where('status', VacationRequestStatus::PENDING);
+                        },
+                    ])
+                    ->get();
 
-        // Fetch employees for admin dashboard
-        $employees = [];
-        if ($user->role === UserRole::ADMIN->value || $user->role === UserRole::OWNER->value) {
-            $employees = User::query()
-                ->where('company_id', $companyId)
-                ->withCount([
-                    'vacation_requests as pending_requests_count' => function ($query) {
-                        $query->where('status', VacationRequestStatus::PENDING);
-                    },
-                ])
-                ->get()
-                ->map(function ($employee) use ($balanceService) {
-                    $balance = $balanceService->getBalanceSummary($employee);
+                // Batch calculate balances to avoid N+1 queries
+                $balances = $balanceService->getBatchBalanceSummaries($employeeModels);
+
+                $employees = $employeeModels->map(function ($employee) use ($balances) {
+                    $balance = $balances[$employee->id];
 
                     return [
                         'id' => $employee->id,
@@ -74,23 +88,29 @@ class DashboardController extends Controller
                         'pendingDays' => $balance['pending_days'],
                     ];
                 });
-        }
+            }
 
-        // Count notifications (pending requests for the user)
-        $notificationCount = VacationRequest::query()
-            ->where('company_id', $companyId)
-            ->where('user_id', $user->id)
-            ->where('status', VacationRequestStatus::PENDING)
-            ->count();
+            // Count notifications (pending requests for the user) - cached for 1 minute
+            $notificationCount = Cache::remember("notifications.{$user->id}.count", now()->addMinute(), function () use ($companyId, $user) {
+                return VacationRequest::query()
+                    ->where('company_id', $companyId)
+                    ->where('user_id', $user->id)
+                    ->where('status', VacationRequestStatus::PENDING)
+                    ->count();
+            });
 
-        return Inertia::render('Dashboard', [
-            'requests' => $requests,
-            'employees' => $employees,
+            return [
+                'requests' => $requests,
+                'employees' => $employees,
+                'totalDaysAllowed' => $annualDays,
+                'notificationCount' => $notificationCount,
+                'userBalance' => $userBalance,
+            ];
+        });
+
+        return Inertia::render('Dashboard', array_merge($dashboardData, [
             'userRole' => $user->role,
             'userName' => $user->name,
-            'totalDaysAllowed' => $annualDays,
-            'notificationCount' => $notificationCount,
-            'userBalance' => $userBalance,
-        ]);
+        ]));
     }
 }

@@ -12,8 +12,12 @@ Route::middleware('auth')->group(function () {
     Route::redirect('settings', '/settings/profile');
 
     Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::patch('settings/profile', [ProfileController::class, 'update'])
+        ->middleware('throttle:admin')
+        ->name('profile.update');
+    Route::delete('settings/profile', [ProfileController::class, 'destroy'])
+        ->middleware('throttle:6,1')
+        ->name('profile.destroy');
 
     Route::get('settings/password', [PasswordController::class, 'edit'])->name('user-password.edit');
 
@@ -30,7 +34,9 @@ Route::middleware('auth')->group(function () {
 
     // Company settings (only for owners and admins)
     Route::get('settings/company', [CompanySettingsController::class, 'edit'])->name('company-settings.edit');
-    Route::post('settings/company', [CompanySettingsController::class, 'update'])->name('company-settings.update');
+    Route::post('settings/company', [CompanySettingsController::class, 'update'])
+        ->middleware('throttle:admin')
+        ->name('company-settings.update');
 
     // Admin settings - subscription and billing (only for owners and admins)
     Route::get('settings/admin', [AdminSettingsController::class, 'index'])->name('admin-settings.index');

@@ -242,4 +242,77 @@ class VacationBalanceService
             'year' => $year,
         ];
     }
+
+    /**
+     * Get balance summaries for multiple users efficiently (no N+1 queries).
+     */
+    public function getBatchBalanceSummaries(iterable $users, ?int $year = null): array
+    {
+        $year = $year ?? now()->year;
+        $userIds = [];
+        $companyIds = [];
+        $userMap = [];
+
+        foreach ($users as $user) {
+            $userIds[] = $user->id;
+            $companyIds[] = $user->company_id;
+            $userMap[$user->id] = $user;
+        }
+
+        if (empty($userIds)) {
+            return [];
+        }
+
+        // Preload all vacation requests for all users
+        $allRequests = VacationRequest::query()
+            ->whereIn('user_id', $userIds)
+            ->where(function ($query) use ($year) {
+                $query->whereYear('start_date', $year)
+                    ->orWhereYear('end_date', $year);
+            })
+            ->get()
+            ->groupBy('user_id');
+
+        // Preload company settings
+        $companySettings = CompanySetting::whereIn('company_id', array_unique($companyIds))
+            ->get()
+            ->keyBy('company_id');
+
+        // Calculate balances for each user using preloaded data
+        $results = [];
+        foreach ($userMap as $userId => $user) {
+            $userRequests = $allRequests->get($userId, collect());
+            $companySetting = $companySettings->get($user->company_id);
+            $annualDays = $companySetting?->annual_days ?? 20;
+
+            $usedDays = 0;
+            $pendingDays = 0;
+
+            foreach ($userRequests as $request) {
+                if ($this->requestTypeAffectsBalance($request->type)) {
+                    $days = $this->calculateRequestDays($request);
+
+                    if ($request->status === VacationRequestStatus::APPROVED) {
+                        $usedDays += $days;
+                    } elseif ($request->status === VacationRequestStatus::PENDING) {
+                        $pendingDays += $days;
+                    }
+                }
+            }
+
+            $remainingBalance = max(0, $annualDays - $usedDays - $pendingDays);
+            $availableBalance = max(0, $annualDays - $usedDays - $pendingDays);
+
+            $results[$userId] = [
+                'annual_days' => $annualDays,
+                'used_days' => $usedDays,
+                'pending_days' => $pendingDays,
+                'remaining_balance' => $remainingBalance,
+                'available_balance' => $availableBalance,
+                'year' => $year,
+            ];
+        }
+
+        return $results;
+    }
 }
