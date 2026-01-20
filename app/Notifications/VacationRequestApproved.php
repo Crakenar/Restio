@@ -38,23 +38,21 @@ class VacationRequestApproved extends Notification
     {
         $startDate = $this->vacationRequest->start_date->format('M d, Y');
         $endDate = $this->vacationRequest->end_date->format('M d, Y');
-        $type = str_replace('_', ' ', ucfirst($this->vacationRequest->type->value));
+        $type = str_replace('_', ' ', ucwords(str_replace('_', ' ', $this->vacationRequest->type->value)));
         $approver = User::find($this->vacationRequest->approved_by);
 
         return (new MailMessage)
-            ->success()
             ->subject('Your Time Off Request Has Been Approved!')
-            ->greeting('Great news, '.$notifiable->name.'!')
-            ->line('Your time off request has been **approved**.')
-            ->line('**Type:** '.$type)
-            ->line('**From:** '.$startDate)
-            ->line('**To:** '.$endDate)
-            ->when($approver, function ($mail) use ($approver) {
-                return $mail->line('**Approved by:** '.$approver->name);
-            })
-            ->action('View Request', url('/requests'))
-            ->line('Enjoy your time off!')
-            ->salutation('Best regards, '.config('app.name'));
+            ->view('emails.vacation-request-approved', [
+                'employeeName' => $notifiable->name,
+                'requestType' => $type,
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'days' => $this->vacationRequest->days,
+                'approvedBy' => $approver?->name,
+                'approvedDate' => $this->vacationRequest->approved_date?->format('M d, Y'),
+                'actionUrl' => url('/requests'),
+            ]);
     }
 
     /**

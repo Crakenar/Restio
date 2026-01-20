@@ -38,26 +38,21 @@ class VacationRequestRejected extends Notification
     {
         $startDate = $this->vacationRequest->start_date->format('M d, Y');
         $endDate = $this->vacationRequest->end_date->format('M d, Y');
-        $type = str_replace('_', ' ', ucfirst($this->vacationRequest->type->value));
+        $type = str_replace('_', ' ', ucwords(str_replace('_', ' ', $this->vacationRequest->type->value)));
         $rejectedBy = User::find($this->vacationRequest->approved_by);
 
         return (new MailMessage)
-            ->error()
             ->subject('Time Off Request Not Approved')
-            ->greeting('Hello '.$notifiable->name.',')
-            ->line('Unfortunately, your time off request has been declined.')
-            ->line('**Type:** '.$type)
-            ->line('**From:** '.$startDate)
-            ->line('**To:** '.$endDate)
-            ->when($rejectedBy, function ($mail) use ($rejectedBy) {
-                return $mail->line('**Declined by:** '.$rejectedBy->name);
-            })
-            ->when($this->vacationRequest->rejection_reason, function ($mail) {
-                return $mail->line('**Reason:** '.$this->vacationRequest->rejection_reason);
-            })
-            ->action('View Request', url('/requests'))
-            ->line('If you have questions about this decision, please contact your manager.')
-            ->salutation('Best regards, '.config('app.name'));
+            ->view('emails.vacation-request-rejected', [
+                'employeeName' => $notifiable->name,
+                'requestType' => $type,
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'days' => $this->vacationRequest->days,
+                'rejectedBy' => $rejectedBy?->name,
+                'rejectionReason' => $this->vacationRequest->rejection_reason,
+                'actionUrl' => url('/requests'),
+            ]);
     }
 
     /**

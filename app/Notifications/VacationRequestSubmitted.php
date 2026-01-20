@@ -39,21 +39,20 @@ class VacationRequestSubmitted extends Notification implements ShouldQueue
         $employee = $this->vacationRequest->user;
         $startDate = $this->vacationRequest->start_date->format('M d, Y');
         $endDate = $this->vacationRequest->end_date->format('M d, Y');
-        $type = str_replace('_', ' ', ucfirst($this->vacationRequest->type->value));
+        $type = str_replace('_', ' ', ucwords(str_replace('_', ' ', $this->vacationRequest->type->value)));
 
         return (new MailMessage)
             ->subject('New Time Off Request from '.$employee->name)
-            ->greeting('Hello '.$notifiable->name.',')
-            ->line('**'.$employee->name.'** has submitted a new time off request.')
-            ->line('**Type:** '.$type)
-            ->line('**From:** '.$startDate)
-            ->line('**To:** '.$endDate)
-            ->when($this->vacationRequest->reason, function ($mail) {
-                return $mail->line('**Reason:** '.$this->vacationRequest->reason);
-            })
-            ->action('Review Request', url('/requests'))
-            ->line('Please review and approve or reject this request.')
-            ->salutation('Thank you, '.config('app.name'));
+            ->view('emails.vacation-request-submitted', [
+                'managerName' => $notifiable->name,
+                'employeeName' => $employee->name,
+                'requestType' => $type,
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'days' => $this->vacationRequest->days,
+                'reason' => $this->vacationRequest->reason,
+                'actionUrl' => url('/requests'),
+            ]);
     }
 
     /**
