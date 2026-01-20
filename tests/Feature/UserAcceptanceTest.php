@@ -11,11 +11,12 @@ use App\Models\Team;
 use App\Models\User;
 use App\Models\VacationRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\CreatesSubscriptions;
 use Tests\TestCase;
 
 class UserAcceptanceTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, CreatesSubscriptions;
 
     /**
      * UAT-01: Employee Workflow - Complete journey from registration to viewing calendar
@@ -25,6 +26,7 @@ class UserAcceptanceTest extends TestCase
         // Step 1: Register a new employee
         $company = Company::factory()->create();
         CompanySetting::factory()->create(['company_id' => $company->id, 'annual_days' => 20]);
+        $this->createActiveSubscription($company);
 
         $response = $this->post('/register', [
             'name' => 'John Employee',
@@ -88,6 +90,7 @@ class UserAcceptanceTest extends TestCase
         // Setup: Create company with employees and manager
         $company = Company::factory()->create();
         CompanySetting::factory()->create(['company_id' => $company->id]);
+        $this->createActiveSubscription($company);
         $team = Team::factory()->create(['company_id' => $company->id]);
 
         $manager = User::factory()->create([
@@ -151,6 +154,7 @@ class UserAcceptanceTest extends TestCase
         // Setup
         $company = Company::factory()->create();
         CompanySetting::factory()->create(['company_id' => $company->id]);
+        $this->createActiveSubscription($company);
 
         $admin = User::factory()->create([
             'company_id' => $company->id,
@@ -219,13 +223,12 @@ class UserAcceptanceTest extends TestCase
             'company_id' => $company->id,
             'annual_days' => 20,
         ]);
+        $this->createActiveSubscription($company);
 
         $owner = User::factory()->create([
             'company_id' => $company->id,
             'role' => UserRole::OWNER->value,
         ]);
-
-        Subscription::factory()->create(['slug' => 'monthly']);
 
         // Step 1: Owner views dashboard
         $response = $this->actingAs($owner)->get('/dashboard');
@@ -272,6 +275,7 @@ class UserAcceptanceTest extends TestCase
         // Setup
         $company = Company::factory()->create();
         CompanySetting::factory()->create(['company_id' => $company->id]);
+        $this->createActiveSubscription($company);
         $team = Team::factory()->create(['company_id' => $company->id]);
 
         $manager = User::factory()->create([
@@ -332,6 +336,8 @@ class UserAcceptanceTest extends TestCase
 
         CompanySetting::factory()->create(['company_id' => $company1->id]);
         CompanySetting::factory()->create(['company_id' => $company2->id]);
+        $this->createActiveSubscription($company1);
+        $this->createActiveSubscription($company2);
 
         $user1 = User::factory()->create(['company_id' => $company1->id]);
         $user2 = User::factory()->create(['company_id' => $company2->id]);
@@ -363,6 +369,7 @@ class UserAcceptanceTest extends TestCase
     {
         $company = Company::factory()->create();
         CompanySetting::factory()->create(['company_id' => $company->id]);
+        $this->createActiveSubscription($company);
         $team = Team::factory()->create(['company_id' => $company->id]);
 
         // Create multiple team members
@@ -402,6 +409,7 @@ class UserAcceptanceTest extends TestCase
     {
         $company = Company::factory()->create();
         CompanySetting::factory()->create(['company_id' => $company->id]);
+        $this->createActiveSubscription($company);
 
         $user = User::factory()->create(['company_id' => $company->id]);
 

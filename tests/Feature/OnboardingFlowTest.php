@@ -7,8 +7,8 @@ use App\Enum\SubscriptionStatus;
 use App\Enum\UserRole;
 use App\Models\Company;
 use App\Models\CompanySubscription;
-use App\Models\Department;
 use App\Models\Subscription;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -33,10 +33,10 @@ class OnboardingFlowTest extends TestCase
     public function test_user_without_subscription_cannot_access_dashboard(): void
     {
         $company = Company::factory()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
         $user = User::factory()->create([
             'company_id' => $company->id,
-            'department_id' => $department->id,
+            'team_id' => $team->id,
             'role' => UserRole::OWNER,
         ]);
 
@@ -48,10 +48,10 @@ class OnboardingFlowTest extends TestCase
     public function test_user_without_subscription_is_redirected_to_onboarding_on_login(): void
     {
         $company = Company::factory()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
         $user = User::factory()->create([
             'company_id' => $company->id,
-            'department_id' => $department->id,
+            'team_id' => $team->id,
             'role' => UserRole::OWNER,
             'password' => bcrypt('password'),
         ]);
@@ -69,10 +69,10 @@ class OnboardingFlowTest extends TestCase
         $this->withoutVite();
 
         $company = Company::factory()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
         $user = User::factory()->create([
             'company_id' => $company->id,
-            'department_id' => $department->id,
+            'team_id' => $team->id,
             'role' => UserRole::OWNER,
         ]);
 
@@ -95,10 +95,10 @@ class OnboardingFlowTest extends TestCase
     public function test_user_can_create_checkout_session(): void
     {
         $company = Company::factory()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
         $user = User::factory()->create([
             'company_id' => $company->id,
-            'department_id' => $department->id,
+            'team_id' => $team->id,
             'role' => UserRole::OWNER,
         ]);
 
@@ -126,10 +126,10 @@ class OnboardingFlowTest extends TestCase
     public function test_user_can_complete_onboarding_with_subscription(): void
     {
         $company = Company::factory()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
         $user = User::factory()->create([
             'company_id' => $company->id,
-            'department_id' => $department->id,
+            'team_id' => $team->id,
             'role' => UserRole::OWNER,
         ]);
 
@@ -156,10 +156,10 @@ class OnboardingFlowTest extends TestCase
     public function test_user_with_active_subscription_can_access_dashboard(): void
     {
         $company = Company::factory()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
         $user = User::factory()->create([
             'company_id' => $company->id,
-            'department_id' => $department->id,
+            'team_id' => $team->id,
             'role' => UserRole::OWNER,
         ]);
 
@@ -180,10 +180,10 @@ class OnboardingFlowTest extends TestCase
     public function test_user_with_active_subscription_is_redirected_to_dashboard_when_accessing_onboarding(): void
     {
         $company = Company::factory()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
         $user = User::factory()->create([
             'company_id' => $company->id,
-            'department_id' => $department->id,
+            'team_id' => $team->id,
             'role' => UserRole::OWNER,
         ]);
 
@@ -204,10 +204,10 @@ class OnboardingFlowTest extends TestCase
     public function test_user_with_active_subscription_is_redirected_to_dashboard_on_login(): void
     {
         $company = Company::factory()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
         $user = User::factory()->create([
             'company_id' => $company->id,
-            'department_id' => $department->id,
+            'team_id' => $team->id,
             'role' => UserRole::OWNER,
             'password' => bcrypt('password'),
         ]);
@@ -232,10 +232,10 @@ class OnboardingFlowTest extends TestCase
     public function test_onboarding_validates_plan_selection(): void
     {
         $company = Company::factory()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
         $user = User::factory()->create([
             'company_id' => $company->id,
-            'department_id' => $department->id,
+            'team_id' => $team->id,
             'role' => UserRole::OWNER,
         ]);
 
@@ -250,10 +250,10 @@ class OnboardingFlowTest extends TestCase
     public function test_onboarding_requires_valid_session_id(): void
     {
         $company = Company::factory()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
         $user = User::factory()->create([
             'company_id' => $company->id,
-            'department_id' => $department->id,
+            'team_id' => $team->id,
             'role' => UserRole::OWNER,
         ]);
 

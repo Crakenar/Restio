@@ -7,8 +7,8 @@ use App\Enum\SubscriptionStatus;
 use App\Enum\UserRole;
 use App\Models\Company;
 use App\Models\CompanySubscription;
-use App\Models\Department;
 use App\Models\Subscription;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -20,10 +20,10 @@ class SubscriptionManagementTest extends TestCase
     private function createOwnerWithActiveSubscription(): array
     {
         $company = Company::factory()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
         $owner = User::factory()->create([
             'company_id' => $company->id,
-            'department_id' => $department->id,
+            'team_id' => $team->id,
             'role' => UserRole::OWNER,
         ]);
 
@@ -66,10 +66,10 @@ class SubscriptionManagementTest extends TestCase
     public function test_non_owner_cannot_access_subscription_management_page(): void
     {
         $company = Company::factory()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
         $admin = User::factory()->create([
             'company_id' => $company->id,
-            'department_id' => $department->id,
+            'team_id' => $team->id,
             'role' => UserRole::ADMIN,
         ]);
 
@@ -115,10 +115,10 @@ class SubscriptionManagementTest extends TestCase
     public function test_non_owner_cannot_change_plan(): void
     {
         $company = Company::factory()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
         $employee = User::factory()->create([
             'company_id' => $company->id,
-            'department_id' => $department->id,
+            'team_id' => $team->id,
             'role' => UserRole::EMPLOYEE,
         ]);
 
@@ -219,10 +219,10 @@ class SubscriptionManagementTest extends TestCase
     public function test_non_owner_cannot_cancel_subscription(): void
     {
         $company = Company::factory()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
         $manager = User::factory()->create([
             'company_id' => $company->id,
-            'department_id' => $department->id,
+            'team_id' => $team->id,
             'role' => UserRole::MANAGER,
         ]);
 
@@ -243,10 +243,10 @@ class SubscriptionManagementTest extends TestCase
     public function test_cancel_subscription_without_active_subscription_fails(): void
     {
         $company = Company::factory()->create();
-        $department = Department::factory()->create(['company_id' => $company->id]);
+        $team = Team::factory()->create(['company_id' => $company->id]);
         $owner = User::factory()->create([
             'company_id' => $company->id,
-            'department_id' => $department->id,
+            'team_id' => $team->id,
             'role' => UserRole::OWNER,
         ]);
 
