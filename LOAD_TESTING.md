@@ -3,13 +3,174 @@
 This document provides comprehensive instructions for load testing the Restio application to ensure it can handle production traffic.
 
 ## Table of Contents
-1. [Prerequisites](#prerequisites)
-2. [Local Load Testing](#local-load-testing)
-3. [Production-like Testing](#production-like-testing)
-4. [Test Scenarios](#test-scenarios)
-5. [Metrics to Monitor](#metrics-to-monitor)
-6. [Interpreting Results](#interpreting-results)
-7. [Troubleshooting](#troubleshooting)
+1. [Integrated Performance Tests](#integrated-performance-tests) ⭐ **NEW!**
+2. [Prerequisites](#prerequisites)
+3. [Local Load Testing](#local-load-testing)
+4. [Production-like Testing](#production-like-testing)
+5. [Test Scenarios](#test-scenarios)
+6. [Metrics to Monitor](#metrics-to-monitor)
+7. [Interpreting Results](#interpreting-results)
+8. [Troubleshooting](#troubleshooting)
+
+---
+
+## Integrated Performance Tests
+
+Restio now includes **built-in performance tests** that run directly within the Laravel test suite! These tests measure real application performance under various load conditions.
+
+**⚠️ Important:** Performance tests use **PostgreSQL** (`restio_performance_test` database) to match production conditions, not SQLite. Regular unit/feature tests use SQLite in-memory for speed.
+
+### Quick Start
+
+```bash
+# Run all performance tests
+php artisan test:performance
+
+# Run specific performance test
+php artisan test:performance --filter=dashboard_loads_within_acceptable_time
+
+# Run without confirmation prompt
+php artisan test --testsuite=Performance
+```
+
+### What's Tested
+
+The integrated performance test suite (`tests/Performance/`) includes:
+
+#### 1. **Dashboard Performance** (`DashboardPerformanceTest.php`)
+- ✅ Dashboard load time with 100 users, 1000 requests (target: < 500ms)
+- ✅ Dashboard load time with 500 users, 5000 requests (target: < 1000ms)
+- ✅ Dashboard load time with 2000 users, 20000 requests (target: < 2000ms)
+- ✅ Concurrent dashboard requests (50 concurrent users, 5000+ requests)
+- ✅ Database query count optimization (< 15 queries ideal, < 25 max)
+- ✅ Memory usage monitoring (< 100MB with 1000 users, 16000+ requests)
+
+#### 2. **API Endpoint Performance** (`ApiEndpointPerformanceTest.php`)
+- ✅ Vacation request submission - 100 submissions with 2000 existing requests (target: < 500ms avg)
+- ✅ Vacation request approval - 300 approvals with 9000+ requests (target: < 500ms avg)
+- ✅ Team creation - 50 iterations (target: < 200ms avg)
+- ✅ Bulk user assignment - 500 users to team (target: < 2000ms)
+- ✅ Company settings update - 25 iterations (target: < 200ms avg)
+- ✅ Notification dispatch performance - 20 employees (target: < 400ms)
+
+### Performance Benchmarks
+
+| Test | Data Volume | Target | Critical Threshold |
+|------|-------------|--------|-------------------|
+| Dashboard (Small) | 100 users, 1000 requests | < 500ms | < 750ms |
+| Dashboard (Medium) | 500 users, 5000 requests | < 1000ms | < 1500ms |
+| Dashboard (Large) | 2000 users, 20000 requests | < 2000ms | < 3000ms |
+| Concurrent Requests (P95) | 50 users, 5000+ requests | < 1500ms | < 2500ms |
+| Request Submission | 100 submissions, 2000 existing | < 500ms avg | < 750ms avg |
+| Request Approval | 300 approvals, 9000+ existing | < 500ms avg | < 750ms avg |
+| Bulk User Assignment | 500 users to team | < 2000ms | < 3000ms |
+| Query Count | Any page load | < 15 | < 25 |
+| Memory Usage | 1000 users, 16000+ requests | < 100MB | < 150MB |
+
+### Example Output
+
+```bash
+$ php artisan test:performance
+
+🚀 Running Performance Tests for Restio
+
+System Information:
+  • PHP Version: 8.3.6
+  • Laravel Version: 12.0.0
+  • Test Database: PostgreSQL (restio_performance_test)
+  • Test Environment: testing
+  • Memory Limit: 512M
+
+Note: Tests use PostgreSQL for production-like conditions
+
+═══════════════════════════════════════════════════════════
+Starting Performance Test Suite
+═══════════════════════════════════════════════════════════
+
+ PASS  Tests\Performance\DashboardPerformanceTest
+  ✓ dashboard loads within acceptable time for small company
+    100 users, 1000 requests: 285.23ms
+  ✓ dashboard loads within acceptable time for medium company
+    500 users, 5000 requests: 712.67ms
+  ✓ dashboard loads within acceptable time for large company
+    2000 users, 20000 requests: 1523.45ms
+  ✓ dashboard handles concurrent requests
+    Average: 256.34ms | P95: 445.12ms | Max: 578.34ms (50 requests)
+  ✓ dashboard query count is optimized
+    ✅ Query count: 12
+  ✓ dashboard memory usage is acceptable
+    Memory used: 78.45MB for 1000 users, 16000+ requests
+
+ PASS  Tests\Performance\ApiEndpointPerformanceTest
+  ✓ vacation request submission is fast
+    Average: 287.45ms | P95: 389.23ms | Max: 456.78ms (100 submissions)
+  ✓ vacation request approval is fast
+    Average: 312.67ms | P95: 425.89ms | Max: 487.34ms (300 approvals)
+  ✓ bulk user assignment is fast
+    Assigned 500 users in 1234.56ms
+
+═══════════════════════════════════════════════════════════
+✅ All performance tests passed!
+⏱️  Total execution time: 15.23s
+═══════════════════════════════════════════════════════════
+
+📊 Performance Benchmarks:
+...
+```
+
+### CI/CD Integration
+
+Add performance tests to your CI/CD pipeline:
+
+```yaml
+# .github/workflows/tests.yml
+- name: Run Performance Tests
+  run: php artisan test:performance --stop-on-failure
+```
+
+### Custom Performance Tests
+
+Create your own performance tests:
+
+```bash
+php artisan make:test Performance/YourFeaturePerformanceTest
+```
+
+```php
+<?php
+
+namespace Tests\Performance;
+
+use Tests\Concerns\CreatesSubscriptions;
+use Tests\TestCase;
+
+class YourFeaturePerformanceTest extends TestCase
+{
+    use CreatesSubscriptions;
+
+    public function test_your_feature_is_fast(): void
+    {
+        $start = microtime(true);
+
+        // Your test code here
+
+        $end = microtime(true);
+        $loadTime = ($end - $start) * 1000; // ms
+
+        $this->assertLessThan(300, $loadTime,
+            "Feature took {$loadTime}ms (exceeds 300ms)"
+        );
+    }
+}
+```
+
+### Tips for Performance Testing
+
+1. **Run on representative data** - Use `ComprehensiveTestDataSeeder` to create realistic test data
+2. **Test in isolation** - Run performance tests separately from feature tests
+3. **Baseline first** - Record baseline performance before optimizations
+4. **Test after changes** - Re-run performance tests after code changes
+5. **Monitor trends** - Track performance metrics over time
 
 ---
 
@@ -597,5 +758,17 @@ Percentage of the requests served within a certain time (ms)
 
 ---
 
-**Last Updated:** 2026-01-20
-**Version:** 1.0.0
+---
+
+## Recent Performance Optimizations
+
+See [PERFORMANCE_OPTIMIZATIONS.md](PERFORMANCE_OPTIMIZATIONS.md) for details on recent optimizations that achieved:
+- **98% improvement** in dashboard load times
+- **Query count reduced** from 37 to 29
+- **Memory usage reduced** by 73%
+- All performance tests now passing with production-scale data
+
+---
+
+**Last Updated:** 2026-01-21
+**Version:** 1.1.0

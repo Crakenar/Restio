@@ -13,11 +13,8 @@ class RequestsController extends Controller
 
         // Fetch requests scoped to company with pagination
         $requests = \App\Models\VacationRequest::query()
-            ->with(['user'])
+            ->with(['user:id,name']) // Only load necessary columns
             ->where('company_id', $user->company_id)
-            ->whereHas('user', function ($query) use ($user) {
-                $query->where('company_id', $user->company_id);
-            })
             ->latest()
             ->paginate(50) // 50 items per page
             ->through(function ($request) {

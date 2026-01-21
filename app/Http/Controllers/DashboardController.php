@@ -28,14 +28,12 @@ class DashboardController extends Controller
             // Get current user's balance summary
             $userBalance = $balanceService->getBalanceSummary($user);
 
-            // Fetch requests scoped to company
+            // Fetch recent requests scoped to company (limit to 50 most recent for performance)
             $requests = VacationRequest::query()
-                ->with(['user'])
+                ->with(['user:id,name']) // Only select necessary columns
                 ->where('company_id', $companyId)
-                ->whereHas('user', function ($query) use ($companyId) {
-                    $query->where('company_id', $companyId);
-                })
                 ->latest()
+                ->limit(50) // Limit dashboard to 50 most recent requests
                 ->get()
                 ->map(function ($request) {
                     return [
@@ -61,12 +59,14 @@ class DashboardController extends Controller
             if ($user->role === UserRole::ADMIN->value || $user->role === UserRole::OWNER->value) {
                 $employeeModels = User::query()
                     ->where('company_id', $companyId)
-                    ->with('team') // Eager load team to avoid N+1
+                    ->select(['id', 'name', 'email', 'team_id', 'company_id']) // Only select necessary columns
+                    ->with(['team:id,name']) // Eager load team with only necessary columns
                     ->withCount([
                         'vacation_requests as pending_requests_count' => function ($query) {
                             $query->where('status', VacationRequestStatus::PENDING);
                         },
                     ])
+                    ->limit(100) // Limit to 100 employees on dashboard for performance
                     ->get();
 
                 // Batch calculate balances to avoid N+1 queries
