@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     procps \
     curl \
+    postgresql-client \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
         pdo \

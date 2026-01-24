@@ -1,0 +1,281 @@
+{
+  "app": {
+    "name": "Restio",
+    "tagline": "Modern Vacation Management"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "login": "Log in",
+    "register": "Get Started",
+    "learnMore": "Learn More",
+    "goToDashboard": "Go to Dashboard"
+  },
+  "welcome": {
+    "title": "Time off, beautifully managed",
+    "subtitle": "Transform how your team plans vacations and time off. Restio brings clarity, simplicity, and joy to leave management.",
+    "cta": {
+      "startTrial": "Start Free Trial",
+      "createAccount": "Create Account",
+      "signIn": "Sign In",
+      "readyTitle": "Ready to get started?",
+      "readySubtitle": "Join hundreds of teams already managing their time off with Restio"
+    },
+    "stats": {
+      "approvalRate": "Approval Rate",
+      "timeSaved": "Time Saved",
+      "companies": "Companies"
+    },
+    "features": {
+      "title": "Everything you need",
+      "subtitle": "A complete solution for modern teams to manage time off with ease and transparency",
+      "smartTimeOff": {
+        "title": "Smart Time Off",
+        "description": "Effortlessly manage vacation requests, sick days, and time off with an intuitive calendar interface."
+      },
+      "teamCoordination": {
+        "title": "Team Coordination",
+        "description": "Keep your team aligned with real-time availability tracking and coverage planning."
+      },
+      "analytics": {
+        "title": "Analytics Dashboard",
+        "description": "Gain insights into team utilization, pending approvals, and vacation trends at a glance."
+      }
+    },
+    "benefits": {
+      "title": "Built for productivity",
+      "subtitle": "Restio streamlines every aspect of leave management, from submission to approval, giving your team more time to focus on what matters.",
+      "list": {
+        "automatedWorkflows": "Automated approval workflows",
+        "teamCalendar": "Real-time team calendar",
+        "mobileFriendly": "Mobile-friendly interface",
+        "customPolicies": "Customizable leave policies",
+        "reporting": "Detailed reporting & analytics",
+        "integrations": "Seamless integrations"
+      }
+    },
+    "mockup": {
+      "calendar": {
+        "title": "January 2026"
+      },
+      "request": {
+        "title": "Vacation Request",
+        "subtitle": "John Doe • Engineering",
+        "days": "5 days",
+        "approve": "Approve",
+        "decline": "Decline"
+      },
+      "stats": {
+        "title": "Team Overview",
+        "daysUsed": "Days Used",
+        "approved": "Approved",
+        "pending": "Pending"
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to your account to continue",
+      "email": "Email",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign In",
+      "noAccount": "Don't have an account?",
+      "createOne": "Create one"
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Join Restio and start managing time off better",
+      "name": "Full Name",
+      "email": "Email",
+      "password": "Password",
+      "passwordConfirmation": "Confirm Password",
+      "agreeToTerms": "I agree to the {0} and {1}",
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy",
+      "submit": "Create Account",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in"
+    },
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "subtitle": "No problem. Just let us know your email address and we will email you a password reset link.",
+      "email": "Email",
+      "submit": "Email Password Reset Link",
+      "backToLogin": "Back to login"
+    },
+    "resetPassword": {
+      "title": "Reset your password",
+      "subtitle": "Enter your new password below",
+      "email": "Email",
+      "password": "Password",
+      "passwordConfirmation": "Confirm Password",
+      "submit": "Reset Password"
+    },
+    "verifyEmail": {
+      "title": "Verify your email",
+      "subtitle": "Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you?",
+      "resent": "A new verification link has been sent to your email address.",
+      "submit": "Resend Verification Email",
+      "logout": "Log Out"
+    },
+    "twoFactor": {
+      "title": "Two-Factor Authentication",
+      "subtitle": "Confirm access to your account by entering the authentication code provided by your authenticator application.",
+      "code": "Code",
+      "recoveryCode": "Recovery Code",
+      "useRecoveryCode": "Use a recovery code",
+      "useAuthCode": "Use an authentication code",
+      "submit": "Verify"
+    },
+    "confirmPassword": {
+      "title": "Confirm your password",
+      "subtitle": "This is a secure area of the application. Please confirm your password before continuing.",
+      "password": "Password",
+      "submit": "Confirm"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back, {name}",
+    "stats": {
+      "vacationDays": "Vacation Days",
+      "remaining": "Remaining",
+      "pending": "Pending Requests",
+      "approved": "Approved",
+      "teamAvailability": "Team Availability"
+    }
+  },
+  "vacation": {
+    "request": {
+      "title": "Request Time Off",
+      "type": "Type",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "reason": "Reason (optional)",
+      "submit": "Submit Request",
+      "cancel": "Cancel"
+    },
+    "types": {
+      "vacation": "Vacation",
+      "sick": "Sick Leave",
+      "personal": "Personal Day",
+      "other": "Other"
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    }
+  },
+  "team": {
+    "title": "Team",
+    "members": "Team Members",
+    "availability": "Availability",
+    "outOfOffice": "Out of Office"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": {
+      "title": "Profile",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "save": "Save Changes"
+    },
+    "password": {
+      "title": "Change Password",
+      "current": "Current Password",
+      "new": "New Password",
+      "confirm": "Confirm New Password",
+      "save": "Update Password"
+    },
+    "twoFactor": {
+      "title": "Two-Factor Authentication",
+      "description": "Add additional security to your account using two-factor authentication.",
+      "enabled": "Two-factor authentication is enabled.",
+      "disabled": "Two-factor authentication is not enabled.",
+      "enable": "Enable",
+      "disable": "Disable",
+      "showRecoveryCodes": "Show Recovery Codes",
+      "regenerateRecoveryCodes": "Regenerate Recovery Codes",
+      "recoveryCodes": "Recovery Codes",
+      "recoveryCodesDescription": "Store these recovery codes in a secure password manager. They can be used to recover access to your account if your two-factor authentication device is lost."
+    },
+    "appearance": {
+      "title": "Appearance",
+      "theme": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "company": {
+      "title": "Company Settings",
+      "name": "Company Name",
+      "email": "Company Email",
+      "save": "Save Changes"
+    }
+  },
+  "employees": {
+    "title": "Employees",
+    "add": "Add Employee",
+    "edit": "Edit Employee",
+    "delete": "Delete Employee",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "department": "Department",
+    "vacationDays": "Vacation Days"
+  },
+  "requests": {
+    "title": "Requests",
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "all": "All Requests",
+    "approve": "Approve",
+    "reject": "Reject"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "today": "Today",
+    "week": "Week",
+    "month": "Month",
+    "year": "Year"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "loading": "Loading...",
+    "noResults": "No results found",
+    "error": "An error occurred",
+    "success": "Success",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "changeLanguage": "Change Language"
+  },
+  "footer": {
+    "copyright": "© 2026 Restio. All rights reserved.",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "gdpr": "GDPR"
+  },
+  "errors": {
+    "404": "Page not found",
+    "403": "Forbidden",
+    "500": "Server error",
+    "unauthorized": "Unauthorized"
+  }
+}

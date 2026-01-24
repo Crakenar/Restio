@@ -1,0 +1,281 @@
+{
+  "app": {
+    "name": "Restio",
+    "tagline": "Gestion Moderne des Vacances"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "login": "Se connecter",
+    "register": "Commencer",
+    "learnMore": "En savoir plus",
+    "goToDashboard": "Aller au tableau de bord"
+  },
+  "welcome": {
+    "title": "Congés, gérés magnifiquement",
+    "subtitle": "Transformez la façon dont votre équipe planifie les vacances et les congés. Restio apporte clarté, simplicité et joie à la gestion des absences.",
+    "cta": {
+      "startTrial": "Commencer l'essai gratuit",
+      "createAccount": "Créer un compte",
+      "signIn": "Se connecter",
+      "readyTitle": "Prêt à commencer?",
+      "readySubtitle": "Rejoignez des centaines d'équipes qui gèrent déjà leurs congés avec Restio"
+    },
+    "stats": {
+      "approvalRate": "Taux d'approbation",
+      "timeSaved": "Temps économisé",
+      "companies": "Entreprises"
+    },
+    "features": {
+      "title": "Tout ce dont vous avez besoin",
+      "subtitle": "Une solution complète pour les équipes modernes pour gérer les congés avec facilité et transparence",
+      "smartTimeOff": {
+        "title": "Congés intelligents",
+        "description": "Gérez sans effort les demandes de vacances, les congés maladie et les absences avec une interface calendrier intuitive."
+      },
+      "teamCoordination": {
+        "title": "Coordination d'équipe",
+        "description": "Gardez votre équipe alignée avec le suivi en temps réel de la disponibilité et la planification de la couverture."
+      },
+      "analytics": {
+        "title": "Tableau de bord analytique",
+        "description": "Obtenez des informations sur l'utilisation de l'équipe, les approbations en attente et les tendances des vacances en un coup d'œil."
+      }
+    },
+    "benefits": {
+      "title": "Conçu pour la productivité",
+      "subtitle": "Restio rationalise chaque aspect de la gestion des congés, de la soumission à l'approbation, donnant à votre équipe plus de temps pour se concentrer sur ce qui compte.",
+      "list": {
+        "automatedWorkflows": "Flux d'approbation automatisés",
+        "teamCalendar": "Calendrier d'équipe en temps réel",
+        "mobileFriendly": "Interface adaptée aux mobiles",
+        "customPolicies": "Politiques de congés personnalisables",
+        "reporting": "Rapports et analyses détaillés",
+        "integrations": "Intégrations transparentes"
+      }
+    },
+    "mockup": {
+      "calendar": {
+        "title": "Janvier 2026"
+      },
+      "request": {
+        "title": "Demande de vacances",
+        "subtitle": "John Doe • Ingénierie",
+        "days": "5 jours",
+        "approve": "Approuver",
+        "decline": "Refuser"
+      },
+      "stats": {
+        "title": "Aperçu de l'équipe",
+        "daysUsed": "Jours utilisés",
+        "approved": "Approuvé",
+        "pending": "En attente"
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Bon retour",
+      "subtitle": "Connectez-vous à votre compte pour continuer",
+      "email": "Email",
+      "password": "Mot de passe",
+      "rememberMe": "Se souvenir de moi",
+      "forgotPassword": "Mot de passe oublié?",
+      "submit": "Se connecter",
+      "noAccount": "Vous n'avez pas de compte?",
+      "createOne": "En créer un"
+    },
+    "register": {
+      "title": "Créez votre compte",
+      "subtitle": "Rejoignez Restio et commencez à mieux gérer les congés",
+      "name": "Nom complet",
+      "email": "Email",
+      "password": "Mot de passe",
+      "passwordConfirmation": "Confirmer le mot de passe",
+      "agreeToTerms": "J'accepte les {0} et la {1}",
+      "termsOfService": "Conditions d'utilisation",
+      "privacyPolicy": "Politique de confidentialité",
+      "submit": "Créer un compte",
+      "haveAccount": "Vous avez déjà un compte?",
+      "signIn": "Se connecter"
+    },
+    "forgotPassword": {
+      "title": "Mot de passe oublié?",
+      "subtitle": "Pas de problème. Indiquez-nous simplement votre adresse email et nous vous enverrons un lien de réinitialisation.",
+      "email": "Email",
+      "submit": "Envoyer le lien de réinitialisation",
+      "backToLogin": "Retour à la connexion"
+    },
+    "resetPassword": {
+      "title": "Réinitialisez votre mot de passe",
+      "subtitle": "Entrez votre nouveau mot de passe ci-dessous",
+      "email": "Email",
+      "password": "Mot de passe",
+      "passwordConfirmation": "Confirmer le mot de passe",
+      "submit": "Réinitialiser le mot de passe"
+    },
+    "verifyEmail": {
+      "title": "Vérifiez votre email",
+      "subtitle": "Merci de votre inscription! Avant de commencer, pourriez-vous vérifier votre adresse email en cliquant sur le lien que nous venons de vous envoyer?",
+      "resent": "Un nouveau lien de vérification a été envoyé à votre adresse email.",
+      "submit": "Renvoyer l'email de vérification",
+      "logout": "Se déconnecter"
+    },
+    "twoFactor": {
+      "title": "Authentification à deux facteurs",
+      "subtitle": "Confirmez l'accès à votre compte en saisissant le code d'authentification fourni par votre application d'authentification.",
+      "code": "Code",
+      "recoveryCode": "Code de récupération",
+      "useRecoveryCode": "Utiliser un code de récupération",
+      "useAuthCode": "Utiliser un code d'authentification",
+      "submit": "Vérifier"
+    },
+    "confirmPassword": {
+      "title": "Confirmez votre mot de passe",
+      "subtitle": "Ceci est une zone sécurisée de l'application. Veuillez confirmer votre mot de passe avant de continuer.",
+      "password": "Mot de passe",
+      "submit": "Confirmer"
+    }
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bon retour, {name}",
+    "stats": {
+      "vacationDays": "Jours de vacances",
+      "remaining": "Restants",
+      "pending": "Demandes en attente",
+      "approved": "Approuvé",
+      "teamAvailability": "Disponibilité de l'équipe"
+    }
+  },
+  "vacation": {
+    "request": {
+      "title": "Demander un congé",
+      "type": "Type",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "reason": "Raison (facultatif)",
+      "submit": "Soumettre la demande",
+      "cancel": "Annuler"
+    },
+    "types": {
+      "vacation": "Vacances",
+      "sick": "Congé maladie",
+      "personal": "Jour personnel",
+      "other": "Autre"
+    },
+    "status": {
+      "pending": "En attente",
+      "approved": "Approuvé",
+      "rejected": "Rejeté"
+    }
+  },
+  "team": {
+    "title": "Équipe",
+    "members": "Membres de l'équipe",
+    "availability": "Disponibilité",
+    "outOfOffice": "Absent du bureau"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "profile": {
+      "title": "Profil",
+      "name": "Nom",
+      "email": "Email",
+      "phone": "Téléphone",
+      "save": "Enregistrer les modifications"
+    },
+    "password": {
+      "title": "Changer le mot de passe",
+      "current": "Mot de passe actuel",
+      "new": "Nouveau mot de passe",
+      "confirm": "Confirmer le nouveau mot de passe",
+      "save": "Mettre à jour le mot de passe"
+    },
+    "twoFactor": {
+      "title": "Authentification à deux facteurs",
+      "description": "Ajoutez une sécurité supplémentaire à votre compte en utilisant l'authentification à deux facteurs.",
+      "enabled": "L'authentification à deux facteurs est activée.",
+      "disabled": "L'authentification à deux facteurs n'est pas activée.",
+      "enable": "Activer",
+      "disable": "Désactiver",
+      "showRecoveryCodes": "Afficher les codes de récupération",
+      "regenerateRecoveryCodes": "Régénérer les codes de récupération",
+      "recoveryCodes": "Codes de récupération",
+      "recoveryCodesDescription": "Conservez ces codes de récupération dans un gestionnaire de mots de passe sécurisé. Ils peuvent être utilisés pour récupérer l'accès à votre compte si votre appareil d'authentification à deux facteurs est perdu."
+    },
+    "appearance": {
+      "title": "Apparence",
+      "theme": "Thème",
+      "light": "Clair",
+      "dark": "Sombre",
+      "system": "Système"
+    },
+    "company": {
+      "title": "Paramètres de l'entreprise",
+      "name": "Nom de l'entreprise",
+      "email": "Email de l'entreprise",
+      "save": "Enregistrer les modifications"
+    }
+  },
+  "employees": {
+    "title": "Employés",
+    "add": "Ajouter un employé",
+    "edit": "Modifier l'employé",
+    "delete": "Supprimer l'employé",
+    "name": "Nom",
+    "email": "Email",
+    "role": "Rôle",
+    "department": "Département",
+    "vacationDays": "Jours de vacances"
+  },
+  "requests": {
+    "title": "Demandes",
+    "pending": "En attente",
+    "approved": "Approuvé",
+    "rejected": "Rejeté",
+    "all": "Toutes les demandes",
+    "approve": "Approuver",
+    "reject": "Rejeter"
+  },
+  "calendar": {
+    "title": "Calendrier",
+    "today": "Aujourd'hui",
+    "week": "Semaine",
+    "month": "Mois",
+    "year": "Année"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "loading": "Chargement...",
+    "noResults": "Aucun résultat trouvé",
+    "error": "Une erreur s'est produite",
+    "success": "Succès",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Soumettre",
+    "close": "Fermer",
+    "yes": "Oui",
+    "no": "Non",
+    "changeLanguage": "Changer de langue"
+  },
+  "footer": {
+    "copyright": "© 2026 Restio. Tous droits réservés.",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "gdpr": "RGPD"
+  },
+  "errors": {
+    "404": "Page non trouvée",
+    "403": "Interdit",
+    "500": "Erreur serveur",
+    "unauthorized": "Non autorisé"
+  }
+}
