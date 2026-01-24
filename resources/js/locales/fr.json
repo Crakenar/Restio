@@ -277,5 +277,94 @@
     "403": "Interdit",
     "500": "Erreur serveur",
     "unauthorized": "Non autorisé"
+  },
+  "tour": {
+    "next": "Suivant",
+    "previous": "Précédent",
+    "done": "Terminé",
+    "skip": "Passer la visite",
+    "restart": "Redémarrer la visite",
+    "employee": {
+      "welcome": {
+        "title": "Bienvenue sur Restio! 👋",
+        "description": "Faisons un rapide tour pour vous montrer comment gérer vos congés. Cela ne prendra qu'une minute!"
+      },
+      "stats": {
+        "title": "Votre solde de vacances",
+        "description": "Ici, vous pouvez voir vos jours de vacances restants et combien vous en avez utilisés cette année."
+      },
+      "requestButton": {
+        "title": "Demander un congé",
+        "description": "Cliquez ici pour soumettre une nouvelle demande de vacances. Votre gestionnaire sera notifié automatiquement."
+      },
+      "upcoming": {
+        "title": "Congés à venir",
+        "description": "Consultez vos demandes de vacances approuvées et voyez quand vous serez absent du travail."
+      },
+      "sidebar": {
+        "title": "Navigation rapide",
+        "description": "Accédez à votre calendrier, consultez les horaires d'équipe, vérifiez l'historique de vos demandes et modifiez les paramètres."
+      },
+      "complete": {
+        "title": "Vous êtes prêt! 🎉",
+        "description": "Vous pouvez redémarrer cette visite à tout moment depuis les paramètres. Profitez bien de la planification de vos vacances!"
+      }
+    },
+    "manager": {
+      "welcome": {
+        "title": "Bienvenue sur le tableau de bord Manager! 👨‍💼",
+        "description": "En tant que gestionnaire, vous pouvez approuver les demandes et surveiller les congés de votre équipe. Découvrons ensemble!"
+      },
+      "pendingRequests": {
+        "title": "Demandes en attente",
+        "description": "Consultez toutes les demandes de vacances en attente de votre approbation. Elles sont organisées par date et priorité."
+      },
+      "approveReject": {
+        "title": "Approuver ou rejeter",
+        "description": "Examinez et répondez rapidement aux demandes de vacances en un seul clic. Votre équipe est notifiée instantanément."
+      },
+      "teamOverview": {
+        "title": "Aperçu de l'équipe",
+        "description": "Surveillez l'utilisation des vacances de votre équipe, voyez qui est absent et planifiez la couverture en conséquence."
+      },
+      "sidebar": {
+        "title": "Outils de gestion",
+        "description": "Accédez au calendrier d'équipe, gérez les employés, consultez toutes les demandes et configurez les paramètres d'équipe."
+      },
+      "complete": {
+        "title": "Tout est prêt, Manager! 🎯",
+        "description": "Vous êtes prêt à gérer efficacement les congés de votre équipe. Redémarrez cette visite depuis les paramètres."
+      }
+    },
+    "admin": {
+      "welcome": {
+        "title": "Bienvenue sur le tableau de bord Admin! 🔧",
+        "description": "En tant qu'administrateur, vous avez le contrôle total du système. Explorons les fonctionnalités puissantes disponibles."
+      },
+      "analytics": {
+        "title": "Analyses et statistiques",
+        "description": "Consultez les statistiques de l'entreprise, les taux d'approbation, les tendances d'utilisation et les répartitions par département."
+      },
+      "employeeManagement": {
+        "title": "Gestion des employés",
+        "description": "Gérez tous les employés, attribuez des jours de vacances, mettez à jour les rôles et organisez les départements."
+      },
+      "requestsTable": {
+        "title": "Toutes les demandes",
+        "description": "Consultez chaque demande de vacances dans l'entreprise avec filtrage avancé et actions groupées."
+      },
+      "sidebar": {
+        "title": "Navigation Admin",
+        "description": "Accédez à toutes les fonctionnalités: tableau de bord, employés, gestion d'équipe, analyses et paramètres système."
+      },
+      "settings": {
+        "title": "Paramètres de l'entreprise",
+        "description": "Configurez les politiques de l'entreprise, les allocations de vacances, les flux d'approbation et les intégrations."
+      },
+      "complete": {
+        "title": "Pouvoirs Admin débloqués! ⚡",
+        "description": "Vous savez maintenant comment gérer l'ensemble du système. Redémarrez cette visite depuis les paramètres."
+      }
+    }
   }
 }

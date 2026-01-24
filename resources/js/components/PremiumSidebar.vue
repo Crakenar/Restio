@@ -16,6 +16,7 @@ import {
 } from 'lucide-vue-next';
 import NotificationBell from './NotificationBell.vue';
 import NotificationPanel from './NotificationPanel.vue';
+import TourButton from './TourButton.vue';
 
 interface NavItem {
     title: string;
@@ -258,9 +259,20 @@ const closeNotificationPanel = () => {
                 </nav>
 
                 <!-- Footer - User Profile -->
-                <div class="border-t border-white/20 p-4 dark:border-white/10">
+                <div class="border-t border-white/20 p-4 dark:border-white/10" data-tour="sidebar">
+                    <!-- Help Tour Button & Settings -->
+                    <div :class="['mb-2 flex gap-2', isCollapsed ? 'flex-col' : '']">
+                        <!-- Tour Button -->
+                        <div class="flex-1">
+                            <TourButton
+                                :role="userRole === 'admin' ? 'admin' : userRole === 'manager' ? 'manager' : 'employee'"
+                            />
+                        </div>
+                    </div>
+
                     <!-- Settings Link -->
                     <Link
+                        data-tour="settings"
                         href="/settings"
                         :class="[
                             'group mb-2 flex items-center gap-3 rounded-2xl px-4 py-2 text-slate-700 transition-all duration-300 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5',

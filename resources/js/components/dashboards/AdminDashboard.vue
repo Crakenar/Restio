@@ -141,6 +141,7 @@ const getTypeColor = (type: string) => {
         class="animate-in space-y-6 duration-700 fade-in slide-in-from-bottom-4"
     >
         <div
+            data-tour="welcome"
             class="relative overflow-hidden rounded-2xl border border-slate-200/50 bg-white/60 p-8 text-slate-900 backdrop-blur-xl dark:border-white/20 dark:bg-white/10 dark:text-white"
         >
             <div class="relative z-10">
@@ -342,7 +343,7 @@ const getTypeColor = (type: string) => {
         </div>
 
         <!-- Analytics Grid -->
-        <div class="grid gap-4 md:grid-cols-2">
+        <div data-tour="analytics" class="grid gap-4 md:grid-cols-2">
             <!-- Department Breakdown -->
             <Card
                 class="border border-slate-200/50 bg-white/40 backdrop-blur-sm dark:border-white/10 dark:bg-white/5"
@@ -522,7 +523,7 @@ const getTypeColor = (type: string) => {
                 <!--                <TeamCalendar :requests="requests" />-->
             </TabsContent>
 
-            <TabsContent value="employees">
+            <TabsContent value="employees" data-tour="employee-management">
                 <AdminDashboard
                     :employees="employees"
                     :requests="requests"
@@ -530,7 +531,7 @@ const getTypeColor = (type: string) => {
                 />
             </TabsContent>
 
-            <TabsContent value="requests">
+            <TabsContent value="requests" data-tour="requests-table">
                 <RequestsTable
                     :requests="requests"
                     user-role="admin"

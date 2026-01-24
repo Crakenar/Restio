@@ -185,6 +185,7 @@ const formatDateRange = (start: Date, end: Date) => {
             <div class="grid gap-6 lg:grid-cols-3">
                 <!-- Welcome Card -->
                 <div
+                    data-tour="welcome"
                     class="group relative overflow-hidden rounded-3xl border border-white/60 bg-white/70 p-8 shadow-xl shadow-orange-500/5 backdrop-blur-xl transition-all duration-500 hover:scale-[1.01] hover:border-white/80 hover:bg-white/80 hover:shadow-2xl hover:shadow-orange-500/10 dark:border-white/10 dark:bg-slate-900/70 dark:hover:border-white/20 dark:hover:bg-slate-900/80 lg:col-span-2"
                     style="animation: slideInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1)"
                 >
@@ -257,6 +258,7 @@ const formatDateRange = (start: Date, end: Date) => {
 
             <!-- Stats Cards -->
             <div
+                data-tour="stats"
                 class="grid gap-4 md:grid-cols-3"
                 style="
                     animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
@@ -358,6 +360,7 @@ const formatDateRange = (start: Date, end: Date) => {
                 "
             >
                 <Button
+                    data-tour="request-button"
                     @click="isRequestDialogOpen = true"
                     class="group relative overflow-hidden bg-gradient-to-r from-orange-500 to-rose-500 px-8 py-6 text-lg font-bold text-white shadow-2xl shadow-orange-500/30 transition-all duration-300 hover:scale-105 hover:shadow-3xl hover:shadow-orange-500/40"
                 >
@@ -483,6 +486,7 @@ const formatDateRange = (start: Date, end: Date) => {
             <!-- Upcoming Time Off -->
             <Card
                 v-if="upcomingRequests.length > 0"
+                data-tour="upcoming"
                 class="border border-white/60 bg-white/70 backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/70"
                 style="
                     animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);

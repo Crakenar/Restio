@@ -277,5 +277,94 @@
     "403": "Forbidden",
     "500": "Server error",
     "unauthorized": "Unauthorized"
+  },
+  "tour": {
+    "next": "Next",
+    "previous": "Previous",
+    "done": "Done",
+    "skip": "Skip Tour",
+    "restart": "Restart Tour",
+    "employee": {
+      "welcome": {
+        "title": "Welcome to Restio! 👋",
+        "description": "Let's take a quick tour to show you how to manage your time off. This will only take a minute!"
+      },
+      "stats": {
+        "title": "Your Vacation Balance",
+        "description": "Here you can see your remaining vacation days and how many you've used this year."
+      },
+      "requestButton": {
+        "title": "Request Time Off",
+        "description": "Click here to submit a new vacation request. Your manager will be notified automatically."
+      },
+      "upcoming": {
+        "title": "Upcoming Time Off",
+        "description": "View your approved vacation requests and see when you'll be away from work."
+      },
+      "sidebar": {
+        "title": "Quick Navigation",
+        "description": "Access your calendar, view team schedules, check your requests history, and update settings."
+      },
+      "complete": {
+        "title": "You're Ready to Go! 🎉",
+        "description": "You can restart this tour anytime from settings. Have a great time planning your vacations!"
+      }
+    },
+    "manager": {
+      "welcome": {
+        "title": "Welcome to Manager Dashboard! 👨‍💼",
+        "description": "As a manager, you can approve requests and monitor your team's time off. Let's show you around!"
+      },
+      "pendingRequests": {
+        "title": "Pending Requests",
+        "description": "See all vacation requests waiting for your approval. They're organized by date and priority."
+      },
+      "approveReject": {
+        "title": "Approve or Reject",
+        "description": "Quickly review and respond to vacation requests with a single click. Your team gets notified instantly."
+      },
+      "teamOverview": {
+        "title": "Team Overview",
+        "description": "Monitor your team's vacation usage, see who's away, and plan coverage accordingly."
+      },
+      "sidebar": {
+        "title": "Manager Tools",
+        "description": "Access team calendar, manage employees, view all requests, and configure team settings."
+      },
+      "complete": {
+        "title": "All Set, Manager! 🎯",
+        "description": "You're ready to manage your team's time off efficiently. Restart this tour anytime from settings."
+      }
+    },
+    "admin": {
+      "welcome": {
+        "title": "Welcome to Admin Dashboard! 🔧",
+        "description": "As an admin, you have full control over the system. Let's explore the powerful features available to you."
+      },
+      "analytics": {
+        "title": "Analytics & Insights",
+        "description": "View company-wide statistics, approval rates, utilization trends, and department breakdowns."
+      },
+      "employeeManagement": {
+        "title": "Employee Management",
+        "description": "Manage all employees, assign vacation days, update roles, and organize departments."
+      },
+      "requestsTable": {
+        "title": "All Requests",
+        "description": "See every vacation request across the company with advanced filtering and bulk actions."
+      },
+      "sidebar": {
+        "title": "Admin Navigation",
+        "description": "Access all features: dashboard, employees, team management, analytics, and system settings."
+      },
+      "settings": {
+        "title": "Company Settings",
+        "description": "Configure company-wide policies, vacation allowances, approval workflows, and integrations."
+      },
+      "complete": {
+        "title": "Admin Powers Unlocked! ⚡",
+        "description": "You now know how to manage the entire system. Restart this tour anytime from settings."
+      }
+    }
   }
 }

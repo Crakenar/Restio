@@ -6,7 +6,8 @@ import PremiumSidebar from '@/components/PremiumSidebar.vue';
 import type { BreadcrumbItem } from '@/types';
 import { Employee, UserRole, VacationRequest } from '@/types/vacation';
 import { Head, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useOnboardingTour } from '@/composables/useOnboardingTour';
 
 const page = usePage();
 
@@ -85,6 +86,23 @@ const pageTitle = computed(() => {
             return 'Manager Dashboard';
         default:
             return 'My Dashboard';
+    }
+});
+
+// Onboarding tour
+const { shouldShowTour, startTourForRole } = useOnboardingTour();
+
+onMounted(() => {
+    // Map UserRole enum to tour role type
+    const tourRole = userRole.value === UserRole.ADMIN ? 'admin'
+        : userRole.value === UserRole.MANAGER ? 'manager'
+        : 'employee';
+
+    // Auto-start tour for first-time users
+    if (shouldShowTour(tourRole)) {
+        setTimeout(() => {
+            startTourForRole(tourRole);
+        }, 800); // Wait for page to fully render
     }
 });
 </script>

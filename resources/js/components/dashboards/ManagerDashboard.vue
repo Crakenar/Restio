@@ -104,7 +104,7 @@ const getTypeColor = (type: string) => {
         class="animate-in space-y-6 duration-700 fade-in slide-in-from-bottom-4"
     >
         <!-- Header with Action Metrics -->
-        <div class="grid gap-4 md:grid-cols-4">
+        <div data-tour="welcome" class="grid gap-4 md:grid-cols-4">
             <Card
                 class="relative overflow-hidden border border-slate-200/60 dark:border-white/20 bg-white/60 dark:bg-white/10 text-slate-900 dark:text-white shadow-lg shadow-amber-500/10 backdrop-blur-sm"
             >
@@ -220,7 +220,7 @@ const getTypeColor = (type: string) => {
             </TabsList>
 
             <!-- Pending Requests -->
-            <TabsContent value="pending" class="space-y-4">
+            <TabsContent value="pending" data-tour="pending-requests" class="space-y-4">
                 <Card v-if="pendingRequests.length === 0" class="border border-dashed border-slate-300 dark:border-white/20 bg-white/40 dark:bg-white/5">
                     <CardContent
                         class="flex flex-col items-center justify-center py-12"
@@ -301,7 +301,7 @@ const getTypeColor = (type: string) => {
                                         "{{ request.reason }}"
                                     </p>
                                 </div>
-                                <div class="flex gap-2">
+                                <div data-tour="approve-reject" class="flex gap-2">
                                     <Button
                                         variant="outline"
                                         size="sm"
@@ -328,7 +328,7 @@ const getTypeColor = (type: string) => {
             </TabsContent>
 
             <!-- Team Calendar -->
-            <TabsContent value="team">
+            <TabsContent value="team" data-tour="team-overview">
                 <TeamCalendar :requests="requests" />
             </TabsContent>
 
