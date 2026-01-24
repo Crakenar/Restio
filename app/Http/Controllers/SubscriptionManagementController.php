@@ -40,13 +40,18 @@ class SubscriptionManagementController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Get available plans
-        $availablePlans = Subscription::all();
+        // Get available plans ordered by sort order
+        $availablePlans = Subscription::ordered()->get();
 
         return Inertia::render('SubscriptionManagement', [
             'company' => [
                 'id' => $company->id,
                 'name' => $company->name,
+                'current_user_count' => $company->current_user_count,
+                'user_limit' => $company->user_limit,
+                'remaining_slots' => $company->remaining_user_slots,
+                'is_near_limit' => $company->isNearUserLimit(),
+                'has_reached_limit' => $company->hasReachedUserLimit(),
             ],
             'current_subscription' => $currentSubscription ? [
                 'id' => $currentSubscription->id,
@@ -57,6 +62,10 @@ class SubscriptionManagementController extends Controller
                     'price' => $currentSubscription->subscription->price,
                     'currency' => $currentSubscription->subscription->currency,
                     'interval' => $currentSubscription->subscription->interval->value,
+                    'max_users' => $currentSubscription->subscription->max_users,
+                    'description' => $currentSubscription->subscription->description,
+                    'features' => $currentSubscription->subscription->features,
+                    'is_popular' => $currentSubscription->subscription->is_popular,
                 ],
                 'status' => $currentSubscription->status->value,
                 'starts_at' => $currentSubscription->starts_at->toIso8601String(),
@@ -71,7 +80,20 @@ class SubscriptionManagementController extends Controller
                 'ends_at' => $sub->ends_at?->format('M d, Y'),
                 'created_at' => $sub->created_at->format('M d, Y'),
             ]),
-            'available_plans' => $availablePlans,
+            'available_plans' => $availablePlans->map(fn ($plan) => [
+                'id' => $plan->id,
+                'name' => $plan->name,
+                'slug' => $plan->slug,
+                'price' => $plan->price,
+                'currency' => $plan->currency,
+                'interval' => $plan->interval->value,
+                'max_users' => $plan->max_users,
+                'description' => $plan->description,
+                'features' => $plan->features,
+                'is_popular' => $plan->is_popular,
+                'sort_order' => $plan->sort_order,
+                'formatted_price' => $plan->formatted_price,
+            ]),
             'fake_mode' => $this->paymentService->isFakeMode(),
         ]);
     }

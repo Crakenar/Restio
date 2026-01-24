@@ -40,6 +40,14 @@ class EmployeesController extends Controller
 
         return Inertia::render('Employees', [
             'employees' => $employees,
+            'subscription_info' => [
+                'current_user_count' => $user->company->current_user_count,
+                'user_limit' => $user->company->user_limit,
+                'remaining_slots' => $user->company->remaining_user_slots,
+                'is_near_limit' => $user->company->isNearUserLimit(),
+                'has_reached_limit' => $user->company->hasReachedUserLimit(),
+                'can_add_users' => $user->company->canAddUsers(),
+            ],
         ]);
     }
 
@@ -50,6 +58,17 @@ class EmployeesController extends Controller
     {
         // Authorize employee creation (only admins and owners)
         $this->authorize('create', User::class);
+
+        $company = auth()->user()->company;
+
+        // Check subscription user limit
+        if (!$company->canAddUsers(1)) {
+            return redirect()
+                ->back()
+                ->with('error', "User limit reached ({$company->user_limit} users). Please upgrade your subscription to add more employees.")
+                ->with('upgrade_required', true)
+                ->with('upgrade_url', route('subscription.index'));
+        }
 
         $employee = User::create([
             'name' => $request->input('name'),
@@ -78,7 +97,21 @@ class EmployeesController extends Controller
         $this->authorize('importCsv', User::class);
 
         $file = $request->file('file');
-        $companyId = auth()->user()->company_id;
+        $company = auth()->user()->company;
+        $companyId = $company->id;
+
+        // Count rows in CSV to check if we can add that many users
+        $csvData = array_map('str_getcsv', file($file->getRealPath()));
+        $rowCount = count($csvData) - 1; // Subtract header row
+
+        if (!$company->canAddUsers($rowCount)) {
+            $remainingSlots = $company->remaining_user_slots;
+            return redirect()
+                ->back()
+                ->with('error', "Cannot import {$rowCount} employees. You can only add {$remainingSlots} more users. Current limit: {$company->user_limit} users. Please upgrade your subscription.")
+                ->with('upgrade_required', true)
+                ->with('upgrade_url', route('subscription.index'));
+        }
 
         try {
             $result = $importAction->execute($file, $companyId);

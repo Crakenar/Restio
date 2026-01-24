@@ -57,4 +57,72 @@ class Company extends Model
     {
         return $this->hasOne(CompanySubscription::class)->latestOfMany();
     }
+
+    /**
+     * Get the current active subscription
+     */
+    public function getActiveSubscriptionAttribute()
+    {
+        return $this->subscriptions()
+            ->where('status', \App\Enum\SubscriptionStatus::ACTIVE)
+            ->with('subscription')
+            ->latest()
+            ->first();
+    }
+
+    /**
+     * Get the current user limit based on subscription
+     */
+    public function getUserLimitAttribute(): int
+    {
+        $activeSubscription = $this->active_subscription;
+
+        if (!$activeSubscription) {
+            // Default to free plan limit if no subscription
+            return 6; // 5 employees + 1 owner
+        }
+
+        return $activeSubscription->subscription->max_users ?? 6;
+    }
+
+    /**
+     * Get current number of users (including owner)
+     */
+    public function getCurrentUserCountAttribute(): int
+    {
+        return $this->users()->count();
+    }
+
+    /**
+     * Get remaining user slots
+     */
+    public function getRemainingUserSlotsAttribute(): int
+    {
+        return max(0, $this->user_limit - $this->current_user_count);
+    }
+
+    /**
+     * Check if company can add more users
+     */
+    public function canAddUsers(int $count = 1): bool
+    {
+        return ($this->current_user_count + $count) <= $this->user_limit;
+    }
+
+    /**
+     * Check if company is at or near user limit
+     */
+    public function isNearUserLimit(int $threshold = 80): bool
+    {
+        $usagePercentage = ($this->current_user_count / $this->user_limit) * 100;
+        return $usagePercentage >= $threshold;
+    }
+
+    /**
+     * Check if company has reached user limit
+     */
+    public function hasReachedUserLimit(): bool
+    {
+        return $this->current_user_count >= $this->user_limit;
+    }
 }

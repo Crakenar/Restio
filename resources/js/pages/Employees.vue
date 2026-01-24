@@ -2,12 +2,12 @@
 import PremiumSidebar from '@/components/PremiumSidebar.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 const page = usePage();
-import { Users } from 'lucide-vue-next';
+import { Users, AlertTriangle, ArrowRight, Crown } from 'lucide-vue-next';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import EmployeeForm from '@/components/EmployeeForm.vue';
 import CsvUpload from '@/components/CsvUpload.vue';
 import EmployeeList from '@/components/EmployeeList.vue';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 interface Employee {
     id: number;
@@ -17,13 +17,36 @@ interface Employee {
     created_at: string;
 }
 
+interface SubscriptionInfo {
+    current_user_count: number;
+    user_limit: number;
+    remaining_slots: number;
+    is_near_limit: boolean;
+    has_reached_limit: boolean;
+    can_add_users: boolean;
+}
+
 interface Props {
     employees: Employee[];
+    subscription_info: SubscriptionInfo;
 }
 
 const props = defineProps<Props>();
 
 const activeTab = ref('list');
+
+// Calculate usage percentage
+const usagePercentage = computed(() => {
+    return Math.round((props.subscription_info.current_user_count / props.subscription_info.user_limit) * 100);
+});
+
+// Determine progress bar color based on usage
+const progressBarColor = computed(() => {
+    const percentage = usagePercentage.value;
+    if (percentage >= 100) return 'bg-red-500';
+    if (percentage >= 80) return 'bg-amber-500';
+    return 'bg-gradient-to-r from-orange-500 to-rose-500';
+});
 </script>
 
 <template>
@@ -61,6 +84,179 @@ const activeTab = ref('list');
                     <p class="mt-1.5 text-sm text-slate-600 dark:text-white/70">
                         Manage your team members and import employees
                     </p>
+                </div>
+            </div>
+
+            <!-- User Limit Banner -->
+            <div
+                v-if="subscription_info.is_near_limit || subscription_info.has_reached_limit"
+                class="rounded-2xl border p-6 backdrop-blur-xl transition-all duration-300"
+                :class="
+                    subscription_info.has_reached_limit
+                        ? 'border-red-500/30 bg-red-50/80 dark:bg-red-900/20'
+                        : 'border-amber-500/30 bg-amber-50/80 dark:bg-amber-900/20'
+                "
+            >
+                <div class="flex items-start gap-4">
+                    <div
+                        class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl shadow-lg"
+                        :class="
+                            subscription_info.has_reached_limit
+                                ? 'bg-red-500 text-white'
+                                : 'bg-amber-500 text-white'
+                        "
+                    >
+                        <AlertTriangle class="h-6 w-6" />
+                    </div>
+
+                    <div class="flex-1 space-y-3">
+                        <div>
+                            <h3
+                                class="text-lg font-bold"
+                                :class="
+                                    subscription_info.has_reached_limit
+                                        ? 'text-red-900 dark:text-red-200'
+                                        : 'text-amber-900 dark:text-amber-200'
+                                "
+                            >
+                                {{
+                                    subscription_info.has_reached_limit
+                                        ? 'User Limit Reached'
+                                        : 'Approaching User Limit'
+                                }}
+                            </h3>
+                            <p
+                                class="mt-1 text-sm"
+                                :class="
+                                    subscription_info.has_reached_limit
+                                        ? 'text-red-700 dark:text-red-300'
+                                        : 'text-amber-700 dark:text-amber-300'
+                                "
+                            >
+                                {{ subscription_info.current_user_count }} of {{ subscription_info.user_limit }} users
+                                •
+                                <span v-if="subscription_info.remaining_slots > 0">
+                                    {{ subscription_info.remaining_slots }}
+                                    {{ subscription_info.remaining_slots === 1 ? 'slot' : 'slots' }} remaining
+                                </span>
+                                <span v-else class="font-semibold">
+                                    No slots remaining
+                                </span>
+                            </p>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between text-xs font-medium">
+                                <span
+                                    :class="
+                                        subscription_info.has_reached_limit
+                                            ? 'text-red-700 dark:text-red-300'
+                                            : 'text-amber-700 dark:text-amber-300'
+                                    "
+                                >
+                                    Usage
+                                </span>
+                                <span
+                                    class="font-bold"
+                                    :class="
+                                        subscription_info.has_reached_limit
+                                            ? 'text-red-900 dark:text-red-200'
+                                            : 'text-amber-900 dark:text-amber-200'
+                                    "
+                                >
+                                    {{ usagePercentage }}%
+                                </span>
+                            </div>
+                            <div class="h-3 overflow-hidden rounded-full bg-white/50 dark:bg-slate-900/50">
+                                <div
+                                    class="h-full transition-all duration-500 ease-out"
+                                    :class="progressBarColor"
+                                    :style="{ width: usagePercentage + '%' }"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Warning Message -->
+                        <p
+                            class="text-sm font-medium"
+                            :class="
+                                subscription_info.has_reached_limit
+                                    ? 'text-red-800 dark:text-red-200'
+                                    : 'text-amber-800 dark:text-amber-200'
+                            "
+                        >
+                            <span v-if="subscription_info.has_reached_limit">
+                                You cannot add more employees until you upgrade your subscription plan.
+                            </span>
+                            <span v-else>
+                                You're running low on user slots. Consider upgrading soon to continue growing your team.
+                            </span>
+                        </p>
+
+                        <!-- Upgrade CTA -->
+                        <a
+                            :href="route('subscription.index')"
+                            class="group inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:shadow-xl"
+                            :class="
+                                subscription_info.has_reached_limit
+                                    ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800'
+                                    : 'bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800'
+                            "
+                        >
+                            <Crown class="h-4 w-4" />
+                            Upgrade Subscription
+                            <ArrowRight class="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Count Summary (shown when not near limit) -->
+            <div
+                v-else
+                class="rounded-2xl border border-white/40 bg-white/70 p-4 shadow-lg backdrop-blur-xl dark:border-white/20 dark:bg-slate-900/40"
+            >
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-orange-400 to-rose-500 text-white shadow-md">
+                            <Users class="h-5 w-5" />
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-600 dark:text-slate-400">
+                                Team Size
+                            </p>
+                            <p class="text-lg font-bold text-slate-900 dark:text-white">
+                                {{ subscription_info.current_user_count }} / {{ subscription_info.user_limit }} users
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Mini Progress Bar -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-32 space-y-1">
+                            <div class="flex items-center justify-between text-xs font-medium text-slate-600 dark:text-slate-400">
+                                <span>Usage</span>
+                                <span class="font-bold text-slate-900 dark:text-white">{{ usagePercentage }}%</span>
+                            </div>
+                            <div class="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+                                <div
+                                    class="h-full bg-gradient-to-r from-orange-500 to-rose-500 transition-all duration-500"
+                                    :style="{ width: usagePercentage + '%' }"
+                                />
+                            </div>
+                        </div>
+
+                        <a
+                            v-if="usagePercentage >= 60"
+                            :href="route('subscription.index')"
+                            class="group inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-rose-500 px-3 py-1.5 text-xs font-semibold text-white shadow-md transition-all hover:shadow-lg"
+                        >
+                            <Crown class="h-3.5 w-3.5" />
+                            Upgrade
+                            <ArrowRight class="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                        </a>
+                    </div>
                 </div>
             </div>
 
