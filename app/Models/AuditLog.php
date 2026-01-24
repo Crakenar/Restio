@@ -17,6 +17,8 @@ class AuditLog extends Model
         'old_values',
         'new_values',
         'metadata',
+        'ip_address',
+        'user_agent',
     ];
 
     protected function casts(): array

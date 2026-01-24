@@ -101,5 +101,47 @@ class AppServiceProvider extends ServiceProvider
                 ], 429, $headers);
             });
         });
+
+        // Rate limiting for login attempts (5 per minute by email + IP)
+        RateLimiter::for('login', function (Request $request) {
+            if (app()->environment('testing')) {
+                return Limit::none();
+            }
+
+            $email = $request->input('email');
+            $throttleKey = $email ? strtolower($email).'|'.$request->ip() : $request->ip();
+
+            return Limit::perMinute(5)->by($throttleKey)->response(function (Request $request, array $headers) {
+                return response()->json([
+                    'message' => 'Too many login attempts. Please try again later.',
+                ], 429, $headers);
+            });
+        });
+
+        // Rate limiting for password reset requests (3 per hour)
+        RateLimiter::for('password-reset', function (Request $request) {
+            if (app()->environment('testing')) {
+                return Limit::none();
+            }
+
+            return Limit::perHour(3)->by($request->input('email') ?: $request->ip())->response(function (Request $request, array $headers) {
+                return response()->json([
+                    'message' => 'Too many password reset requests. Please try again later.',
+                ], 429, $headers);
+            });
+        });
+
+        // Rate limiting for vacation request submissions (10 per hour per user)
+        RateLimiter::for('vacation-requests', function (Request $request) {
+            if (app()->environment('testing')) {
+                return Limit::none();
+            }
+
+            return Limit::perHour(10)->by($request->user()?->id ?: $request->ip())->response(function (Request $request, array $headers) {
+                return response()->json([
+                    'message' => 'Too many vacation requests. Please try again later.',
+                ], 429, $headers);
+            });
+        });
     }
 }

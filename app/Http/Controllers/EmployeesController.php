@@ -6,6 +6,7 @@ use App\Actions\ImportEmployeesFromCsv;
 use App\Http\Requests\ImportEmployeesRequest;
 use App\Http\Requests\StoreEmployeeRequest;
 use App\Models\User;
+use App\Services\AuditLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
@@ -13,6 +14,8 @@ use Inertia\Response;
 
 class EmployeesController extends Controller
 {
+    public function __construct(protected AuditLogger $auditLogger) {}
+
     /**
      * Display the employees management page.
      */
@@ -48,12 +51,19 @@ class EmployeesController extends Controller
         // Authorize employee creation (only admins and owners)
         $this->authorize('create', User::class);
 
-        User::create([
+        $employee = User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
             'role' => $request->input('role'),
             'company_id' => auth()->user()->company_id,
+        ]);
+
+        // Log the user creation
+        $this->auditLogger->created($employee, [
+            'name' => $employee->name,
+            'email' => $employee->email,
+            'role' => $employee->role,
         ]);
 
         return redirect()->back()->with('success', 'Employee created successfully');

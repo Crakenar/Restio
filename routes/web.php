@@ -19,6 +19,19 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+// Legal pages
+Route::get('/terms-of-service', function () {
+    return Inertia::render('legal/TermsOfService');
+})->name('legal.terms');
+
+Route::get('/privacy-policy', function () {
+    return Inertia::render('legal/PrivacyPolicy');
+})->name('legal.privacy');
+
+Route::get('/gdpr-compliance', function () {
+    return Inertia::render('legal/GdprCompliance');
+})->name('legal.gdpr');
+
 Route::get('/onboarding', [\App\Http\Controllers\OnboardingController::class, 'show'])
     ->middleware(['auth', 'verified', \App\Http\Middleware\EnsureCompanyIsActive::class])
     ->name('onboarding');
@@ -64,7 +77,9 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\EnsureCompanyIsActiv
         ->name('team-management.remove-user');
 
     // Vacation Requests
-    Route::post('vacation-requests', [VacationRequestController::class, 'store'])->name('vacation-requests.store');
+    Route::post('vacation-requests', [VacationRequestController::class, 'store'])
+        ->middleware('throttle:vacation-requests')
+        ->name('vacation-requests.store');
     Route::patch('vacation-requests/{vacationRequest}', [VacationRequestController::class, 'update'])->name('vacation-requests.update');
     Route::delete('vacation-requests/{vacationRequest}', [VacationRequestController::class, 'destroy'])->name('vacation-requests.destroy');
 

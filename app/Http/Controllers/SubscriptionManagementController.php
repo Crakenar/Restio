@@ -4,13 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Enum\SubscriptionStatus;
 use App\Models\Subscription;
+use App\Services\AuditLogger;
 use App\Services\PaymentService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class SubscriptionManagementController extends Controller
 {
-    public function __construct(protected PaymentService $paymentService) {}
+    public function __construct(
+        protected PaymentService $paymentService,
+        protected AuditLogger $auditLogger
+    ) {}
 
     public function index()
     {
@@ -151,13 +155,19 @@ class SubscriptionManagementController extends Controller
             $invoiceUrl = $this->paymentService->getInvoiceUrl($sessionDetails['invoice_id']);
         }
 
+        // Get current subscription for audit log
+        $currentSubscription = $company->subscriptions()
+            ->where('status', SubscriptionStatus::ACTIVE)
+            ->with('subscription')
+            ->first();
+
         // Cancel current active subscription
         $company->subscriptions()
             ->where('status', SubscriptionStatus::ACTIVE)
             ->update(['status' => SubscriptionStatus::CANCELLED]);
 
         // Create new active subscription
-        $company->subscriptions()->create([
+        $newSubscription = $company->subscriptions()->create([
             'subscription_id' => $subscription->id,
             'status' => SubscriptionStatus::ACTIVE,
             'starts_at' => now(),
@@ -167,6 +177,15 @@ class SubscriptionManagementController extends Controller
             'stripe_subscription_id' => $sessionDetails['subscription_id'] ?? null,
             'stripe_invoice_id' => $sessionDetails['invoice_id'] ?? null,
             'invoice_url' => $invoiceUrl,
+        ]);
+
+        // Log subscription change
+        $this->auditLogger->subscriptionChanged('upgraded', [
+            'old_plan' => $currentSubscription?->subscription->name,
+            'new_plan' => $subscription->name,
+            'old_price' => $currentSubscription?->subscription->price,
+            'new_price' => $subscription->price,
+            'stripe_subscription_id' => $sessionDetails['subscription_id'] ?? null,
         ]);
 
         return redirect()->route('subscription.index')->with('success', 'Subscription upgraded successfully!');
@@ -183,12 +202,25 @@ class SubscriptionManagementController extends Controller
 
         $company = $user->company;
 
+        // Get current subscription for audit log
+        $currentSubscription = $company->subscriptions()
+            ->where('status', SubscriptionStatus::ACTIVE)
+            ->with('subscription')
+            ->first();
+
         // Cancel current active subscription
         $updated = $company->subscriptions()
             ->where('status', SubscriptionStatus::ACTIVE)
             ->update(['status' => SubscriptionStatus::CANCELLED]);
 
         if ($updated) {
+            // Log subscription cancellation
+            $this->auditLogger->subscriptionChanged('cancelled', [
+                'plan' => $currentSubscription?->subscription->name,
+                'price' => $currentSubscription?->subscription->price,
+                'ends_at' => $currentSubscription?->ends_at?->toDateString(),
+            ]);
+
             return back()->with('success', 'Subscription cancelled. You will retain access until the end of your billing period.');
         }
 

@@ -571,14 +571,14 @@ const benefits = [
                     <span>&copy; 2026 Restio. All rights reserved.</span>
                 </div>
                 <div class="flex gap-6">
-                    <a href="#" class="transition-colors hover:text-white"
-                        >Privacy</a
+                    <Link href="/privacy-policy" class="transition-colors hover:text-white"
+                        >Privacy</Link
                     >
-                    <a href="#" class="transition-colors hover:text-white"
-                        >Terms</a
+                    <Link href="/terms-of-service" class="transition-colors hover:text-white"
+                        >Terms</Link
                     >
-                    <a href="#" class="transition-colors hover:text-white"
-                        >Support</a
+                    <Link href="/gdpr-compliance" class="transition-colors hover:text-white"
+                        >GDPR</Link
                     >
                 </div>
             </div>

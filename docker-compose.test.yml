@@ -1,0 +1,73 @@
+# =============================================================================
+# Docker Compose for Testing
+# Optimized for fast test execution
+# =============================================================================
+
+version: "3.8"
+
+services:
+  # Testing database - uses tmpfs for speed
+  db_test:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: laravel_test
+      POSTGRES_USER: laravel_test
+      POSTGRES_PASSWORD: secret_test
+      POSTGRES_INITDB_ARGS: "-E UTF8"
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U laravel_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    tmpfs:
+      - /var/lib/postgresql/data  # In-memory for maximum speed
+
+  # Redis for testing
+  redis_test:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    tmpfs:
+      - /data  # In-memory
+
+  # App container for running tests
+  app_test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    environment:
+      APP_ENV: testing
+      DB_CONNECTION: pgsql
+      DB_HOST: db_test
+      DB_PORT: 5432
+      DB_DATABASE: laravel_test
+      DB_USERNAME: laravel_test
+      DB_PASSWORD: secret_test
+      REDIS_HOST: redis_test
+      REDIS_PORT: 6379
+      CACHE_DRIVER: redis
+      QUEUE_CONNECTION: sync  # Synchronous for testing
+      SESSION_DRIVER: array
+      BCRYPT_ROUNDS: 4
+    volumes:
+      - .:/var/www
+      - /var/www/vendor
+      - /var/www/node_modules
+    depends_on:
+      db_test:
+        condition: service_healthy
+      redis_test:
+        condition: service_healthy
+    command: php artisan test
+
+networks:
+  default:
+    name: restio_test_network

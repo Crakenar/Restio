@@ -101,5 +101,11 @@ class FortifyServiceProvider extends ServiceProvider
         RateLimiter::for('registration', function (Request $request) {
             return Limit::perMinute(3)->by($request->ip());
         });
+
+        RateLimiter::for('password-reset', function (Request $request) {
+            $email = $request->input('email');
+
+            return Limit::perHour(3)->by($email ?: $request->ip());
+        });
     }
 }

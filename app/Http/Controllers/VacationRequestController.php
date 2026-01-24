@@ -9,12 +9,15 @@ use App\Models\VacationRequest;
 use App\Notifications\VacationRequestApproved;
 use App\Notifications\VacationRequestRejected;
 use App\Notifications\VacationRequestSubmitted;
+use App\Services\AuditLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 
 class VacationRequestController extends Controller
 {
+    public function __construct(protected AuditLogger $auditLogger) {}
+
     /**
      * Store a newly created vacation request.
      */
@@ -92,6 +95,14 @@ class VacationRequestController extends Controller
             'approved_date' => now(),
         ]);
 
+        // Log the approval
+        $this->auditLogger->requestApproved($vacationRequest, [
+            'requester_name' => $vacationRequest->user->name,
+            'start_date' => $vacationRequest->start_date->toDateString(),
+            'end_date' => $vacationRequest->end_date->toDateString(),
+            'type' => $vacationRequest->type,
+        ]);
+
         // Send notification to employee
         $vacationRequest->user->notify(new VacationRequestApproved($vacationRequest));
 
@@ -116,6 +127,15 @@ class VacationRequestController extends Controller
             'status' => VacationRequestStatus::REJECTED->value,
             'approved_by' => $user->id,
             'approved_date' => now(),
+            'rejection_reason' => $validated['rejection_reason'] ?? null,
+        ]);
+
+        // Log the rejection
+        $this->auditLogger->requestRejected($vacationRequest, [
+            'requester_name' => $vacationRequest->user->name,
+            'start_date' => $vacationRequest->start_date->toDateString(),
+            'end_date' => $vacationRequest->end_date->toDateString(),
+            'type' => $vacationRequest->type,
             'rejection_reason' => $validated['rejection_reason'] ?? null,
         ]);
 
