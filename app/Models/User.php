@@ -35,6 +35,7 @@ class User extends Authenticatable
         'role',
         'company_id',
         'team_id',
+        'locale',
     ];
 
     /**
@@ -76,5 +77,13 @@ class User extends Authenticatable
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
+    }
+
+    /**
+     * Get the user's preferred locale.
+     */
+    public function getPreferredLocale(): string
+    {
+        return $this->locale ?? config('app.locale', 'en');
     }
 }

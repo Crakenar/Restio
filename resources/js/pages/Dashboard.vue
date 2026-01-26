@@ -8,8 +8,10 @@ import { Employee, UserRole, VacationRequest } from '@/types/vacation';
 import { Head, usePage } from '@inertiajs/vue3';
 import { computed, onMounted, ref } from 'vue';
 import { useOnboardingTour } from '@/composables/useOnboardingTour';
+import { useI18n } from 'vue-i18n';
 
 const page = usePage();
+const { t } = useI18n();
 
 // Define props received from Inertia controller
 interface Props {
@@ -73,20 +75,13 @@ const handleSelectEmployee = (id: string) => {
 };
 
 // Breadcrumbs
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/dashboard' },
-];
+const breadcrumbs = computed<BreadcrumbItem[]>(() => [
+    { title: t('dashboard.title'), href: '/dashboard' },
+]);
 
 // Page title based on role
 const pageTitle = computed(() => {
-    switch (userRole.value) {
-        case UserRole.ADMIN:
-            return 'Admin Dashboard';
-        case UserRole.MANAGER:
-            return 'Manager Dashboard';
-        default:
-            return 'My Dashboard';
-    }
+    return t('dashboard.title');
 });
 
 // Onboarding tour

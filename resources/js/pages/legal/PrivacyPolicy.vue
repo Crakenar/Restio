@@ -1,18 +1,22 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { ArrowLeft, Eye, Lock, Database, Share2, Cookie, Mail } from 'lucide-vue-next';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
+import PublicLanguageSwitcher from '@/components/PublicLanguageSwitcher.vue';
+import { useI18n } from 'vue-i18n';
 
-const sections = [
-    { id: 'introduction', title: '1. Introduction', icon: Eye },
-    { id: 'collection', title: '2. Information We Collect', icon: Database },
-    { id: 'usage', title: '3. How We Use Your Information', icon: Share2 },
-    { id: 'sharing', title: '4. Information Sharing', icon: Share2 },
-    { id: 'security', title: '5. Data Security', icon: Lock },
-    { id: 'cookies', title: '6. Cookies & Tracking', icon: Cookie },
-    { id: 'rights', title: '7. Your Rights', icon: Eye },
-    { id: 'contact', title: '8. Contact Us', icon: Mail },
-];
+const { t } = useI18n();
+
+const sections = computed(() => [
+    { id: 'introduction', title: `1. ${t('legal.privacy.sections.introduction')}`, icon: Eye },
+    { id: 'collection', title: `2. ${t('legal.privacy.sections.collection')}`, icon: Database },
+    { id: 'usage', title: `3. ${t('legal.privacy.sections.usage')}`, icon: Share2 },
+    { id: 'sharing', title: `4. ${t('legal.privacy.sections.sharing')}`, icon: Share2 },
+    { id: 'security', title: `5. ${t('legal.privacy.sections.security')}`, icon: Lock },
+    { id: 'cookies', title: `6. ${t('legal.privacy.sections.cookies')}`, icon: Cookie },
+    { id: 'rights', title: `7. ${t('legal.privacy.sections.rights')}`, icon: Eye },
+    { id: 'contact', title: `8. ${t('legal.privacy.sections.contact')}`, icon: Mail },
+]);
 
 const isLoaded = ref(false);
 
@@ -43,10 +47,13 @@ onMounted(() => {
                         class="group flex items-center gap-2 text-sm font-medium text-blue-600 transition-colors hover:text-blue-900"
                     >
                         <ArrowLeft class="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-                        <span>Back to Home</span>
+                        <span>{{ t('legal.backToHome') }}</span>
                     </Link>
-                    <div class="text-xs font-medium tracking-wide text-blue-400">
-                        PRIVACY
+                    <div class="flex items-center gap-4">
+                        <PublicLanguageSwitcher />
+                        <div class="text-xs font-medium tracking-wide text-blue-400">
+                            {{ t('legal.privacy.badge') }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -524,10 +531,12 @@ onMounted(() => {
     font-size: 1.125rem;
     line-height: 1.8;
     font-weight: 300;
+    color: #1e40af; /* blue-800 - fix white text issue */
 }
 
 .prose-legal h3 {
     font-family: 'Albert Sans', sans-serif;
+    color: #1e3a8a; /* blue-900 */
 }
 
 @media (max-width: 768px) {

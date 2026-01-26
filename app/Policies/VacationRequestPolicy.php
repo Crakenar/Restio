@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Enum\UserRole;
 use App\Enum\VacationRequestStatus;
+use App\Models\Admin;
 use App\Models\User;
 use App\Models\VacationRequest;
 use Illuminate\Auth\Access\Response;
@@ -14,7 +15,7 @@ class VacationRequestPolicy
      * Determine whether the user can view any models.
      * All authenticated users can view vacation requests (filtered by company in controller).
      */
-    public function viewAny(User $user): bool
+    public function viewAny(User|Admin $user): bool
     {
         return true;
     }
@@ -25,8 +26,13 @@ class VacationRequestPolicy
      * Managers can view requests from users in their team.
      * Admins and owners can view any request in their company.
      */
-    public function view(User $user, VacationRequest $vacationRequest): bool
+    public function view(User|Admin $user, VacationRequest $vacationRequest): bool
     {
+        // System admins can view all vacation requests
+        if ($user instanceof Admin) {
+            return true;
+        }
+
         // Must be same company
         if ($user->company_id !== $vacationRequest->company_id) {
             return false;
@@ -57,8 +63,13 @@ class VacationRequestPolicy
      * Determine whether the user can create models.
      * All employees can create vacation requests.
      */
-    public function create(User $user): bool
+    public function create(User|Admin $user): bool
     {
+        // System admins can create vacation requests on behalf of users
+        if ($user instanceof Admin) {
+            return true;
+        }
+
         return true;
     }
 
@@ -66,8 +77,13 @@ class VacationRequestPolicy
      * Determine whether the user can update the model.
      * Users can only update their own PENDING requests.
      */
-    public function update(User $user, VacationRequest $vacationRequest): bool
+    public function update(User|Admin $user, VacationRequest $vacationRequest): bool
     {
+        // System admins can update any vacation request
+        if ($user instanceof Admin) {
+            return true;
+        }
+
         // Must be same company
         if ($user->company_id !== $vacationRequest->company_id) {
             return false;
@@ -86,8 +102,13 @@ class VacationRequestPolicy
      * Determine whether the user can delete the model.
      * Users can only delete their own PENDING requests.
      */
-    public function delete(User $user, VacationRequest $vacationRequest): bool
+    public function delete(User|Admin $user, VacationRequest $vacationRequest): bool
     {
+        // System admins can delete any vacation request
+        if ($user instanceof Admin) {
+            return true;
+        }
+
         // Must be same company
         if ($user->company_id !== $vacationRequest->company_id) {
             return false;
@@ -107,8 +128,13 @@ class VacationRequestPolicy
      * Managers can approve requests from users in their team.
      * Admins and owners can approve any request in their company.
      */
-    public function approve(User $user, VacationRequest $vacationRequest): Response
+    public function approve(User|Admin $user, VacationRequest $vacationRequest): Response
     {
+        // System admins can approve any request
+        if ($user instanceof Admin) {
+            return Response::allow();
+        }
+
         // Must be same company
         if ($user->company_id !== $vacationRequest->company_id) {
             return Response::deny('You cannot approve requests from another company.');
@@ -149,8 +175,13 @@ class VacationRequestPolicy
      * Determine whether the user can reject the model.
      * Same permissions as approve.
      */
-    public function reject(User $user, VacationRequest $vacationRequest): Response
+    public function reject(User|Admin $user, VacationRequest $vacationRequest): Response
     {
+        // System admins can reject any request
+        if ($user instanceof Admin) {
+            return Response::allow();
+        }
+
         // Must be same company
         if ($user->company_id !== $vacationRequest->company_id) {
             return Response::deny('You cannot reject requests from another company.');
@@ -190,16 +221,18 @@ class VacationRequestPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, VacationRequest $vacationRequest): bool
+    public function restore(User|Admin $user, VacationRequest $vacationRequest): bool
     {
-        return false;
+        // Only system admins can restore vacation requests
+        return $user instanceof Admin;
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, VacationRequest $vacationRequest): bool
+    public function forceDelete(User|Admin $user, VacationRequest $vacationRequest): bool
     {
-        return false;
+        // Only system admins can force delete vacation requests
+        return $user instanceof Admin;
     }
 }

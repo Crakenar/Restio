@@ -5,6 +5,12 @@
   },
   "nav": {
     "dashboard": "Dashboard",
+    "calendar": "Calendar",
+    "requests": "Requests",
+    "team": "Team",
+    "employees": "Employees",
+    "teamManagement": "Team Management",
+    "settings": "Settings",
     "login": "Log in",
     "register": "Get Started",
     "learnMore": "Learn More",
@@ -76,34 +82,34 @@
     "login": {
       "title": "Welcome back",
       "subtitle": "Sign in to your account to continue",
-      "email": "Email",
+      "email": "Email address",
       "password": "Password",
-      "rememberMe": "Remember me",
+      "rememberMe": "Remember me for 30 days",
       "forgotPassword": "Forgot password?",
-      "submit": "Sign In",
+      "signIn": "Sign in",
       "noAccount": "Don't have an account?",
-      "createOne": "Create one"
+      "createAccount": "Create account",
+      "footer": "Secure authentication powered by Restio"
     },
     "register": {
-      "title": "Create your account",
-      "subtitle": "Join Restio and start managing time off better",
-      "name": "Full Name",
-      "email": "Email",
+      "title": "Create account",
+      "subtitle": "Start managing your time off beautifully",
+      "fullName": "Full name",
+      "companyName": "Company Name",
+      "email": "Email address",
       "password": "Password",
-      "passwordConfirmation": "Confirm Password",
-      "agreeToTerms": "I agree to the {0} and {1}",
-      "termsOfService": "Terms of Service",
-      "privacyPolicy": "Privacy Policy",
-      "submit": "Create Account",
+      "confirmPassword": "Confirm password",
+      "createButton": "Create account",
       "haveAccount": "Already have an account?",
       "signIn": "Sign in"
     },
     "forgotPassword": {
-      "title": "Forgot your password?",
-      "subtitle": "No problem. Just let us know your email address and we will email you a password reset link.",
-      "email": "Email",
-      "submit": "Email Password Reset Link",
-      "backToLogin": "Back to login"
+      "title": "Forgot password?",
+      "subtitle": "No worries, we'll send you reset instructions",
+      "email": "Email address",
+      "sendButton": "Send reset link",
+      "backToLogin": "Back to sign in",
+      "footer": "Check your spam folder if you don't receive an email"
     },
     "resetPassword": {
       "title": "Reset your password",
@@ -138,13 +144,111 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "welcome": "Welcome back, {name}",
+    "welcome": "Welcome back",
+    "welcomeMessage": "Welcome back, {name}",
+    "subtitle": "Here's what's happening with your time off",
     "stats": {
       "vacationDays": "Vacation Days",
       "remaining": "Remaining",
+      "used": "Used",
       "pending": "Pending Requests",
       "approved": "Approved",
-      "teamAvailability": "Team Availability"
+      "rejected": "Rejected",
+      "teamAvailability": "Team Availability",
+      "total": "Total",
+      "thisMonth": "This Month",
+      "thisYear": "This Year"
+    },
+    "recentRequests": {
+      "title": "Recent Requests",
+      "subtitle": "Your latest vacation requests",
+      "noRequests": "No requests yet",
+      "noRequestsDescription": "You haven't submitted any vacation requests yet",
+      "viewAll": "View All Requests",
+      "status": "Status",
+      "dates": "Dates",
+      "days": "days",
+      "day": "day"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "newRequest": "New Request",
+      "viewCalendar": "View Calendar",
+      "viewTeam": "View Team"
+    },
+    "upcomingVacations": {
+      "title": "Upcoming Vacations",
+      "subtitle": "Your approved time off",
+      "noVacations": "No upcoming vacations",
+      "startsIn": "Starts in {days} days",
+      "inProgress": "In progress"
+    },
+    "employee": {
+      "requestTimeOff": "Request Time Off",
+      "upcomingTimeOff": "Upcoming Time Off",
+      "leave": "Leave",
+      "supportUser": "User Support",
+      "documentationResources": "Documentation and resources",
+      "download": "Download",
+      "plannings": "Plannings",
+      "absences": "Absences",
+      "tools": "Tools",
+      "news": "News",
+      "vacationCalendar": "Vacation Calendar",
+      "colleaguesSchedule": "Colleagues Schedule",
+      "absenceRequest": "Absence Request",
+      "requestHistory": "Request History",
+      "attendanceBoard": "Attendance Board",
+      "documentManagement": "Document Management",
+      "userNews": "User News",
+      "titlePlaceholder": "Title",
+      "newsPlaceholder": "Place your custom news message here for all company users.",
+      "seeMore": "See More"
+    },
+    "manager": {
+      "actionRequired": "Action Required",
+      "pendingApprovals": "Pending approvals",
+      "outToday": "Out Today",
+      "teamSize": "Team Size",
+      "pendingTab": "Pending",
+      "teamCalendar": "Team Calendar",
+      "upcomingTab": "Upcoming",
+      "allCaughtUp": "All caught up!",
+      "noPendingReview": "No pending requests to review",
+      "upcomingTeamAbsences": "Upcoming Team Absences",
+      "planAheadCoverage": "Plan ahead for team coverage",
+      "noUpcomingAbsences": "No upcoming absences scheduled",
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "admin": {
+      "title": "Admin Dashboard",
+      "subtitle": "Company-wide vacation analytics and management",
+      "totalEmployees": "Total Employees",
+      "activeWorkforce": "Active workforce",
+      "totalRequests": "Total Requests",
+      "allTimeSubmissions": "All time submissions",
+      "approvalRate": "Approval Rate",
+      "requestSuccessRate": "Request success rate",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "outToday": "Out Today",
+      "currentlyAbsent": "Currently absent",
+      "departmentBreakdown": "Department Breakdown",
+      "requestsByDepartment": "Requests by department",
+      "requestsLabel": "requests",
+      "pendingLabel": "pending",
+      "requestTypes": "Request Types",
+      "distributionByType": "Distribution by leave type",
+      "companyUtilization": "Company-wide Utilization",
+      "vacationDayUsage": "Vacation day usage across all employees",
+      "totalDaysUsed": "Total Days Used",
+      "totalDaysAvailable": "Total Days Available",
+      "utilizationRate": "Utilization Rate",
+      "coverageCalendar": "Coverage Calendar",
+      "employeeManagement": "Employee Management",
+      "allRequests": "All Requests"
     }
   },
   "vacation": {
@@ -171,25 +275,47 @@
   },
   "team": {
     "title": "Team",
+    "subtitle": "View your team members and their availability",
     "members": "Team Members",
     "availability": "Availability",
-    "outOfOffice": "Out of Office"
+    "outOfOffice": "Out of Office",
+    "available": "Available",
+    "onVacation": "On Vacation",
+    "noMembers": "No team members",
+    "noMembersDescription": "No one has been assigned to your team yet",
+    "viewCalendar": "View Calendar",
+    "contactMember": "Contact"
   },
   "settings": {
     "title": "Settings",
     "profile": {
-      "title": "Profile",
-      "name": "Name",
-      "email": "Email",
+      "title": "Personal Information",
+      "subtitle": "Update your profile details",
+      "name": "Full Name",
+      "email": "Email Address",
       "phone": "Phone",
-      "save": "Save Changes"
+      "save": "Save Profile",
+      "saving": "Saving...",
+      "namePlaceholder": "John Doe",
+      "emailPlaceholder": "john@example.com",
+      "emailUnverified": "Your email address is unverified.",
+      "resendVerification": "Click here to resend verification email.",
+      "verificationSent": "✓ Verification email sent!",
+      "emailVerified": "Email verified"
+    },
+    "language": {
+      "title": "Language Preferences",
+      "subtitle": "Choose your preferred language",
+      "displayLanguage": "Display Language",
+      "description": "Select your preferred language for the application interface. This setting will be saved to your profile and applied across all devices."
     },
     "password": {
       "title": "Change Password",
       "current": "Current Password",
       "new": "New Password",
       "confirm": "Confirm New Password",
-      "save": "Update Password"
+      "save": "Update Password",
+      "saving": "Saving..."
     },
     "twoFactor": {
       "title": "Two-Factor Authentication",
@@ -212,37 +338,113 @@
     },
     "company": {
       "title": "Company Settings",
+      "subtitle": "Configure organization preferences",
       "name": "Company Name",
+      "namePlaceholder": "Acme Corporation",
       "email": "Company Email",
-      "save": "Save Changes"
+      "annualDays": "Annual Vacation Days",
+      "annualDaysPlaceholder": "20",
+      "annualDaysDescription": "Default paid vacation days per year for employees",
+      "approvalRequired": "Require Manager Approval",
+      "approvalRequiredDescription": "Vacation requests must be approved before confirmation",
+      "timezone": "Company Timezone",
+      "timezonePlaceholder": "Select a timezone",
+      "timezoneDescription": "Used for date calculations and scheduling",
+      "save": "Save Company Settings",
+      "saving": "Saving..."
+    },
+    "deleteAccount": {
+      "title": "Delete Account",
+      "description": "Once your account is deleted, all of its resources and data will be permanently deleted."
     }
   },
   "employees": {
     "title": "Employees",
+    "subtitle": "Manage your team members and import employees",
     "add": "Add Employee",
+    "addNew": "Add New Employee",
     "edit": "Edit Employee",
     "delete": "Delete Employee",
     "name": "Name",
     "email": "Email",
     "role": "Role",
     "department": "Department",
-    "vacationDays": "Vacation Days"
+    "team": "Team",
+    "vacationDays": "Vacation Days",
+    "actions": "Actions",
+    "noEmployees": "No employees yet",
+    "noEmployeesDescription": "Add your first employee to get started",
+    "importing": "Importing...",
+    "import": "Import Employees",
+    "csvUpload": "CSV Upload",
+    "uploadCsv": "Upload CSV File",
+    "downloadTemplate": "Download Template",
+    "list": "Employee List",
+    "form": "Add Employee Form"
+  },
+  "teamManagement": {
+    "title": "Team Management",
+    "subtitle": "Create and manage teams in your organization",
+    "addTeam": "Add Team",
+    "createTeam": "Create Team",
+    "editTeam": "Edit Team",
+    "deleteTeam": "Delete Team",
+    "assignUsers": "Assign Users",
+    "assignUsersTo": "Assign Users to {teamName}",
+    "removeUser": "Remove User",
+    "teamName": "Team Name",
+    "teamNamePlaceholder": "Engineering Team",
+    "description": "Description",
+    "descriptionPlaceholder": "Team description (optional)",
+    "manager": "Team Manager",
+    "selectManager": "Select a manager",
+    "members": "Members",
+    "memberCount": "{count} members",
+    "noTeams": "No teams yet",
+    "noTeamsDescription": "Create your first team to get started",
+    "noMembers": "No members assigned",
+    "availableUsers": "Available Users",
+    "searchUsers": "Search users...",
+    "selectUsers": "Select users to assign to this team",
+    "save": "Save Team",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "confirmDelete": "Are you sure you want to delete this team?",
+    "deleteWarning": "This action cannot be undone."
   },
   "requests": {
-    "title": "Requests",
+    "title": "Time Off Requests",
+    "subtitle": {
+      "employee": "View and manage your time off requests",
+      "manager": "Review and approve team requests"
+    },
     "pending": "Pending",
     "approved": "Approved",
     "rejected": "Rejected",
-    "all": "All Requests",
+    "all": "All",
+    "total": "Total",
     "approve": "Approve",
     "reject": "Reject"
   },
   "calendar": {
     "title": "Calendar",
+    "subtitle": "View team schedules and time off",
     "today": "Today",
     "week": "Week",
     "month": "Month",
-    "year": "Year"
+    "year": "Year",
+    "nextMonth": "Next Month",
+    "previousMonth": "Previous Month",
+    "viewMode": "View Mode",
+    "legend": {
+      "title": "Legend",
+      "vacation": "Vacation",
+      "sick": "Sick Leave",
+      "personal": "Personal Day",
+      "other": "Other"
+    },
+    "noEvents": "No events this month",
+    "loading": "Loading calendar..."
   },
   "common": {
     "save": "Save",
@@ -264,7 +466,8 @@
     "close": "Close",
     "yes": "Yes",
     "no": "No",
-    "changeLanguage": "Change Language"
+    "changeLanguage": "Change Language",
+    "notifications": "notifications"
   },
   "footer": {
     "copyright": "© 2026 Restio. All rights reserved.",
@@ -364,6 +567,337 @@
       "complete": {
         "title": "Admin Powers Unlocked! ⚡",
         "description": "You now know how to manage the entire system. Restart this tour anytime from settings."
+      }
+    }
+  },
+  "legal": {
+    "backToHome": "Back to Home",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "gdprCompliance": "GDPR Compliance",
+    "privacy": {
+      "badge": "PRIVACY POLICY",
+      "tagline": "Your Privacy Matters",
+      "title": "Privacy Policy",
+      "lastUpdated": "Last Updated",
+      "date": "January 22, 2026",
+      "tableOfContents": "Table of Contents",
+      "sections": {
+        "introduction": "Introduction",
+        "collection": "Information We Collect",
+        "usage": "How We Use Your Information",
+        "sharing": "Information Sharing",
+        "security": "Data Security",
+        "cookies": "Cookies & Tracking Technologies",
+        "rights": "Your Rights",
+        "contact": "Contact Us"
+      },
+      "introduction": {
+        "p1": "At Restio, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our vacation management platform.",
+        "p2": "We are committed to protecting your personal data and ensuring transparency in our data practices. Please read this policy carefully to understand our views and practices regarding your personal data."
+      },
+      "collection": {
+        "intro": "We collect several types of information to provide and improve our services:",
+        "personal": {
+          "title": "Personal Information",
+          "item1": "Name, email address, and contact details",
+          "item2": "Job title, department, and company information",
+          "item3": "Account credentials and authentication data",
+          "item4": "Profile information and preferences"
+        },
+        "usage": {
+          "title": "Usage Information",
+          "item1": "Vacation requests and time-off data",
+          "item2": "Activity logs and usage patterns",
+          "item3": "Device information and IP addresses",
+          "item4": "Browser type and operating system"
+        },
+        "communication": {
+          "title": "Communication Data",
+          "item1": "Messages and notifications within the platform",
+          "item2": "Support tickets and customer service communications",
+          "item3": "Feedback and survey responses"
+        }
+      },
+      "usage": {
+        "intro": "We use the information we collect for various purposes, including:",
+        "item1": "Providing, maintaining, and improving our services",
+        "item2": "Processing vacation requests and managing time-off workflows",
+        "item3": "Sending you notifications, updates, and administrative messages",
+        "item4": "Analyzing usage patterns to enhance user experience",
+        "item5": "Ensuring platform security and preventing fraud",
+        "item6": "Complying with legal obligations and enforcing our terms",
+        "item7": "Responding to your inquiries and providing customer support",
+        "promise": "We will never sell your personal information to third parties for marketing purposes."
+      },
+      "sharing": {
+        "intro": "We may share your information in the following circumstances:",
+        "organization": {
+          "title": "With Your Organization:",
+          "description": "Your employer or organization administrators have access to information necessary for managing vacation requests and team coordination"
+        },
+        "providers": {
+          "title": "Service Providers:",
+          "description": "We work with trusted third-party service providers who help us operate our platform (e.g., hosting, analytics, payment processing)"
+        },
+        "legal": {
+          "title": "Legal Requirements:",
+          "description": "When required by law, court order, or government regulation"
+        },
+        "business": {
+          "title": "Business Transfers:",
+          "description": "In connection with a merger, acquisition, or sale of assets"
+        },
+        "consent": {
+          "title": "With Your Consent:",
+          "description": "When you explicitly authorize us to share specific information"
+        }
+      },
+      "security": {
+        "p1": "We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.",
+        "measures": {
+          "title": "Our security measures include:",
+          "item1": "End-to-end encryption for data transmission",
+          "item2": "Regular security audits and vulnerability assessments",
+          "item3": "Access controls and authentication mechanisms",
+          "item4": "Secure data centers with physical security measures",
+          "item5": "Employee training on data protection practices",
+          "item6": "Incident response procedures and breach notification protocols"
+        },
+        "disclaimer": "While we strive to protect your information, no method of transmission over the internet or electronic storage is 100% secure. We cannot guarantee absolute security but continuously work to enhance our security measures."
+      },
+      "cookies": {
+        "intro": "We use cookies and similar tracking technologies to enhance your experience, analyze usage patterns, and personalize content. Cookies are small data files stored on your device.",
+        "essential": {
+          "title": "Essential Cookies",
+          "description": "Required for basic platform functionality, authentication, and security."
+        },
+        "analytics": {
+          "title": "Analytics Cookies",
+          "description": "Help us understand how users interact with our platform to improve services."
+        },
+        "control": "You can control cookie preferences through your browser settings. Note that disabling certain cookies may affect platform functionality."
+      },
+      "rights": {
+        "intro": "Depending on your location, you may have certain rights regarding your personal information:",
+        "access": {
+          "title": "Access:",
+          "description": "Request access to the personal information we hold about you"
+        },
+        "correction": {
+          "title": "Correction:",
+          "description": "Request correction of inaccurate or incomplete information"
+        },
+        "deletion": {
+          "title": "Deletion:",
+          "description": "Request deletion of your personal information under certain circumstances"
+        },
+        "portability": {
+          "title": "Data Portability:",
+          "description": "Receive your personal information in a structured, commonly used format"
+        },
+        "objection": {
+          "title": "Objection:",
+          "description": "Object to processing of your personal information for certain purposes"
+        },
+        "restriction": {
+          "title": "Restriction:",
+          "description": "Request restriction of processing in certain circumstances"
+        },
+        "exercise": "To exercise these rights, please contact us using the information provided in the Contact Us section."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "intro": "If you have questions about this Privacy Policy or our data practices, please contact our Data Protection Officer:",
+        "email": "privacy@restio.com"
+      },
+      "footer": {
+        "terms": "Terms of Service",
+        "gdpr": "GDPR Compliance",
+        "copyright": "© 2026 Restio. All rights reserved."
+      }
+    },
+    "terms": {
+      "badge": "LEGAL",
+      "tagline": "Legal Document",
+      "title": "Terms of Service",
+      "effectiveDate": "Effective Date",
+      "date": "January 22, 2026",
+      "tableOfContents": "Table of Contents",
+      "sections": {
+        "acceptance": "Acceptance of Terms",
+        "services": "Description of Services",
+        "accounts": "User Accounts",
+        "conduct": "User Conduct",
+        "intellectual": "Intellectual Property",
+        "termination": "Termination",
+        "liability": "Limitation of Liability",
+        "changes": "Changes to Terms"
+      },
+      "acceptance": {
+        "p1": "By accessing and using Restio's services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service and all applicable laws and regulations.",
+        "p2": "If you do not agree with any part of these terms, you must not use our services. Your continued use of the platform constitutes acceptance of these terms and any modifications we may make from time to time."
+      },
+      "services": {
+        "p1": "Restio provides a comprehensive vacation and time-off management platform designed to streamline your organization's leave request processes, team coordination, and workforce planning.",
+        "includes": {
+          "title": "Our services include:",
+          "item1": "Vacation request submission and approval workflows",
+          "item2": "Team calendar and availability tracking",
+          "item3": "Analytics and reporting dashboards",
+          "item4": "Notification and communication systems",
+          "item5": "Integration with third-party services"
+        },
+        "reserve": "We reserve the right to modify, suspend, or discontinue any aspect of our services at any time, with or without notice, though we will make reasonable efforts to communicate significant changes to our users."
+      },
+      "accounts": {
+        "p1": "To access certain features of our platform, you must create an account. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.",
+        "p2": "You must provide accurate, current, and complete information during registration and keep your account information updated. You agree to notify us immediately of any unauthorized use of your account or any other breach of security.",
+        "important": "Important: You must be at least 18 years old to create an account and use our services."
+      },
+      "conduct": {
+        "intro": "You agree to use our services only for lawful purposes and in accordance with these Terms. You specifically agree not to:",
+        "item1": "Use the services in any way that violates applicable laws or regulations",
+        "item2": "Attempt to gain unauthorized access to our systems or networks",
+        "item3": "Interfere with or disrupt the services or servers",
+        "item4": "Upload or transmit viruses, malware, or other malicious code",
+        "item5": "Impersonate any person or entity or misrepresent your affiliation",
+        "item6": "Harvest or collect information about other users"
+      },
+      "intellectual": {
+        "p1": "All content, features, and functionality of our services, including but not limited to text, graphics, logos, icons, images, audio clips, and software, are the exclusive property of Restio and are protected by international copyright, trademark, and other intellectual property laws.",
+        "p2": "You may not reproduce, distribute, modify, create derivative works from, publicly display, or exploit any of our content without our prior written consent."
+      },
+      "termination": {
+        "p1": "We reserve the right to suspend or terminate your account and access to our services at our sole discretion, without notice, for conduct that we believe violates these Terms or is harmful to other users, us, or third parties, or for any other reason.",
+        "p2": "You may terminate your account at any time by following the account closure process in your account settings. Upon termination, your right to use the services will immediately cease."
+      },
+      "liability": {
+        "p1": "To the fullest extent permitted by applicable law, Restio shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses.",
+        "aggregate": "Our aggregate liability to you for all claims arising out of or relating to these Terms or the services shall not exceed the amount you have paid us in the twelve (12) months preceding the claim."
+      },
+      "changes": {
+        "p1": "We reserve the right to modify these Terms at any time. We will provide notice of material changes by posting the updated Terms on our website and updating the \"Effective Date\" at the top of this document.",
+        "p2": "Your continued use of our services after such modifications constitutes your acknowledgment and acceptance of the modified Terms. If you do not agree to the modified Terms, you must stop using our services."
+      },
+      "contactSection": {
+        "title": "Questions?",
+        "intro": "If you have any questions about these Terms of Service, please contact us at:",
+        "email": "legal@restio.com"
+      },
+      "footer": {
+        "privacy": "Privacy Policy",
+        "gdpr": "GDPR Compliance",
+        "copyright": "© 2026 Restio. All rights reserved."
+      }
+    },
+    "gdpr": {
+      "badge": "GDPR COMPLIANCE",
+      "tagline": "Data Protection",
+      "title": "GDPR Compliance",
+      "intro": "We are committed to protecting your personal data and privacy rights under the General Data Protection Regulation (GDPR). This page explains how we comply with GDPR and what rights you have.",
+      "principles": {
+        "title": "Our GDPR Principles",
+        "subtitle": "We adhere to the six fundamental principles of GDPR in all our data processing activities.",
+        "lawfulness": {
+          "title": "Lawfulness & Transparency",
+          "description": "We process data lawfully, fairly, and transparently in accordance with GDPR requirements."
+        },
+        "purpose": {
+          "title": "Purpose Limitation",
+          "description": "Data is collected for specific, explicit, and legitimate purposes only."
+        },
+        "minimization": {
+          "title": "Data Minimization",
+          "description": "We collect only data that is necessary for the intended purpose."
+        },
+        "accuracy": {
+          "title": "Accuracy",
+          "description": "Personal data is kept accurate and up to date with mechanisms for correction."
+        },
+        "storage": {
+          "title": "Storage Limitation",
+          "description": "Data is retained only as long as necessary for the specified purposes."
+        },
+        "integrity": {
+          "title": "Integrity & Confidentiality",
+          "description": "Appropriate security measures protect data from unauthorized processing."
+        }
+      },
+      "rights": {
+        "title": "Your GDPR Rights",
+        "subtitle": "Under GDPR, you have comprehensive rights regarding your personal data. Here's what you can do:",
+        "access": {
+          "title": "Right to Access",
+          "description": "Request a copy of the personal data we hold about you.",
+          "action": "Request your data"
+        },
+        "rectification": {
+          "title": "Right to Rectification",
+          "description": "Correct inaccurate or incomplete personal data.",
+          "action": "Update your information"
+        },
+        "erasure": {
+          "title": "Right to Erasure",
+          "description": "Request deletion of your personal data (\"right to be forgotten\").",
+          "action": "Delete your data"
+        },
+        "portability": {
+          "title": "Right to Data Portability",
+          "description": "Receive your data in a structured, machine-readable format.",
+          "action": "Export your data"
+        },
+        "object": {
+          "title": "Right to Object",
+          "description": "Object to processing of your personal data for specific purposes.",
+          "action": "Manage preferences"
+        },
+        "restriction": {
+          "title": "Right to Restriction",
+          "description": "Request restriction of processing under certain conditions.",
+          "action": "Restrict processing"
+        }
+      },
+      "processing": {
+        "title": "How We Process Your Data",
+        "legal": {
+          "title": "Legal Basis for Processing",
+          "intro": "We process your personal data based on the following legal grounds:",
+          "contract": "Contract Performance: To provide our services as per our agreement with you",
+          "legitimate": "Legitimate Interests: To improve and optimize our platform",
+          "legalObligation": "Legal Obligations: To comply with applicable laws and regulations",
+          "consent": "Consent: Where you have given explicit consent for specific purposes"
+        },
+        "retention": {
+          "title": "Data Retention",
+          "description": "We retain your personal data only for as long as necessary to fulfill the purposes for which it was collected, comply with legal obligations, resolve disputes, and enforce our agreements. When data is no longer needed, we securely delete or anonymize it."
+        },
+        "transfers": {
+          "title": "International Data Transfers",
+          "description": "When we transfer personal data outside the European Economic Area (EEA), we ensure appropriate safeguards are in place, such as Standard Contractual Clauses (SCCs) approved by the European Commission, to protect your data."
+        },
+        "breach": {
+          "title": "Data Breach Notification",
+          "description": "In the event of a data breach that poses a risk to your rights and freedoms, we will notify you and the relevant supervisory authority within 72 hours of becoming aware of the breach, in accordance with GDPR requirements."
+        }
+      },
+      "supervisory": {
+        "title": "Supervisory Authority",
+        "p1": "You have the right to lodge a complaint with a supervisory authority if you believe we have not complied with GDPR requirements. The supervisory authority in your jurisdiction can investigate your complaint and take appropriate action.",
+        "p2": "However, we encourage you to contact us first so we can address your concerns directly and work together to resolve any issues."
+      },
+      "dpo": {
+        "title": "Data Protection Officer",
+        "subtitle": "For any questions about GDPR compliance or to exercise your rights, contact our Data Protection Officer:",
+        "emailLabel": "Email",
+        "email": "dpo@restio.com",
+        "responseLabel": "Response Time",
+        "responseTime": "We aim to respond to all GDPR-related requests within 30 days."
+      },
+      "footer": {
+        "terms": "Terms of Service",
+        "privacy": "Privacy Policy",
+        "copyright": "© 2026 Restio. All rights reserved."
       }
     }
   }

@@ -8,7 +8,10 @@ import InputError from '@/components/InputError.vue'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Spinner } from '@/components/ui/spinner'
+import PublicLanguageSwitcher from '@/components/PublicLanguageSwitcher.vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const isLoaded = ref(false)
 
 onMounted(() => {
@@ -46,6 +49,11 @@ onMounted(() => {
             class="relative z-10 w-full max-w-md transition-all duration-1000"
             :class="isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'"
         >
+            <!-- Language Switcher -->
+            <div class="flex justify-end mb-6">
+                <PublicLanguageSwitcher />
+            </div>
+
             <!-- Logo -->
             <div class="flex justify-center mb-8">
                 <div class="flex items-center gap-3">
@@ -63,9 +71,9 @@ onMounted(() => {
                 <!-- Header -->
                 <div class="text-center mb-8">
                     <h1 class="text-3xl font-bold text-white mb-2" style="font-family: 'DM Serif Display', serif">
-                        Create account
+                        {{ t('auth.register.title') }}
                     </h1>
-                    <p class="text-white/70">Start managing your time off beautifully</p>
+                    <p class="text-white/70">{{ t('auth.register.subtitle') }}</p>
                 </div>
 
                 <!-- Form -->
@@ -78,7 +86,7 @@ onMounted(() => {
                     <!-- Name -->
                     <div class="space-y-2">
                         <Label for="name" class="text-white/90 text-sm font-medium">
-                            Full name
+                            {{ t('auth.register.fullName') }}
                         </Label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -103,7 +111,7 @@ onMounted(() => {
                     <!-- Company Name -->
                     <div class="space-y-2">
                         <Label for="company_name" class="text-white/90 text-sm font-medium">
-                            Company Name
+                            {{ t('auth.register.companyName') }}
                         </Label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -126,7 +134,7 @@ onMounted(() => {
                     <!-- Email -->
                     <div class="space-y-2">
                         <Label for="email" class="text-white/90 text-sm font-medium">
-                            Email address
+                            {{ t('auth.register.email') }}
                         </Label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -149,7 +157,7 @@ onMounted(() => {
                     <!-- Password -->
                     <div class="space-y-2">
                         <Label for="password" class="text-white/90 text-sm font-medium">
-                            Password
+                            {{ t('auth.register.password') }}
                         </Label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -172,7 +180,7 @@ onMounted(() => {
                     <!-- Confirm Password -->
                     <div class="space-y-2">
                         <Label for="password_confirmation" class="text-white/90 text-sm font-medium">
-                            Confirm password
+                            {{ t('auth.register.confirmPassword') }}
                         </Label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -201,20 +209,20 @@ onMounted(() => {
                         data-test="register-user-button"
                     >
                         <Spinner v-if="processing" class="h-5 w-5" />
-                        <span v-else>Create account</span>
+                        <span v-else>{{ t('auth.register.createButton') }}</span>
                         <ArrowRight v-if="!processing" class="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                     </button>
                 </Form>
 
                 <!-- Login Link -->
                 <div class="mt-8 text-center text-sm text-white/70">
-                    Already have an account?
+                    {{ t('auth.register.haveAccount') }}
                     <Link
                         :href="login()"
                         class="text-orange-400 hover:text-orange-300 font-medium transition-colors ml-1"
                         :tabindex="6"
                     >
-                        Sign in
+                        {{ t('auth.register.signIn') }}
                     </Link>
                 </div>
             </div>

@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import { ArrowLeft, Scale, FileText, Shield } from 'lucide-vue-next';
 import { onMounted, ref } from 'vue';
+import PublicLanguageSwitcher from '@/components/PublicLanguageSwitcher.vue';
 
 const sections = [
     { id: 'acceptance', title: '1. Acceptance of Terms', icon: FileText },
@@ -45,8 +46,11 @@ onMounted(() => {
                         <ArrowLeft class="h-4 w-4 transition-transform group-hover:-translate-x-1" />
                         <span>Back to Home</span>
                     </Link>
-                    <div class="text-xs font-medium tracking-wide text-stone-400">
-                        LEGAL
+                    <div class="flex items-center gap-4">
+                        <PublicLanguageSwitcher />
+                        <div class="text-xs font-medium tracking-wide text-stone-400">
+                            LEGAL
+                        </div>
                     </div>
                 </div>
             </div>
@@ -457,10 +461,12 @@ onMounted(() => {
     font-size: 1.125rem;
     line-height: 1.8;
     font-weight: 300;
+    color: #44403c; /* stone-700 - fix white text issue */
 }
 
 .prose-legal h3 {
     font-family: 'Albert Sans', sans-serif;
+    color: #292524; /* stone-800 */
 }
 
 @media (max-width: 768px) {

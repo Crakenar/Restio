@@ -13,6 +13,7 @@ class AuditLog extends Model
         'auditable_type',
         'auditable_id',
         'user_id',
+        'admin_id',
         'company_id',
         'old_values',
         'new_values',
@@ -38,6 +39,11 @@ class AuditLog extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function admin(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class);
     }
 
     public function company(): BelongsTo

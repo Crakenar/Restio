@@ -18,6 +18,9 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 interface User {
     id: number;
@@ -87,10 +90,10 @@ const handleEditTeam = () => {
 };
 
 const handleDeleteTeam = (teamId: number) => {
-    if (confirm('Are you sure you want to delete this team? Users will be unassigned.')) {
+    if (confirm(t('teamManagement.confirmDelete') + ' ' + t('teamManagement.deleteWarning'))) {
         router.delete(`/team-management/${teamId}`, {
             onSuccess: () => {
-                toast.success('Team deleted successfully!');
+                toast.success(t('teamManagement.deleteTeam') + ' successfully!');
             },
             onError: () => {
                 toast.error('Failed to delete team. Please try again.');
@@ -159,7 +162,7 @@ const toggleUserSelection = (userId: number) => {
 </script>
 
 <template>
-    <Head title="Team Management" />
+    <Head :title="$t('teamManagement.title')" />
 
     <div
         class="flex min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-rose-50 dark:from-slate-950 dark:via-orange-950 dark:to-rose-950"
@@ -195,10 +198,10 @@ const toggleUserSelection = (userId: number) => {
                             <h1
                                 class="text-4xl font-bold tracking-tight text-slate-900 dark:text-white"
                             >
-                                Team Management
+                                {{ $t('teamManagement.title') }}
                             </h1>
                             <p class="mt-1.5 text-sm text-slate-600 dark:text-white/70">
-                                Create and manage teams for your organization
+                                {{ $t('teamManagement.subtitle') }}
                             </p>
                         </div>
                     </div>
@@ -210,20 +213,20 @@ const toggleUserSelection = (userId: number) => {
                                 class="bg-gradient-to-r from-orange-500 to-rose-500 text-white hover:from-orange-600 hover:to-rose-600"
                             >
                                 <Plus class="mr-2 h-4 w-4" />
-                                Create Team
+                                {{ $t('teamManagement.createTeam') }}
                             </Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>
-                                <DialogTitle>Create New Team</DialogTitle>
+                                <DialogTitle>{{ $t('teamManagement.createTeam') }}</DialogTitle>
                             </DialogHeader>
                             <form @submit.prevent="handleCreateTeam" class="space-y-4">
                                 <div>
-                                    <Label for="team-name">Team Name</Label>
+                                    <Label for="team-name">{{ $t('teamManagement.teamName') }}</Label>
                                     <Input
                                         id="team-name"
                                         v-model="createForm.name"
-                                        placeholder="Enter team name"
+                                        :placeholder="$t('teamManagement.teamNamePlaceholder')"
                                         required
                                     />
                                 </div>
@@ -233,14 +236,14 @@ const toggleUserSelection = (userId: number) => {
                                         variant="outline"
                                         @click="isCreateDialogOpen = false"
                                     >
-                                        Cancel
+                                        {{ $t('teamManagement.cancel') }}
                                     </Button>
                                     <Button
                                         type="submit"
                                         :disabled="createForm.processing"
                                         class="bg-gradient-to-r from-orange-500 to-rose-500 text-white hover:from-orange-600 hover:to-rose-600"
                                     >
-                                        Create Team
+                                        {{ createForm.processing ? $t('teamManagement.saving') : $t('teamManagement.createTeam') }}
                                     </Button>
                                 </div>
                             </form>
@@ -265,8 +268,7 @@ const toggleUserSelection = (userId: number) => {
                                         {{ team.name }}
                                     </h3>
                                     <p class="text-sm text-slate-600 dark:text-slate-400">
-                                        {{ team.users_count }}
-                                        {{ team.users_count === 1 ? 'member' : 'members' }}
+                                        {{ $t('teamManagement.memberCount', { count: team.users_count }) }}
                                     </p>
                                 </div>
                                 <div class="flex gap-2">
@@ -330,7 +332,7 @@ const toggleUserSelection = (userId: number) => {
                                 @click="openAssignDialog(team)"
                             >
                                 <UserPlus class="mr-2 h-4 w-4" />
-                                Assign Users
+                                {{ $t('teamManagement.assignUsers') }}
                             </Button>
                         </CardContent>
                     </Card>
@@ -343,10 +345,10 @@ const toggleUserSelection = (userId: number) => {
                         <CardContent class="flex flex-col items-center justify-center p-12">
                             <Users class="mb-4 h-16 w-16 text-slate-400 dark:text-slate-600" />
                             <h3 class="mb-2 text-xl font-semibold text-slate-900 dark:text-white">
-                                No teams yet
+                                {{ $t('teamManagement.noTeams') }}
                             </h3>
                             <p class="text-sm text-slate-600 dark:text-slate-400">
-                                Create your first team to get started
+                                {{ $t('teamManagement.noTeamsDescription') }}
                             </p>
                         </CardContent>
                     </Card>
@@ -385,15 +387,15 @@ const toggleUserSelection = (userId: number) => {
     <Dialog v-model:open="isEditDialogOpen">
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Edit Team</DialogTitle>
+                <DialogTitle>{{ $t('teamManagement.editTeam') }}</DialogTitle>
             </DialogHeader>
             <form @submit.prevent="handleEditTeam" class="space-y-4">
                 <div>
-                    <Label for="edit-team-name">Team Name</Label>
+                    <Label for="edit-team-name">{{ $t('teamManagement.teamName') }}</Label>
                     <Input
                         id="edit-team-name"
                         v-model="editForm.name"
-                        placeholder="Enter team name"
+                        :placeholder="$t('teamManagement.teamNamePlaceholder')"
                         required
                     />
                 </div>
@@ -403,14 +405,14 @@ const toggleUserSelection = (userId: number) => {
                         variant="outline"
                         @click="isEditDialogOpen = false"
                     >
-                        Cancel
+                        {{ $t('teamManagement.cancel') }}
                     </Button>
                     <Button
                         type="submit"
                         :disabled="editForm.processing"
                         class="bg-gradient-to-r from-orange-500 to-rose-500 text-white hover:from-orange-600 hover:to-rose-600"
                     >
-                        Update Team
+                        {{ editForm.processing ? $t('teamManagement.saving') : $t('teamManagement.save') }}
                     </Button>
                 </div>
             </form>
@@ -421,7 +423,7 @@ const toggleUserSelection = (userId: number) => {
     <Dialog v-model:open="isAssignDialogOpen">
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Assign Users to {{ selectedTeam?.name }}</DialogTitle>
+                <DialogTitle>{{ $t('teamManagement.assignUsersTo', { teamName: selectedTeam?.name }) }}</DialogTitle>
             </DialogHeader>
             <div class="space-y-4">
                 <div class="max-h-96 space-y-2 overflow-y-auto">
@@ -447,12 +449,12 @@ const toggleUserSelection = (userId: number) => {
                         v-if="unassignedUsers.length === 0"
                         class="py-8 text-center text-sm text-slate-600 dark:text-slate-400"
                     >
-                        No unassigned users available
+                        {{ $t('teamManagement.noMembers') }}
                     </div>
                 </div>
                 <div class="flex justify-end gap-2">
                     <Button type="button" variant="outline" @click="isAssignDialogOpen = false">
-                        Cancel
+                        {{ $t('teamManagement.cancel') }}
                     </Button>
                     <Button
                         type="button"
@@ -460,8 +462,7 @@ const toggleUserSelection = (userId: number) => {
                         :disabled="selectedUserIds.length === 0"
                         class="bg-gradient-to-r from-orange-500 to-rose-500 text-white hover:from-orange-600 hover:to-rose-600"
                     >
-                        Assign {{ selectedUserIds.length }}
-                        {{ selectedUserIds.length === 1 ? 'User' : 'Users' }}
+                        {{ $t('teamManagement.assignUsers') }} ({{ selectedUserIds.length }})
                     </Button>
                 </div>
             </div>

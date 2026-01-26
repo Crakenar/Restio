@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import PremiumSidebar from '@/components/PremiumSidebar.vue';
-import { Head, usePage } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 const page = usePage();
 import { Users, AlertTriangle, ArrowRight, Crown } from 'lucide-vue-next';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,6 +8,11 @@ import EmployeeForm from '@/components/EmployeeForm.vue';
 import CsvUpload from '@/components/CsvUpload.vue';
 import EmployeeList from '@/components/EmployeeList.vue';
 import { ref, computed } from 'vue';
+import { index as subscriptionIndexRoute } from '@/routes/subscription';
+import { employees as employeesRoute } from '@/routes';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 interface Employee {
     id: number;
@@ -27,11 +32,20 @@ interface SubscriptionInfo {
 }
 
 interface Props {
-    employees: Employee[];
+    employees: {
+        data: Employee[];
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+    };
     subscription_info: SubscriptionInfo;
 }
 
 const props = defineProps<Props>();
+
+// Extract employee data from pagination
+const employees = computed(() => props.employees.data);
 
 const activeTab = ref('list');
 
@@ -50,7 +64,7 @@ const progressBarColor = computed(() => {
 </script>
 
 <template>
-    <Head title="Employees" />
+    <Head :title="t('employees.title')" />
 
     <div class="flex min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-rose-50 dark:from-slate-950 dark:via-orange-950 dark:to-rose-950">
         <!-- Sidebar -->
@@ -79,10 +93,10 @@ const progressBarColor = computed(() => {
                 </div>
                 <div>
                     <h1 class="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
-                        Employees
+                        {{ t('employees.title') }}
                     </h1>
                     <p class="mt-1.5 text-sm text-slate-600 dark:text-white/70">
-                        Manage your team members and import employees
+                        {{ t('employees.subtitle') }}
                     </p>
                 </div>
             </div>
@@ -196,7 +210,7 @@ const progressBarColor = computed(() => {
 
                         <!-- Upgrade CTA -->
                         <a
-                            :href="route('subscription.index')"
+                            :href="subscriptionIndexRoute.url()"
                             class="group inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:shadow-xl"
                             :class="
                                 subscription_info.has_reached_limit
@@ -249,7 +263,7 @@ const progressBarColor = computed(() => {
 
                         <a
                             v-if="usagePercentage >= 60"
-                            :href="route('subscription.index')"
+                            :href="subscriptionIndexRoute.url()"
                             class="group inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-rose-500 px-3 py-1.5 text-xs font-semibold text-white shadow-md transition-all hover:shadow-lg"
                         >
                             <Crown class="h-3.5 w-3.5" />
@@ -312,7 +326,7 @@ const progressBarColor = computed(() => {
                 <!-- Employee List Tab -->
                 <TabsContent
                     value="list"
-                    class="relative flex-1 overflow-hidden rounded-3xl border border-white/40 bg-white/70 shadow-2xl backdrop-blur-2xl dark:border-white/20 dark:bg-slate-900/40"
+                    class="relative flex-1 space-y-4 overflow-hidden rounded-3xl border border-white/40 bg-white/70 shadow-2xl backdrop-blur-2xl dark:border-white/20 dark:bg-slate-900/40"
                 >
                     <!-- Animated gradient overlay -->
                     <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
@@ -324,6 +338,33 @@ const progressBarColor = computed(() => {
 
                     <div class="relative p-8">
                         <EmployeeList :employees="employees" />
+                    </div>
+
+                    <!-- Pagination -->
+                    <div
+                        v-if="props.employees.last_page > 1"
+                        class="relative flex items-center justify-between border-t border-white/20 px-8 py-4"
+                    >
+                        <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
+                            Page {{ props.employees.current_page }} of {{ props.employees.last_page }}
+                            <span class="ml-2 text-slate-500 dark:text-slate-400">({{ props.employees.total }} total employees)</span>
+                        </p>
+                        <div class="flex gap-2">
+                            <Link
+                                v-if="props.employees.current_page > 1"
+                                :href="employeesRoute.url({ query: { page: props.employees.current_page - 1 } })"
+                                class="rounded-xl bg-gradient-to-r from-slate-600 to-slate-700 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-slate-700 hover:to-slate-800 hover:shadow-lg"
+                            >
+                                Previous
+                            </Link>
+                            <Link
+                                v-if="props.employees.current_page < props.employees.last_page"
+                                :href="employeesRoute.url({ query: { page: props.employees.current_page + 1 } })"
+                                class="rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-orange-600 hover:to-rose-600 hover:shadow-lg"
+                            >
+                                Next
+                            </Link>
+                        </div>
                     </div>
                 </TabsContent>
 

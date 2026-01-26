@@ -17,6 +17,9 @@ import {
 import NotificationBell from './NotificationBell.vue';
 import NotificationPanel from './NotificationPanel.vue';
 import TourButton from './TourButton.vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 interface NavItem {
     title: string;
@@ -64,17 +67,17 @@ const currentRoute = computed(() => page.url);
 const navItems = computed<NavItem[]>(() => {
     const items: NavItem[] = [
         {
-            title: 'Dashboard',
+            title: t('nav.dashboard'),
             href: '/dashboard',
             icon: LayoutGrid,
         },
         {
-            title: 'Calendar',
+            title: t('nav.calendar'),
             href: '/calendar',
             icon: Calendar,
         },
         {
-            title: 'Requests',
+            title: t('nav.requests'),
             href: '/requests',
             icon: FileText,
         },
@@ -83,7 +86,7 @@ const navItems = computed<NavItem[]>(() => {
     // Team - for managers and admins
     if (userRole.value === 'manager' || userRole.value === 'admin') {
         items.push({
-            title: 'Team',
+            title: t('nav.team'),
             href: '/teams',
             icon: Users,
             roles: ['manager', 'admin'],
@@ -93,7 +96,7 @@ const navItems = computed<NavItem[]>(() => {
     // Employees - for admins only
     if (userRole.value === 'admin' || userRole.value === 'owner') {
         items.push({
-            title: 'Employees',
+            title: t('nav.employees'),
             href: '/employees',
             icon: Users,
             roles: ['admin', 'owner'],
@@ -103,7 +106,7 @@ const navItems = computed<NavItem[]>(() => {
     // Team Management - for admins and owners
     if (userRole.value === 'admin' || userRole.value === 'owner') {
         items.push({
-            title: 'Team Management',
+            title: t('nav.teamManagement'),
             href: '/team-management',
             icon: UserCog,
             roles: ['admin', 'owner'],
@@ -285,7 +288,7 @@ const closeNotificationPanel = () => {
                             <Settings class="h-5 w-5" />
                         </div>
                         <span v-if="!isCollapsed" class="text-sm font-medium">
-                            Settings
+                            {{ t('nav.settings') }}
                         </span>
 
                         <!-- Tooltip -->
@@ -293,7 +296,7 @@ const closeNotificationPanel = () => {
                             v-if="isCollapsed"
                             class="pointer-events-none absolute left-full top-1/2 ml-4 -translate-y-1/2 whitespace-nowrap rounded-xl border border-white/20 bg-white/90 px-3 py-2 text-sm font-semibold text-slate-800 opacity-0 shadow-xl backdrop-blur-xl transition-all duration-300 group-hover:opacity-100 dark:border-white/10 dark:bg-slate-900/90 dark:text-slate-100"
                         >
-                            Settings
+                            {{ t('nav.settings') }}
                             <div
                                 class="absolute right-full top-1/2 -mr-1 -translate-y-1/2 border-4 border-transparent border-r-white/90 dark:border-r-slate-900/90"
                             />

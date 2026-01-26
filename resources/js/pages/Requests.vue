@@ -2,7 +2,8 @@
 import RequestsTable from '@/components/RequestsTable.vue';
 import RequestActionModal from '@/components/RequestActionModal.vue';
 import PremiumSidebar from '@/components/PremiumSidebar.vue';
-import { Head, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { requests as requestsRoute } from '@/routes';
 
 const page = usePage();
 import { FileText, Clock, CheckCircle2, XCircle, Plus } from 'lucide-vue-next';
@@ -14,6 +15,9 @@ import { Badge } from '@/components/ui/badge';
 import { UserRole } from '@/enums/UserRole';
 import { VacationRequestStatus } from '@/enums/VacationRequestStatus';
 import { VacationRequestType } from '@/enums/VacationRequestType';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 interface VacationRequest {
     id: string;
@@ -29,7 +33,20 @@ interface VacationRequest {
 
 // Define props received from Inertia controller
 interface Props {
-    requests: VacationRequest[];
+    requests: {
+        data: VacationRequest[];
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+    };
+    counts: {
+        all: number;
+        pending: number;
+        approved: number;
+        rejected: number;
+    };
+    currentStatus: string;
     userRole: UserRole;
 }
 
@@ -37,7 +54,7 @@ const props = defineProps<Props>();
 
 // Convert props to refs for reactivity (dates need to be converted)
 const requests = computed<VacationRequest[]>(() =>
-    props.requests.map((req) => ({
+    props.requests.data.map((req) => ({
         ...req,
         startDate: new Date(req.startDate),
         endDate: new Date(req.endDate),
@@ -52,39 +69,17 @@ const modalAction = ref<'approve' | 'reject' | null>(null);
 const selectedRequestId = ref<string | null>(null);
 const selectedEmployeeName = ref<string>('');
 
-const activeTab = ref('all');
+// Active tab is controlled by the currentStatus prop from backend
+const activeTab = ref(props.currentStatus);
 
-// Filter requests based on role
-const visibleRequests = computed(() => {
-    return requests.value;
-});
-
-// Filter by status
-const pendingRequests = computed(() =>
-    visibleRequests.value.filter((r) => r.status === VacationRequestStatus.PENDING)
-);
-
-const approvedRequests = computed(() =>
-    visibleRequests.value.filter((r) => r.status === VacationRequestStatus.APPROVED)
-);
-
-const rejectedRequests = computed(() =>
-    visibleRequests.value.filter((r) => r.status === VacationRequestStatus.REJECTED)
-);
-
-// Get filtered requests based on active tab
-const filteredRequests = computed(() => {
-    switch (activeTab.value) {
-        case 'pending':
-            return pendingRequests.value;
-        case 'approved':
-            return approvedRequests.value;
-        case 'rejected':
-            return rejectedRequests.value;
-        default:
-            return visibleRequests.value;
-    }
-});
+// Navigate to a different tab
+const navigateToTab = (status: string) => {
+    const query = status === 'all' ? {} : { status };
+    router.get(requestsRoute.url({ query }), {}, {
+        preserveState: false,
+        preserveScroll: false,
+    });
+};
 
 const handleApprove = (id: string, employeeName: string) => {
     selectedRequestId.value = id;
@@ -111,7 +106,7 @@ const closeModal = () => {
 </script>
 
 <template>
-    <Head title="Requests" />
+    <Head :title="t('requests.title')" />
 
     <div class="flex min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-rose-50 dark:from-slate-950 dark:via-orange-950 dark:to-rose-950">
         <!-- Sidebar -->
@@ -141,10 +136,10 @@ const closeModal = () => {
                     </div>
                     <div>
                         <h1 class="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
-                            Time Off Requests
+                            {{ t('requests.title') }}
                         </h1>
                         <p class="mt-1.5 text-sm text-slate-600 dark:text-white/70">
-                            {{ userRole === UserRole.EMPLOYEE ? 'View and manage your time off requests' : 'Review and approve team requests' }}
+                            {{ userRole === UserRole.EMPLOYEE ? t('requests.subtitle.employee') : t('requests.subtitle.manager') }}
                         </p>
                     </div>
                 </div>
@@ -155,7 +150,7 @@ const closeModal = () => {
                     class="bg-gradient-to-r from-orange-500 to-rose-500 text-white hover:from-orange-600 hover:to-rose-600"
                 >
                     <Plus class="mr-2 h-4 w-4" />
-                    New Request
+                    {{ t('vacation.request.title') }}
                 </Button>
             </div>
 
@@ -165,8 +160,8 @@ const closeModal = () => {
                     <CardContent class="p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-slate-600 dark:text-white/60">Total</p>
-                                <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ visibleRequests.length }}</p>
+                                <p class="text-sm font-medium text-slate-600 dark:text-white/60">{{ t('requests.total') }}</p>
+                                <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ counts.all }}</p>
                             </div>
                             <FileText class="h-8 w-8 text-slate-400 dark:text-white/40" />
                         </div>
@@ -177,8 +172,8 @@ const closeModal = () => {
                     <CardContent class="p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-amber-600 dark:text-amber-400">Pending</p>
-                                <p class="text-3xl font-bold text-amber-700 dark:text-amber-300">{{ pendingRequests.length }}</p>
+                                <p class="text-sm font-medium text-amber-600 dark:text-amber-400">{{ t('requests.pending') }}</p>
+                                <p class="text-3xl font-bold text-amber-700 dark:text-amber-300">{{ counts.pending }}</p>
                             </div>
                             <Clock class="h-8 w-8 text-amber-400" />
                         </div>
@@ -189,8 +184,8 @@ const closeModal = () => {
                     <CardContent class="p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-emerald-600 dark:text-emerald-400">Approved</p>
-                                <p class="text-3xl font-bold text-emerald-700 dark:text-emerald-300">{{ approvedRequests.length }}</p>
+                                <p class="text-sm font-medium text-emerald-600 dark:text-emerald-400">{{ t('requests.approved') }}</p>
+                                <p class="text-3xl font-bold text-emerald-700 dark:text-emerald-300">{{ counts.approved }}</p>
                             </div>
                             <CheckCircle2 class="h-8 w-8 text-emerald-400" />
                         </div>
@@ -201,8 +196,8 @@ const closeModal = () => {
                     <CardContent class="p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-rose-600 dark:text-rose-400">Rejected</p>
-                                <p class="text-3xl font-bold text-rose-700 dark:text-rose-300">{{ rejectedRequests.length }}</p>
+                                <p class="text-sm font-medium text-rose-600 dark:text-rose-400">{{ t('requests.rejected') }}</p>
+                                <p class="text-3xl font-bold text-rose-700 dark:text-rose-300">{{ counts.rejected }}</p>
                             </div>
                             <XCircle class="h-8 w-8 text-rose-400" />
                         </div>
@@ -221,6 +216,7 @@ const closeModal = () => {
                         <TabsTrigger
                             value="all"
                             class="group relative overflow-hidden rounded-xl px-6 py-3 font-semibold text-slate-600 transition-all duration-300 hover:text-slate-900 data-[state=active]:text-white dark:text-slate-300 dark:hover:text-white dark:data-[state=active]:text-white"
+                            @click="navigateToTab('all')"
                         >
                             <!-- Active gradient background -->
                             <div class="absolute inset-0 bg-gradient-to-r from-slate-600 to-slate-800 opacity-0 transition-opacity duration-300 data-[state=active]:opacity-100 group-data-[state=active]:opacity-100" />
@@ -228,9 +224,9 @@ const closeModal = () => {
                             <!-- Content -->
                             <span class="relative z-10 flex items-center gap-2">
                                 <FileText class="h-4 w-4" />
-                                All
+                                {{ t('requests.all') }}
                                 <span class="ml-1 flex h-6 min-w-[24px] items-center justify-center rounded-full bg-slate-200 px-2 text-xs font-bold text-slate-700 transition-all group-data-[state=active]:bg-white/20 group-data-[state=active]:text-white dark:bg-slate-700 dark:text-slate-300 dark:group-data-[state=active]:bg-white/20">
-                                    {{ visibleRequests.length }}
+                                    {{ counts.all }}
                                 </span>
                             </span>
                         </TabsTrigger>
@@ -238,6 +234,7 @@ const closeModal = () => {
                         <TabsTrigger
                             value="pending"
                             class="group relative overflow-hidden rounded-xl px-6 py-3 font-semibold text-slate-600 transition-all duration-300 hover:text-amber-700 data-[state=active]:text-white dark:text-slate-300 dark:hover:text-amber-400 dark:data-[state=active]:text-white"
+                            @click="navigateToTab('pending')"
                         >
                             <!-- Active gradient background -->
                             <div class="absolute inset-0 bg-gradient-to-r from-amber-500 to-orange-600 opacity-0 shadow-lg transition-all duration-300 group-data-[state=active]:opacity-100 group-data-[state=active]:shadow-amber-500/50" />
@@ -245,13 +242,13 @@ const closeModal = () => {
                             <!-- Content -->
                             <span class="relative z-10 flex items-center gap-2">
                                 <Clock class="h-4 w-4" />
-                                Pending
+                                {{ t('requests.pending') }}
                                 <span
-                                    v-if="pendingRequests.length > 0"
+                                    v-if="counts.pending > 0"
                                     class="ml-1 flex h-6 min-w-[24px] animate-pulse items-center justify-center rounded-full bg-amber-100 px-2 text-xs font-bold text-amber-700 transition-all group-data-[state=active]:bg-white/20 group-data-[state=active]:text-white dark:bg-amber-900/50 dark:text-amber-300 dark:group-data-[state=active]:bg-white/20"
                                     style="animation-duration: 2s"
                                 >
-                                    {{ pendingRequests.length }}
+                                    {{ counts.pending }}
                                 </span>
                             </span>
                         </TabsTrigger>
@@ -259,6 +256,7 @@ const closeModal = () => {
                         <TabsTrigger
                             value="approved"
                             class="group relative overflow-hidden rounded-xl px-6 py-3 font-semibold text-slate-600 transition-all duration-300 hover:text-emerald-700 data-[state=active]:text-white dark:text-slate-300 dark:hover:text-emerald-400 dark:data-[state=active]:text-white"
+                            @click="navigateToTab('approved')"
                         >
                             <!-- Active gradient background -->
                             <div class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-600 opacity-0 shadow-lg transition-all duration-300 group-data-[state=active]:opacity-100 group-data-[state=active]:shadow-emerald-500/50" />
@@ -266,9 +264,9 @@ const closeModal = () => {
                             <!-- Content -->
                             <span class="relative z-10 flex items-center gap-2">
                                 <CheckCircle2 class="h-4 w-4" />
-                                Approved
+                                {{ t('requests.approved') }}
                                 <span class="ml-1 flex h-6 min-w-[24px] items-center justify-center rounded-full bg-emerald-100 px-2 text-xs font-bold text-emerald-700 transition-all group-data-[state=active]:bg-white/20 group-data-[state=active]:text-white dark:bg-emerald-900/50 dark:text-emerald-300 dark:group-data-[state=active]:bg-white/20">
-                                    {{ approvedRequests.length }}
+                                    {{ counts.approved }}
                                 </span>
                             </span>
                         </TabsTrigger>
@@ -276,6 +274,7 @@ const closeModal = () => {
                         <TabsTrigger
                             value="rejected"
                             class="group relative overflow-hidden rounded-xl px-6 py-3 font-semibold text-slate-600 transition-all duration-300 hover:text-rose-700 data-[state=active]:text-white dark:text-slate-300 dark:hover:text-rose-400 dark:data-[state=active]:text-white"
+                            @click="navigateToTab('rejected')"
                         >
                             <!-- Active gradient background -->
                             <div class="absolute inset-0 bg-gradient-to-r from-rose-500 to-red-600 opacity-0 shadow-lg transition-all duration-300 group-data-[state=active]:opacity-100 group-data-[state=active]:shadow-rose-500/50" />
@@ -283,9 +282,9 @@ const closeModal = () => {
                             <!-- Content -->
                             <span class="relative z-10 flex items-center gap-2">
                                 <XCircle class="h-4 w-4" />
-                                Rejected
+                                {{ t('requests.rejected') }}
                                 <span class="ml-1 flex h-6 min-w-[24px] items-center justify-center rounded-full bg-rose-100 px-2 text-xs font-bold text-rose-700 transition-all group-data-[state=active]:bg-white/20 group-data-[state=active]:text-white dark:bg-rose-900/50 dark:text-rose-300 dark:group-data-[state=active]:bg-white/20">
-                                    {{ rejectedRequests.length }}
+                                    {{ counts.rejected }}
                                 </span>
                             </span>
                         </TabsTrigger>
@@ -295,7 +294,7 @@ const closeModal = () => {
                 <!-- All Tabs Content - Same design for all -->
                 <TabsContent
                     value="all"
-                    class="relative flex-1 overflow-hidden rounded-3xl border border-white/40 bg-white/70 shadow-2xl backdrop-blur-2xl dark:border-white/20 dark:bg-slate-900/40"
+                    class="relative flex-1 space-y-4 overflow-hidden rounded-3xl border border-white/40 bg-white/70 shadow-2xl backdrop-blur-2xl dark:border-white/20 dark:bg-slate-900/40"
                 >
                     <!-- Animated gradient overlay -->
                     <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
@@ -307,17 +306,44 @@ const closeModal = () => {
 
                     <div class="relative p-8">
                         <RequestsTable
-                            :requests="filteredRequests"
+                            :requests="requests"
                             :user-role="userRole"
                             @approve="handleApprove"
                             @reject="handleReject"
                         />
                     </div>
+
+                    <!-- Pagination -->
+                    <div
+                        v-if="props.requests.last_page > 1"
+                        class="relative flex items-center justify-between border-t border-white/20 px-8 py-4"
+                    >
+                        <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
+                            Page {{ props.requests.current_page }} of {{ props.requests.last_page }}
+                            <span class="ml-2 text-slate-500 dark:text-slate-400">({{ props.requests.total }} total)</span>
+                        </p>
+                        <div class="flex gap-2">
+                            <Link
+                                v-if="props.requests.current_page > 1"
+                                :href="requestsRoute.url({ query: currentStatus === 'all' ? { page: props.requests.current_page - 1 } : { status: currentStatus, page: props.requests.current_page - 1 } })"
+                                class="rounded-xl bg-gradient-to-r from-slate-600 to-slate-700 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-slate-700 hover:to-slate-800 hover:shadow-lg"
+                            >
+                                Previous
+                            </Link>
+                            <Link
+                                v-if="props.requests.current_page < props.requests.last_page"
+                                :href="requestsRoute.url({ query: currentStatus === 'all' ? { page: props.requests.current_page + 1 } : { status: currentStatus, page: props.requests.current_page + 1 } })"
+                                class="rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-orange-600 hover:to-rose-600 hover:shadow-lg"
+                            >
+                                Next
+                            </Link>
+                        </div>
+                    </div>
                 </TabsContent>
 
                 <TabsContent
                     value="pending"
-                    class="relative flex-1 overflow-hidden rounded-3xl border border-white/40 bg-white/70 shadow-2xl backdrop-blur-2xl dark:border-white/20 dark:bg-slate-900/40"
+                    class="relative flex-1 space-y-4 overflow-hidden rounded-3xl border border-white/40 bg-white/70 shadow-2xl backdrop-blur-2xl dark:border-white/20 dark:bg-slate-900/40"
                 >
                     <!-- Animated gradient overlay -->
                     <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
@@ -329,17 +355,44 @@ const closeModal = () => {
 
                     <div class="relative p-8">
                         <RequestsTable
-                            :requests="filteredRequests"
+                            :requests="requests"
                             :user-role="userRole"
                             @approve="handleApprove"
                             @reject="handleReject"
                         />
                     </div>
+
+                    <!-- Pagination -->
+                    <div
+                        v-if="props.requests.last_page > 1"
+                        class="relative flex items-center justify-between border-t border-white/20 px-8 py-4"
+                    >
+                        <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
+                            Page {{ props.requests.current_page }} of {{ props.requests.last_page }}
+                            <span class="ml-2 text-slate-500 dark:text-slate-400">({{ props.requests.total }} total)</span>
+                        </p>
+                        <div class="flex gap-2">
+                            <Link
+                                v-if="props.requests.current_page > 1"
+                                :href="requestsRoute.url({ query: currentStatus === 'all' ? { page: props.requests.current_page - 1 } : { status: currentStatus, page: props.requests.current_page - 1 } })"
+                                class="rounded-xl bg-gradient-to-r from-slate-600 to-slate-700 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-slate-700 hover:to-slate-800 hover:shadow-lg"
+                            >
+                                Previous
+                            </Link>
+                            <Link
+                                v-if="props.requests.current_page < props.requests.last_page"
+                                :href="requestsRoute.url({ query: currentStatus === 'all' ? { page: props.requests.current_page + 1 } : { status: currentStatus, page: props.requests.current_page + 1 } })"
+                                class="rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-orange-600 hover:to-rose-600 hover:shadow-lg"
+                            >
+                                Next
+                            </Link>
+                        </div>
+                    </div>
                 </TabsContent>
 
                 <TabsContent
                     value="approved"
-                    class="relative flex-1 overflow-hidden rounded-3xl border border-white/40 bg-white/70 shadow-2xl backdrop-blur-2xl dark:border-white/20 dark:bg-slate-900/40"
+                    class="relative flex-1 space-y-4 overflow-hidden rounded-3xl border border-white/40 bg-white/70 shadow-2xl backdrop-blur-2xl dark:border-white/20 dark:bg-slate-900/40"
                 >
                     <!-- Animated gradient overlay -->
                     <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
@@ -351,17 +404,44 @@ const closeModal = () => {
 
                     <div class="relative p-8">
                         <RequestsTable
-                            :requests="filteredRequests"
+                            :requests="requests"
                             :user-role="userRole"
                             @approve="handleApprove"
                             @reject="handleReject"
                         />
                     </div>
+
+                    <!-- Pagination -->
+                    <div
+                        v-if="props.requests.last_page > 1"
+                        class="relative flex items-center justify-between border-t border-white/20 px-8 py-4"
+                    >
+                        <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
+                            Page {{ props.requests.current_page }} of {{ props.requests.last_page }}
+                            <span class="ml-2 text-slate-500 dark:text-slate-400">({{ props.requests.total }} total)</span>
+                        </p>
+                        <div class="flex gap-2">
+                            <Link
+                                v-if="props.requests.current_page > 1"
+                                :href="requestsRoute.url({ query: currentStatus === 'all' ? { page: props.requests.current_page - 1 } : { status: currentStatus, page: props.requests.current_page - 1 } })"
+                                class="rounded-xl bg-gradient-to-r from-slate-600 to-slate-700 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-slate-700 hover:to-slate-800 hover:shadow-lg"
+                            >
+                                Previous
+                            </Link>
+                            <Link
+                                v-if="props.requests.current_page < props.requests.last_page"
+                                :href="requestsRoute.url({ query: currentStatus === 'all' ? { page: props.requests.current_page + 1 } : { status: currentStatus, page: props.requests.current_page + 1 } })"
+                                class="rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-orange-600 hover:to-rose-600 hover:shadow-lg"
+                            >
+                                Next
+                            </Link>
+                        </div>
+                    </div>
                 </TabsContent>
 
                 <TabsContent
                     value="rejected"
-                    class="relative flex-1 overflow-hidden rounded-3xl border border-white/40 bg-white/70 shadow-2xl backdrop-blur-2xl dark:border-white/20 dark:bg-slate-900/40"
+                    class="relative flex-1 space-y-4 overflow-hidden rounded-3xl border border-white/40 bg-white/70 shadow-2xl backdrop-blur-2xl dark:border-white/20 dark:bg-slate-900/40"
                 >
                     <!-- Animated gradient overlay -->
                     <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
@@ -373,11 +453,38 @@ const closeModal = () => {
 
                     <div class="relative p-8">
                         <RequestsTable
-                            :requests="filteredRequests"
+                            :requests="requests"
                             :user-role="userRole"
                             @approve="handleApprove"
                             @reject="handleReject"
                         />
+                    </div>
+
+                    <!-- Pagination -->
+                    <div
+                        v-if="props.requests.last_page > 1"
+                        class="relative flex items-center justify-between border-t border-white/20 px-8 py-4"
+                    >
+                        <p class="text-sm font-medium text-slate-600 dark:text-slate-300">
+                            Page {{ props.requests.current_page }} of {{ props.requests.last_page }}
+                            <span class="ml-2 text-slate-500 dark:text-slate-400">({{ props.requests.total }} total)</span>
+                        </p>
+                        <div class="flex gap-2">
+                            <Link
+                                v-if="props.requests.current_page > 1"
+                                :href="requestsRoute.url({ query: currentStatus === 'all' ? { page: props.requests.current_page - 1 } : { status: currentStatus, page: props.requests.current_page - 1 } })"
+                                class="rounded-xl bg-gradient-to-r from-slate-600 to-slate-700 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-slate-700 hover:to-slate-800 hover:shadow-lg"
+                            >
+                                Previous
+                            </Link>
+                            <Link
+                                v-if="props.requests.current_page < props.requests.last_page"
+                                :href="requestsRoute.url({ query: currentStatus === 'all' ? { page: props.requests.current_page + 1 } : { status: currentStatus, page: props.requests.current_page + 1 } })"
+                                class="rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-orange-600 hover:to-rose-600 hover:shadow-lg"
+                            >
+                                Next
+                            </Link>
+                        </div>
                     </div>
                 </TabsContent>
             </Tabs>

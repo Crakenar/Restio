@@ -9,7 +9,9 @@ import {
     TrendingUp,
     Users,
 } from 'lucide-vue-next';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import PublicLanguageSwitcher from '@/components/PublicLanguageSwitcher.vue';
 
 withDefaults(
     defineProps<{
@@ -20,6 +22,7 @@ withDefaults(
     },
 );
 
+const { t } = useI18n();
 const isLoaded = ref(false);
 
 onMounted(() => {
@@ -28,35 +31,32 @@ onMounted(() => {
     }, 100);
 });
 
-const features = [
+const features = computed(() => [
     {
         icon: CalendarDays,
-        title: 'Smart Time Off',
-        description:
-            'Effortlessly manage vacation requests, sick days, and time off with an intuitive calendar interface.',
+        title: t('welcome.features.smartTimeOff.title'),
+        description: t('welcome.features.smartTimeOff.description'),
     },
     {
         icon: Users,
-        title: 'Team Coordination',
-        description:
-            'Keep your team aligned with real-time availability tracking and coverage planning.',
+        title: t('welcome.features.teamCoordination.title'),
+        description: t('welcome.features.teamCoordination.description'),
     },
     {
         icon: TrendingUp,
-        title: 'Analytics Dashboard',
-        description:
-            'Gain insights into team utilization, pending approvals, and vacation trends at a glance.',
+        title: t('welcome.features.analytics.title'),
+        description: t('welcome.features.analytics.description'),
     },
-];
+]);
 
-const benefits = [
-    'Automated approval workflows',
-    'Real-time team calendar',
-    'Mobile-friendly interface',
-    'Customizable leave policies',
-    'Detailed reporting & analytics',
-    'Seamless integrations',
-];
+const benefits = computed(() => [
+    t('welcome.benefits.list.automatedWorkflows'),
+    t('welcome.benefits.list.teamCalendar'),
+    t('welcome.benefits.list.mobileFriendly'),
+    t('welcome.benefits.list.customPolicies'),
+    t('welcome.benefits.list.reporting'),
+    t('welcome.benefits.list.integrations'),
+]);
 </script>
 
 <template>
@@ -112,26 +112,27 @@ const benefits = [
             </div>
 
             <div class="flex items-center gap-3">
+                <PublicLanguageSwitcher />
                 <Link
                     v-if="$page.props.auth.user"
                     :href="dashboard()"
                     class="rounded-full border border-white/20 bg-white/10 px-6 py-2.5 text-sm font-medium text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
                 >
-                    Dashboard
+                    {{ t('nav.goToDashboard') }}
                 </Link>
                 <template v-else>
                     <Link
                         :href="login()"
                         class="rounded-full px-6 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10"
                     >
-                        Log in
+                        {{ t('nav.login') }}
                     </Link>
                     <Link
                         v-if="canRegister"
                         :href="register()"
                         class="rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-6 py-2.5 text-sm font-medium text-white shadow-lg shadow-orange-500/30 transition-all duration-300 hover:from-orange-600 hover:to-rose-600"
                     >
-                        Get Started
+                        {{ t('nav.register') }}
                     </Link>
                 </template>
             </div>
@@ -155,7 +156,7 @@ const benefits = [
                             class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm"
                         >
                             <Sparkles class="h-4 w-4 text-yellow-400" />
-                            <span>Modern Vacation Management</span>
+                            <span>{{ t('app.tagline') }}</span>
                         </div>
 
                         <!-- Headline -->
@@ -164,19 +165,13 @@ const benefits = [
                                 class="bg-gradient-to-br from-white via-orange-100 to-rose-200 bg-clip-text text-5xl leading-tight font-bold text-transparent md:text-6xl lg:text-7xl"
                                 style="font-family: 'DM Serif Display', serif"
                             >
-                                Time off,
-                                <br />
-                                beautifully
-                                <br />
-                                managed
+                                {{ t('welcome.title') }}
                             </h1>
                             <p
                                 class="max-w-xl text-lg leading-relaxed text-white/70 md:text-xl"
                                 style="font-family: 'Work Sans', sans-serif"
                             >
-                                Transform how your team plans vacations and time
-                                off. Restio brings clarity, simplicity, and joy
-                                to leave management.
+                                {{ t('welcome.subtitle') }}
                             </p>
                         </div>
 
@@ -187,7 +182,7 @@ const benefits = [
                                 :href="register()"
                                 class="group flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-8 py-4 text-base font-semibold text-white shadow-2xl shadow-orange-500/40 transition-all duration-300 hover:from-orange-600 hover:to-rose-600"
                             >
-                                <span>Start Free Trial</span>
+                                <span>{{ t('welcome.cta.startTrial') }}</span>
                                 <ChevronRight
                                     class="h-5 w-5 transition-transform group-hover:translate-x-1"
                                 />
@@ -197,7 +192,7 @@ const benefits = [
                                 :href="dashboard()"
                                 class="group flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-8 py-4 text-base font-semibold text-white shadow-2xl shadow-orange-500/40 transition-all duration-300 hover:from-orange-600 hover:to-rose-600"
                             >
-                                <span>Go to Dashboard</span>
+                                <span>{{ t('nav.goToDashboard') }}</span>
                                 <ChevronRight
                                     class="h-5 w-5 transition-transform group-hover:translate-x-1"
                                 />
@@ -206,7 +201,7 @@ const benefits = [
                                 href="#features"
                                 class="flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
                             >
-                                Learn More
+                                {{ t('nav.learnMore') }}
                             </a>
                         </div>
 
@@ -219,7 +214,7 @@ const benefits = [
                                     99%
                                 </div>
                                 <div class="text-sm text-white/60">
-                                    Approval Rate
+                                    {{ t('welcome.stats.approvalRate') }}
                                 </div>
                             </div>
                             <div class="space-y-1">
@@ -227,7 +222,7 @@ const benefits = [
                                     2.5h
                                 </div>
                                 <div class="text-sm text-white/60">
-                                    Time Saved
+                                    {{ t('welcome.stats.timeSaved') }}
                                 </div>
                             </div>
                             <div class="space-y-1">
@@ -235,7 +230,7 @@ const benefits = [
                                     100+
                                 </div>
                                 <div class="text-sm text-white/60">
-                                    Companies
+                                    {{ t('welcome.stats.companies') }}
                                 </div>
                             </div>
                         </div>
@@ -441,11 +436,10 @@ const benefits = [
                         class="bg-gradient-to-br from-white via-orange-100 to-rose-200 bg-clip-text text-4xl font-bold text-transparent md:text-5xl"
                         style="font-family: 'DM Serif Display', serif"
                     >
-                        Everything you need
+                        {{ t('welcome.features.title') }}
                     </h2>
                     <p class="mx-auto max-w-2xl text-lg text-white/70">
-                        A complete solution for modern teams to manage time off
-                        with ease and transparency
+                        {{ t('welcome.features.subtitle') }}
                     </p>
                 </div>
 
@@ -485,12 +479,10 @@ const benefits = [
                                 class="mb-6 bg-gradient-to-br from-white to-orange-200 bg-clip-text text-3xl font-bold text-transparent"
                                 style="font-family: 'DM Serif Display', serif"
                             >
-                                Built for productivity
+                                {{ t('welcome.benefits.title') }}
                             </h3>
                             <p class="leading-relaxed text-white/70">
-                                Restio streamlines every aspect of leave
-                                management, from submission to approval, giving
-                                your team more time to focus on what matters.
+                                {{ t('welcome.benefits.subtitle') }}
                             </p>
                         </div>
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -519,11 +511,10 @@ const benefits = [
                     class="bg-gradient-to-br from-white via-orange-100 to-rose-200 bg-clip-text text-4xl font-bold text-transparent md:text-5xl lg:text-6xl"
                     style="font-family: 'DM Serif Display', serif"
                 >
-                    Ready to get started?
+                    {{ t('welcome.cta.readyTitle') }}
                 </h2>
                 <p class="mx-auto max-w-2xl text-xl text-white/70">
-                    Join hundreds of teams already managing their time off with
-                    Restio
+                    {{ t('welcome.cta.readySubtitle') }}
                 </p>
                 <div
                     class="flex flex-col justify-center gap-4 pt-4 sm:flex-row"
@@ -533,7 +524,7 @@ const benefits = [
                         :href="register()"
                         class="group flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-10 py-5 text-lg font-semibold text-white shadow-2xl shadow-orange-500/40 transition-all duration-300 hover:from-orange-600 hover:to-rose-600"
                     >
-                        <span>Create Account</span>
+                        <span>{{ t('welcome.cta.createAccount') }}</span>
                         <ChevronRight
                             class="h-5 w-5 transition-transform group-hover:translate-x-1"
                         />
@@ -543,14 +534,14 @@ const benefits = [
                         :href="login()"
                         class="flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-10 py-5 text-lg font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
                     >
-                        Sign In
+                        {{ t('welcome.cta.signIn') }}
                     </Link>
                     <Link
                         v-else
                         :href="dashboard()"
                         class="group flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-10 py-5 text-lg font-semibold text-white shadow-2xl shadow-orange-500/40 transition-all duration-300 hover:from-orange-600 hover:to-rose-600"
                     >
-                        <span>Go to Dashboard</span>
+                        <span>{{ t('nav.goToDashboard') }}</span>
                         <ChevronRight
                             class="h-5 w-5 transition-transform group-hover:translate-x-1"
                         />
@@ -568,17 +559,17 @@ const benefits = [
             >
                 <div class="flex items-center gap-2">
                     <CalendarDays class="h-4 w-4" />
-                    <span>&copy; 2026 Restio. All rights reserved.</span>
+                    <span>{{ t('footer.copyright') }}</span>
                 </div>
                 <div class="flex gap-6">
                     <Link href="/privacy-policy" class="transition-colors hover:text-white"
-                        >Privacy</Link
+                        >{{ t('footer.privacy') }}</Link
                     >
                     <Link href="/terms-of-service" class="transition-colors hover:text-white"
-                        >Terms</Link
+                        >{{ t('footer.terms') }}</Link
                     >
                     <Link href="/gdpr-compliance" class="transition-colors hover:text-white"
-                        >GDPR</Link
+                        >{{ t('footer.gdpr') }}</Link
                     >
                 </div>
             </div>

@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Enum\UserRole;
+use App\Models\Admin;
 use App\Models\User;
 
 class UserPolicy
@@ -11,8 +12,13 @@ class UserPolicy
      * Determine whether the user can view any models.
      * Admins and owners can view all users in their company.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(User|Admin $user): bool
     {
+        // System admins can view all users
+        if ($user instanceof Admin) {
+            return true;
+        }
+
         $role = UserRole::from($user->role);
 
         return $role->isOwnerOrAdmin();
@@ -24,8 +30,13 @@ class UserPolicy
      * Managers can view users in their team.
      * Users can view themselves.
      */
-    public function view(User $user, User $model): bool
+    public function view(User|Admin $user, User $model): bool
     {
+        // System admins can view any user
+        if ($user instanceof Admin) {
+            return true;
+        }
+
         // Must be same company
         if ($user->company_id !== $model->company_id) {
             return false;
@@ -55,8 +66,13 @@ class UserPolicy
      * Determine whether the user can create models.
      * Only admins and owners can create new users.
      */
-    public function create(User $user): bool
+    public function create(User|Admin $user): bool
     {
+        // System admins can create users
+        if ($user instanceof Admin) {
+            return true;
+        }
+
         $role = UserRole::from($user->role);
 
         return $role->isOwnerOrAdmin();
@@ -67,8 +83,13 @@ class UserPolicy
      * Admins and owners can update any user in their company.
      * Users can update their own profile information.
      */
-    public function update(User $user, User $model): bool
+    public function update(User|Admin $user, User $model): bool
     {
+        // System admins can update any user
+        if ($user instanceof Admin) {
+            return true;
+        }
+
         // Must be same company
         if ($user->company_id !== $model->company_id) {
             return false;
@@ -90,8 +111,13 @@ class UserPolicy
      * Only admins and owners can delete users.
      * Cannot delete yourself.
      */
-    public function delete(User $user, User $model): bool
+    public function delete(User|Admin $user, User $model): bool
     {
+        // System admins can delete any user
+        if ($user instanceof Admin) {
+            return true;
+        }
+
         // Must be same company
         if ($user->company_id !== $model->company_id) {
             return false;
@@ -111,8 +137,13 @@ class UserPolicy
      * Determine whether the user can import users via CSV.
      * Only admins and owners can import users.
      */
-    public function importCsv(User $user): bool
+    public function importCsv(User|Admin $user): bool
     {
+        // System admins can import users
+        if ($user instanceof Admin) {
+            return true;
+        }
+
         $role = UserRole::from($user->role);
 
         return $role->isOwnerOrAdmin();
@@ -121,16 +152,18 @@ class UserPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, User $model): bool
+    public function restore(User|Admin $user, User $model): bool
     {
-        return false;
+        // Only system admins can restore users
+        return $user instanceof Admin;
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, User $model): bool
+    public function forceDelete(User|Admin $user, User $model): bool
     {
-        return false;
+        // Only system admins can force delete users
+        return $user instanceof Admin;
     }
 }

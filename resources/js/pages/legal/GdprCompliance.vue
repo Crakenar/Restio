@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import { ArrowLeft, Shield, Download, Trash2, Edit, AlertCircle, CheckCircle2 } from 'lucide-vue-next';
 import { onMounted, ref } from 'vue';
+import PublicLanguageSwitcher from '@/components/PublicLanguageSwitcher.vue';
 
 const principles = [
     {
@@ -100,8 +101,11 @@ onMounted(() => {
                         <ArrowLeft class="h-4 w-4 transition-transform group-hover:-translate-x-1" />
                         <span>Back to Home</span>
                     </Link>
-                    <div class="text-xs font-medium tracking-wide text-emerald-400">
-                        GDPR COMPLIANCE
+                    <div class="flex items-center gap-4">
+                        <PublicLanguageSwitcher />
+                        <div class="text-xs font-medium tracking-wide text-emerald-400">
+                            GDPR COMPLIANCE
+                        </div>
                     </div>
                 </div>
             </div>
@@ -444,5 +448,15 @@ onMounted(() => {
 <style scoped>
 .legal-document {
     font-family: 'Albert Sans', sans-serif;
+}
+
+/* Fix white text visibility issue */
+.legal-document p,
+.legal-document li {
+    color: #047857; /* emerald-700 */
+}
+
+.legal-document h3 {
+    color: #065f46; /* emerald-800 */
 }
 </style>

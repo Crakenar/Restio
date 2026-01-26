@@ -22,6 +22,9 @@ import {
     XCircle,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 interface Props {
     requests: VacationRequest[];
@@ -152,9 +155,9 @@ const getTypeColor = (type: string) => {
                         <BarChart3 class="h-6 w-6" />
                     </div>
                     <div>
-                        <h2 class="text-2xl font-bold">Admin Dashboard</h2>
+                        <h2 class="text-2xl font-bold">{{ t('dashboard.admin.title') }}</h2>
                         <p class="text-sm text-slate-600 dark:text-white/70">
-                            Company-wide vacation analytics and management
+                            {{ t('dashboard.admin.subtitle') }}
                         </p>
                     </div>
                 </div>
@@ -175,7 +178,7 @@ const getTypeColor = (type: string) => {
                             <p
                                 class="mb-1 text-sm font-medium text-slate-600 dark:text-white/60"
                             >
-                                Total Employees
+                                {{ t('dashboard.admin.totalEmployees') }}
                             </p>
                             <p
                                 class="text-4xl font-bold text-slate-900 dark:text-white"
@@ -185,7 +188,7 @@ const getTypeColor = (type: string) => {
                             <p
                                 class="mt-1 text-xs text-slate-500 dark:text-white/40"
                             >
-                                Active workforce
+                                {{ t('dashboard.admin.activeWorkforce') }}
                             </p>
                         </div>
                         <Users class="h-10 w-10 text-blue-400 opacity-50" />
@@ -200,13 +203,13 @@ const getTypeColor = (type: string) => {
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="mb-1 text-sm font-medium text-white/60">
-                                Total Requests
+                                {{ t('dashboard.admin.totalRequests') }}
                             </p>
                             <p class="text-4xl font-bold text-white">
                                 {{ totalRequests }}
                             </p>
                             <p class="mt-1 text-xs text-white/40">
-                                All time submissions
+                                {{ t('dashboard.admin.allTimeSubmissions') }}
                             </p>
                         </div>
                         <Calendar
@@ -223,13 +226,13 @@ const getTypeColor = (type: string) => {
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="mb-1 text-sm font-medium text-white/60">
-                                Approval Rate
+                                {{ t('dashboard.admin.approvalRate') }}
                             </p>
                             <p class="text-4xl font-bold text-white">
                                 {{ approvalRate }}%
                             </p>
                             <p class="mt-1 text-xs text-white/40">
-                                Request success rate
+                                {{ t('dashboard.admin.requestSuccessRate') }}
                             </p>
                         </div>
                         <TrendingUp
@@ -250,7 +253,7 @@ const getTypeColor = (type: string) => {
                         <p
                             class="text-sm font-medium text-slate-600 dark:text-white/60"
                         >
-                            Pending
+                            {{ t('dashboard.admin.pending') }}
                         </p>
                         <Clock class="h-5 w-5 text-amber-500" />
                     </div>
@@ -278,7 +281,7 @@ const getTypeColor = (type: string) => {
                 <CardContent class="p-6">
                     <div class="mb-2 flex items-center justify-between">
                         <p class="text-sm font-medium text-white/60">
-                            Approved
+                            {{ t('dashboard.admin.approved') }}
                         </p>
                         <CheckCircle2 class="h-5 w-5 text-emerald-500" />
                     </div>
@@ -304,7 +307,7 @@ const getTypeColor = (type: string) => {
                 <CardContent class="p-6">
                     <div class="mb-2 flex items-center justify-between">
                         <p class="text-sm font-medium text-white/60">
-                            Rejected
+                            {{ t('dashboard.admin.rejected') }}
                         </p>
                         <XCircle class="h-5 w-5 text-red-500" />
                     </div>
@@ -330,14 +333,14 @@ const getTypeColor = (type: string) => {
                 <CardContent class="p-6">
                     <div class="mb-2 flex items-center justify-between">
                         <p class="text-sm font-medium text-white/60">
-                            Out Today
+                            {{ t('dashboard.admin.outToday') }}
                         </p>
                         <AlertTriangle class="h-5 w-5 text-blue-500" />
                     </div>
                     <p class="text-3xl font-bold text-white">
                         {{ currentAbsences }}
                     </p>
-                    <p class="mt-2 text-xs text-white/40">Currently absent</p>
+                    <p class="mt-2 text-xs text-white/40">{{ t('dashboard.admin.currentlyAbsent') }}</p>
                 </CardContent>
             </Card>
         </div>
@@ -350,10 +353,10 @@ const getTypeColor = (type: string) => {
             >
                 <CardHeader>
                     <CardTitle class="text-slate-900 dark:text-white"
-                        >Department Breakdown</CardTitle
+                        >{{ t('dashboard.admin.departmentBreakdown') }}</CardTitle
                     >
                     <CardDescription class="text-slate-500 dark:text-white/60"
-                        >Requests by department</CardDescription
+                        >{{ t('dashboard.admin.requestsByDepartment') }}</CardDescription
                     >
                 </CardHeader>
                 <CardContent>
@@ -373,14 +376,14 @@ const getTypeColor = (type: string) => {
                                 <div class="mt-1 flex items-center gap-2">
                                     <span
                                         class="text-xs text-slate-500 dark:text-white/50"
-                                        >{{ dept.count }} requests</span
+                                        >{{ dept.count }} {{ t('dashboard.admin.requestsLabel') }}</span
                                     >
                                     <Badge
                                         v-if="dept.pending > 0"
                                         variant="outline"
                                         class="border-amber-500/50 text-xs text-amber-500"
                                     >
-                                        {{ dept.pending }} pending
+                                        {{ dept.pending }} {{ t('dashboard.admin.pendingLabel') }}
                                     </Badge>
                                 </div>
                             </div>
@@ -402,10 +405,10 @@ const getTypeColor = (type: string) => {
             >
                 <CardHeader>
                     <CardTitle class="text-slate-900 dark:text-white"
-                        >Request Types</CardTitle
+                        >{{ t('dashboard.admin.requestTypes') }}</CardTitle
                     >
                     <CardDescription class="text-slate-500 dark:text-white/60"
-                        >Distribution by leave type</CardDescription
+                        >{{ t('dashboard.admin.distributionByType') }}</CardDescription
                     >
                 </CardHeader>
                 <CardContent>
@@ -449,10 +452,10 @@ const getTypeColor = (type: string) => {
         >
             <CardHeader>
                 <CardTitle class="text-slate-900 dark:text-white"
-                    >Company-wide Utilization</CardTitle
+                    >{{ t('dashboard.admin.companyUtilization') }}</CardTitle
                 >
                 <CardDescription class="text-slate-500 dark:text-white/60"
-                    >Vacation day usage across all employees</CardDescription
+                    >{{ t('dashboard.admin.vacationDayUsage') }}</CardDescription
                 >
             </CardHeader>
             <CardContent>
@@ -462,7 +465,7 @@ const getTypeColor = (type: string) => {
                             <p
                                 class="text-sm text-slate-500 dark:text-white/50"
                             >
-                                Total Days Used
+                                {{ t('dashboard.admin.totalDaysUsed') }}
                             </p>
                             <p
                                 class="text-2xl font-bold text-slate-900 dark:text-white"
@@ -472,7 +475,7 @@ const getTypeColor = (type: string) => {
                         </div>
                         <div>
                             <p class="text-sm text-white/50">
-                                Total Days Available
+                                {{ t('dashboard.admin.totalDaysAvailable') }}
                             </p>
                             <p class="text-2xl font-bold text-white">
                                 {{ totalDaysAvailable }}
@@ -480,7 +483,7 @@ const getTypeColor = (type: string) => {
                         </div>
                         <div>
                             <p class="text-sm text-white/50">
-                                Utilization Rate
+                                {{ t('dashboard.admin.utilizationRate') }}
                             </p>
                             <p class="text-2xl font-bold text-white">
                                 {{ utilizationRate }}%
@@ -505,17 +508,17 @@ const getTypeColor = (type: string) => {
                 <TabsTrigger
                     value="calendar"
                     class="text-slate-600 transition-all hover:bg-white/20 hover:text-slate-900 data-[state=active]:bg-white/60 data-[state=active]:text-slate-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white"
-                    >Coverage Calendar</TabsTrigger
+                    >{{ t('dashboard.admin.coverageCalendar') }}</TabsTrigger
                 >
                 <TabsTrigger
                     value="employees"
                     class="text-slate-600 transition-all hover:bg-white/20 hover:text-slate-900 data-[state=active]:bg-white/60 data-[state=active]:text-slate-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white"
-                    >Employee Management</TabsTrigger
+                    >{{ t('dashboard.admin.employeeManagement') }}</TabsTrigger
                 >
                 <TabsTrigger
                     value="requests"
                     class="text-slate-600 transition-all hover:bg-white/20 hover:text-slate-900 data-[state=active]:bg-white/60 data-[state=active]:text-slate-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white"
-                    >All Requests</TabsTrigger
+                    >{{ t('dashboard.admin.allRequests') }}</TabsTrigger
                 >
             </TabsList>
 

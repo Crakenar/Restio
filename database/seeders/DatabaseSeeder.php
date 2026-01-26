@@ -22,7 +22,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(SubscriptionSeeder::class);
+        $this->call([
+            SubscriptionSeeder::class,
+            AdminSeeder::class,
+        ]);
 
         // Get subscription plans
         $subscriptions = Subscription::all();
@@ -58,9 +61,9 @@ class DatabaseSeeder extends Seeder
                     : now()->add(1, $subscription->interval->value),
             ]);
 
-            // Create departments
-            $departments = collect(['Engineering', 'Marketing', 'Sales', 'HR', 'Finance'])
-                ->map(fn ($name) => \App\Models\Department::create([
+            // Create teams
+            $teams = collect(['Engineering', 'Marketing', 'Sales', 'HR', 'Finance'])
+                ->map(fn ($name) => \App\Models\Team::create([
                     'company_id' => $company->id,
                     'name' => $name,
                 ]));
@@ -68,9 +71,9 @@ class DatabaseSeeder extends Seeder
             // Create users for this company
             $users = User::factory($size['users'])
                 ->for($company)
-                ->state(function (array $attributes) use ($departments) {
+                ->state(function (array $attributes) use ($teams) {
                     return [
-                        'department_id' => $departments->random()->id,
+                        'team_id' => $teams->random()->id,
                     ];
                 })
                 ->create();
@@ -78,7 +81,7 @@ class DatabaseSeeder extends Seeder
             // Set roles: 1 owner, 1-2 admins, 2-3 managers, rest are employees
             $users[0]->update([
                 'role' => UserRole::OWNER,
-                'department_id' => $departments->firstWhere('name', 'Engineering')->id,
+                'team_id' => $teams->firstWhere('name', 'Engineering')->id,
             ]);
 
             // Set 1-2 admins
@@ -131,7 +134,7 @@ class DatabaseSeeder extends Seeder
                 'email' => 'owner@example.com',
                 'password' => \Hash::make('password'),
                 'role' => UserRole::OWNER,
-                'department_id' => $testCompany->departments()->firstWhere('name', 'Engineering')->id,
+                'team_id' => $testCompany->teams()->firstWhere('name', 'Engineering')->id,
             ]);
 
         // Give test user some vacation requests
@@ -150,7 +153,7 @@ class DatabaseSeeder extends Seeder
                 ['Subscriptions', Subscription::query()->count()],
                 ['Companies', Company::query()->count()],
                 ['Company Subscriptions', \App\Models\CompanySubscription::query()->count()],
-                ['Departments', \App\Models\Department::query()->count()],
+                ['Teams', \App\Models\Team::query()->count()],
                 ['Company Settings', CompanySetting::query()->count()],
                 ['Users', User::count()],
                 ['Vacation Requests', VacationRequest::query()->count()],

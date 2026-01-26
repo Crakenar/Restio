@@ -44,6 +44,9 @@ Route::get('/onboarding/complete', [\App\Http\Controllers\OnboardingController::
     ->middleware(['auth', 'verified', \App\Http\Middleware\EnsureCompanyIsActive::class])
     ->name('onboarding.complete');
 
+// Locale switching (accessible to all users)
+Route::post('/locale', [\App\Http\Controllers\LocaleController::class, 'update'])->name('locale.update');
+
 Route::middleware(['auth', 'verified', \App\Http\Middleware\EnsureCompanyIsActive::class])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard-demo', fn () => Inertia::render('DashboardDemo'))->name('dashboard.demo');

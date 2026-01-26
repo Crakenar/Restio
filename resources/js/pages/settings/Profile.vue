@@ -4,6 +4,7 @@ import { Head, useForm, Link, usePage } from '@inertiajs/vue3';
 import PremiumSidebar from '@/components/PremiumSidebar.vue';
 import DeleteUser from '@/components/DeleteUser.vue';
 import ToastContainer from '@/components/ToastContainer.vue';
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -212,12 +213,12 @@ const handleCompanySubmit = () => {
                                         <h2
                                             class="text-xl font-bold text-slate-900 dark:text-white"
                                         >
-                                            Personal Information
+                                            {{ $t('settings.profile.title') }}
                                         </h2>
                                         <p
                                             class="text-sm text-slate-600 dark:text-slate-400"
                                         >
-                                            Update your profile details
+                                            {{ $t('settings.profile.subtitle') }}
                                         </p>
                                     </div>
                                 </div>
@@ -229,14 +230,14 @@ const handleCompanySubmit = () => {
                                             for="name"
                                             class="text-slate-700 dark:text-slate-300"
                                         >
-                                            Full Name
+                                            {{ $t('settings.profile.name') }}
                                         </Label>
                                         <Input
                                             id="name"
                                             v-model="profileForm.name"
                                             type="text"
                                             required
-                                            placeholder="John Doe"
+                                            :placeholder="$t('settings.profile.namePlaceholder')"
                                             class="border-slate-200/50 bg-white/60 backdrop-blur-sm transition-all duration-300 focus:border-blue-500 focus:bg-white dark:border-white/10 dark:bg-white/5 dark:focus:border-blue-400 dark:focus:bg-white/10"
                                             :class="{
                                                 'border-red-500 dark:border-red-400':
@@ -257,14 +258,14 @@ const handleCompanySubmit = () => {
                                             for="email"
                                             class="text-slate-700 dark:text-slate-300"
                                         >
-                                            Email Address
+                                            {{ $t('settings.profile.email') }}
                                         </Label>
                                         <Input
                                             id="email"
                                             v-model="profileForm.email"
                                             type="email"
                                             required
-                                            placeholder="john@example.com"
+                                            :placeholder="$t('settings.profile.emailPlaceholder')"
                                             class="border-slate-200/50 bg-white/60 backdrop-blur-sm transition-all duration-300 focus:border-blue-500 focus:bg-white dark:border-white/10 dark:bg-white/5 dark:focus:border-blue-400 dark:focus:bg-white/10"
                                             :class="{
                                                 'border-red-500 dark:border-red-400':
@@ -290,15 +291,14 @@ const handleCompanySubmit = () => {
                                                 <p
                                                     class="text-sm text-amber-800 dark:text-amber-300"
                                                 >
-                                                    Your email address is unverified.
+                                                    {{ $t('settings.profile.emailUnverified') }}
                                                     <Link
                                                         href="/email/verification-notification"
                                                         method="post"
                                                         as="button"
                                                         class="font-semibold underline underline-offset-2 transition-colors hover:text-amber-900 dark:hover:text-amber-200"
                                                     >
-                                                        Click here to resend verification
-                                                        email.
+                                                        {{ $t('settings.profile.resendVerification') }}
                                                     </Link>
                                                 </p>
                                                 <p
@@ -307,7 +307,7 @@ const handleCompanySubmit = () => {
                                                     "
                                                     class="mt-2 text-sm font-semibold text-amber-900 dark:text-amber-200"
                                                 >
-                                                    ✓ Verification email sent!
+                                                    {{ $t('settings.profile.verificationSent') }}
                                                 </p>
                                             </div>
                                         </div>
@@ -321,7 +321,7 @@ const handleCompanySubmit = () => {
                                             <p
                                                 class="text-sm font-medium text-emerald-800 dark:text-emerald-300"
                                             >
-                                                Email verified
+                                                {{ $t('settings.profile.emailVerified') }}
                                             </p>
                                         </div>
                                     </div>
@@ -339,8 +339,8 @@ const handleCompanySubmit = () => {
                                                 <Save class="h-4 w-4" />
                                                 {{
                                                     profileForm.processing
-                                                        ? 'Saving...'
-                                                        : 'Save Profile'
+                                                        ? $t('settings.profile.saving')
+                                                        : $t('settings.profile.save')
                                                 }}
                                             </span>
                                         </Button>
@@ -349,6 +349,50 @@ const handleCompanySubmit = () => {
                             </div>
                         </div>
                     </form>
+
+                    <!-- Language Preferences Card -->
+                    <div
+                        class="group relative overflow-hidden rounded-3xl border border-white/60 bg-white/70 backdrop-blur-xl transition-all duration-500 hover:border-white/80 hover:bg-white/80 hover:shadow-xl dark:border-white/10 dark:bg-slate-900/70 dark:hover:border-white/20 dark:hover:bg-slate-900/80"
+                    >
+                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-pink-500/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                        />
+
+                        <div class="relative p-8">
+                            <div class="mb-6 flex items-center gap-3">
+                                <div
+                                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 shadow-md"
+                                >
+                                    <Globe class="h-5 w-5 text-white" />
+                                </div>
+                                <div>
+                                    <h2
+                                        class="text-xl font-bold text-slate-900 dark:text-white"
+                                    >
+                                        {{ $t('settings.language.title') }}
+                                    </h2>
+                                    <p
+                                        class="text-sm text-slate-600 dark:text-slate-400"
+                                    >
+                                        {{ $t('settings.language.subtitle') }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="grid gap-2">
+                                    <Label class="text-slate-700 dark:text-slate-300">
+                                        {{ $t('settings.language.displayLanguage') }}
+                                    </Label>
+                                    <LanguageSwitcher />
+                                </div>
+
+                                <p class="text-sm text-slate-500 dark:text-slate-400">
+                                    {{ $t('settings.language.description') }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Delete Account Section -->
                     <div
@@ -393,12 +437,12 @@ const handleCompanySubmit = () => {
                                         <h2
                                             class="text-xl font-bold text-slate-900 dark:text-white"
                                         >
-                                            Company Settings
+                                            {{ $t('settings.company.title') }}
                                         </h2>
                                         <p
                                             class="text-sm text-slate-600 dark:text-slate-400"
                                         >
-                                            Configure organization preferences
+                                            {{ $t('settings.company.subtitle') }}
                                         </p>
                                     </div>
                                 </div>
@@ -410,14 +454,14 @@ const handleCompanySubmit = () => {
                                             for="company-name"
                                             class="text-slate-700 dark:text-slate-300"
                                         >
-                                            Company Name
+                                            {{ $t('settings.company.name') }}
                                         </Label>
                                         <Input
                                             id="company-name"
                                             v-model="companyForm.name"
                                             type="text"
                                             required
-                                            placeholder="Acme Corporation"
+                                            :placeholder="$t('settings.company.namePlaceholder')"
                                             class="border-slate-200/50 bg-white/60 backdrop-blur-sm transition-all duration-300 focus:border-indigo-500 focus:bg-white dark:border-white/10 dark:bg-white/5 dark:focus:border-indigo-400 dark:focus:bg-white/10"
                                             :class="{
                                                 'border-red-500 dark:border-red-400':
@@ -438,7 +482,7 @@ const handleCompanySubmit = () => {
                                             for="annual-days"
                                             class="text-slate-700 dark:text-slate-300"
                                         >
-                                            Annual Vacation Days
+                                            {{ $t('settings.company.annualDays') }}
                                         </Label>
                                         <Input
                                             id="annual-days"
@@ -447,7 +491,7 @@ const handleCompanySubmit = () => {
                                             min="0"
                                             max="365"
                                             required
-                                            placeholder="20"
+                                            :placeholder="$t('settings.company.annualDaysPlaceholder')"
                                             class="border-slate-200/50 bg-white/60 backdrop-blur-sm transition-all duration-300 focus:border-indigo-500 focus:bg-white dark:border-white/10 dark:bg-white/5 dark:focus:border-indigo-400 dark:focus:bg-white/10"
                                             :class="{
                                                 'border-red-500 dark:border-red-400':
@@ -457,8 +501,7 @@ const handleCompanySubmit = () => {
                                         <p
                                             class="text-sm text-slate-600 dark:text-slate-400"
                                         >
-                                            Default paid vacation days per year for
-                                            employees
+                                            {{ $t('settings.company.annualDaysDescription') }}
                                         </p>
                                         <p
                                             v-if="companyForm.errors.annual_days"
@@ -477,13 +520,12 @@ const handleCompanySubmit = () => {
                                                 for="approval-required"
                                                 class="text-base font-semibold text-slate-900 dark:text-white"
                                             >
-                                                Require Manager Approval
+                                                {{ $t('settings.company.approvalRequired') }}
                                             </Label>
                                             <p
                                                 class="mt-1 text-sm text-slate-600 dark:text-slate-400"
                                             >
-                                                Vacation requests must be approved before
-                                                confirmation
+                                                {{ $t('settings.company.approvalRequiredDescription') }}
                                             </p>
                                         </div>
                                         <Checkbox
@@ -502,7 +544,7 @@ const handleCompanySubmit = () => {
                                             for="timezone"
                                             class="text-slate-700 dark:text-slate-300"
                                         >
-                                            Company Timezone
+                                            {{ $t('settings.company.timezone') }}
                                         </Label>
                                         <Select v-model="companyForm.timezone">
                                             <SelectTrigger
@@ -510,7 +552,7 @@ const handleCompanySubmit = () => {
                                                 class="border-slate-200/50 bg-white/60 backdrop-blur-sm transition-all duration-300 focus:border-indigo-500 focus:bg-white dark:border-white/10 dark:bg-white/5 dark:focus:border-indigo-400 dark:focus:bg-white/10"
                                             >
                                                 <SelectValue
-                                                    placeholder="Select a timezone"
+                                                    :placeholder="$t('settings.company.timezonePlaceholder')"
                                                 />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -526,7 +568,7 @@ const handleCompanySubmit = () => {
                                         <p
                                             class="text-sm text-slate-600 dark:text-slate-400"
                                         >
-                                            Used for date calculations and scheduling
+                                            {{ $t('settings.company.timezoneDescription') }}
                                         </p>
                                         <p
                                             v-if="companyForm.errors.timezone"
@@ -549,8 +591,8 @@ const handleCompanySubmit = () => {
                                                 <Save class="h-4 w-4" />
                                                 {{
                                                     companyForm.processing
-                                                        ? 'Saving...'
-                                                        : 'Save Company Settings'
+                                                        ? $t('settings.company.saving')
+                                                        : $t('settings.company.save')
                                                 }}
                                             </span>
                                         </Button>

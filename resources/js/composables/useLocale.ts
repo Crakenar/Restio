@@ -22,15 +22,20 @@ export function useLocale() {
     );
 
     const switchLocale = (newLocale: string) => {
-        if (availableLocales.value.includes(newLocale)) {
-            // Visit current page with new locale parameter
-            router.get(
-                window.location.pathname,
+        if (availableLocales.value.includes(newLocale) && newLocale !== currentLocale.value) {
+            // Post to locale update endpoint
+            router.post(
+                '/locale',
                 { locale: newLocale },
                 {
-                    preserveState: true,
+                    preserveState: false,
                     preserveScroll: true,
-                    only: ['locale'], // Only refresh locale prop
+                    onSuccess: () => {
+                        // Update i18n locale
+                        locale.value = newLocale;
+                        // Update HTML lang attribute
+                        document.documentElement.lang = newLocale;
+                    },
                 }
             );
         }

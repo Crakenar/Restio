@@ -19,6 +19,9 @@ import {
     XCircle,
 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 interface Props {
     requests: VacationRequest[];
@@ -112,13 +115,13 @@ const getTypeColor = (type: string) => {
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="mb-1 text-sm font-medium text-slate-600 dark:text-white/70">
-                                Action Required
+                                {{ t('dashboard.manager.actionRequired') }}
                             </p>
                             <p class="text-4xl font-bold">
                                 {{ pendingRequests.length }}
                             </p>
                             <p class="mt-1 text-xs text-slate-500 dark:text-white/50">
-                                Pending approvals
+                                {{ t('dashboard.manager.pendingApprovals') }}
                             </p>
                         </div>
                         <div
@@ -139,7 +142,7 @@ const getTypeColor = (type: string) => {
                             <p
                                 class="mb-1 text-sm font-medium text-slate-600 dark:text-white/60"
                             >
-                                Approved
+                                {{ t('dashboard.admin.approved') }}
                             </p>
                             <p
                                 class="text-3xl font-bold text-slate-900 dark:text-white"
@@ -163,7 +166,7 @@ const getTypeColor = (type: string) => {
                             <p
                                 class="mb-1 text-sm font-medium text-slate-600 dark:text-white/60"
                             >
-                                Out Today
+                                {{ t('dashboard.manager.outToday') }}
                             </p>
                             <p
                                 class="text-3xl font-bold text-slate-900 dark:text-white"
@@ -187,7 +190,7 @@ const getTypeColor = (type: string) => {
                             <p
                                 class="mb-1 text-sm font-medium text-slate-600 dark:text-white/60"
                             >
-                                Team Size
+                                {{ t('dashboard.manager.teamSize') }}
                             </p>
                             <p
                                 class="text-3xl font-bold text-slate-900 dark:text-white"
@@ -207,7 +210,7 @@ const getTypeColor = (type: string) => {
         <Tabs v-model="activeTab" class="space-y-4">
             <TabsList class="grid w-full grid-cols-3 border border-slate-200 bg-white/90 shadow-lg backdrop-blur-xl dark:border-white/20 dark:bg-white/10">
                 <TabsTrigger value="pending" class="relative text-slate-600 hover:bg-slate-100 hover:text-slate-900 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">
-                    Pending
+                    {{ t('dashboard.manager.pendingTab') }}
                     <Badge
                         v-if="pendingRequests.length > 0"
                         class="ml-2 border-0 bg-amber-500 text-white shadow-sm"
@@ -215,8 +218,8 @@ const getTypeColor = (type: string) => {
                         {{ pendingRequests.length }}
                     </Badge>
                 </TabsTrigger>
-                <TabsTrigger value="team" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">Team Calendar</TabsTrigger>
-                <TabsTrigger value="upcoming" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">Upcoming</TabsTrigger>
+                <TabsTrigger value="team" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">{{ t('dashboard.manager.teamCalendar') }}</TabsTrigger>
+                <TabsTrigger value="upcoming" class="text-slate-600 hover:bg-slate-100 hover:text-slate-900 data-[state=active]:bg-slate-200 data-[state=active]:text-slate-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white dark:data-[state=active]:bg-white/20 dark:data-[state=active]:text-white">{{ t('dashboard.manager.upcomingTab') }}</TabsTrigger>
             </TabsList>
 
             <!-- Pending Requests -->
@@ -227,10 +230,10 @@ const getTypeColor = (type: string) => {
                     >
                         <CheckCircle2 class="mb-4 h-12 w-12 text-emerald-500" />
                         <h3 class="mb-2 text-lg font-semibold text-slate-900 dark:text-white">
-                            All caught up!
+                            {{ t('dashboard.manager.allCaughtUp') }}
                         </h3>
                         <p class="text-sm text-slate-600 dark:text-white/60">
-                            No pending requests to review
+                            {{ t('dashboard.manager.noPendingReview') }}
                         </p>
                     </CardContent>
                 </Card>
@@ -291,7 +294,7 @@ const getTypeColor = (type: string) => {
                                                         (1000 * 60 * 60 * 24),
                                                 ) + 1
                                             }}
-                                            days
+                                            {{ t('dashboard.recentRequests.days') }}
                                         </span>
                                     </div>
                                     <p
@@ -309,7 +312,7 @@ const getTypeColor = (type: string) => {
                                         class="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
                                     >
                                         <CheckCircle2 class="mr-1 h-4 w-4" />
-                                        Approve
+                                        {{ t('dashboard.manager.approve') }}
                                     </Button>
                                     <Button
                                         variant="outline"
@@ -318,7 +321,7 @@ const getTypeColor = (type: string) => {
                                         class="border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300"
                                     >
                                         <XCircle class="mr-1 h-4 w-4" />
-                                        Reject
+                                        {{ t('dashboard.manager.reject') }}
                                     </Button>
                                 </div>
                             </div>
@@ -336,9 +339,9 @@ const getTypeColor = (type: string) => {
             <TabsContent value="upcoming" class="space-y-4">
                 <Card class="border border-slate-200/50 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-sm">
                     <CardHeader>
-                        <CardTitle class="text-slate-900 dark:text-white">Upcoming Team Absences</CardTitle>
+                        <CardTitle class="text-slate-900 dark:text-white">{{ t('dashboard.manager.upcomingTeamAbsences') }}</CardTitle>
                         <CardDescription class="text-slate-500 dark:text-white/60"
-                            >Plan ahead for team coverage</CardDescription
+                            >{{ t('dashboard.manager.planAheadCoverage') }}</CardDescription
                         >
                     </CardHeader>
                     <CardContent>
@@ -350,7 +353,7 @@ const getTypeColor = (type: string) => {
                                 class="mb-4 h-12 w-12 text-slate-300 dark:text-white/30"
                             />
                             <p class="text-sm text-slate-400 dark:text-white/50">
-                                No upcoming absences scheduled
+                                {{ t('dashboard.manager.noUpcomingAbsences') }}
                             </p>
                         </div>
                         <div v-else class="space-y-3">
@@ -401,7 +404,7 @@ const getTypeColor = (type: string) => {
                                                         (1000 * 60 * 60 * 24),
                                                 ) + 1
                                             }}
-                                            days
+                                            {{ t('dashboard.recentRequests.days') }}
                                         </p>
                                     </div>
                                 </div>

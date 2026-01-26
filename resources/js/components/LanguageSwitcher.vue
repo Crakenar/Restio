@@ -7,7 +7,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Globe } from 'lucide-vue-next';
+import { Globe, Check } from 'lucide-vue-next';
 
 const { currentLocale, availableLocales, switchLocale } = useLocale();
 
@@ -20,9 +20,9 @@ const localeNames: Record<string, string> = {
 <template>
     <DropdownMenu>
         <DropdownMenuTrigger as-child>
-            <Button variant="ghost" size="icon">
-                <Globe class="h-5 w-5" />
-                <span class="sr-only">{{ $t('common.changeLanguage') }}</span>
+            <Button variant="outline" class="gap-2">
+                <Globe class="h-4 w-4" />
+                <span>{{ localeNames[currentLocale] || currentLocale }}</span>
             </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
@@ -31,8 +31,10 @@ const localeNames: Record<string, string> = {
                 :key="locale"
                 @click="switchLocale(locale)"
                 :class="{ 'bg-accent': currentLocale === locale }"
+                class="flex items-center justify-between gap-4"
             >
                 <span>{{ localeNames[locale] || locale }}</span>
+                <Check v-if="currentLocale === locale" class="h-4 w-4" />
             </DropdownMenuItem>
         </DropdownMenuContent>
     </DropdownMenu>

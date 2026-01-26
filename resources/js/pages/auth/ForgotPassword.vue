@@ -8,11 +8,14 @@ import InputError from '@/components/InputError.vue'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Spinner } from '@/components/ui/spinner'
+import PublicLanguageSwitcher from '@/components/PublicLanguageSwitcher.vue'
+import { useI18n } from 'vue-i18n'
 
 defineProps<{
     status?: string
 }>()
 
+const { t } = useI18n()
 const isLoaded = ref(false)
 
 onMounted(() => {
@@ -50,6 +53,11 @@ onMounted(() => {
             class="relative z-10 w-full max-w-md transition-all duration-1000"
             :class="isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'"
         >
+            <!-- Language Switcher -->
+            <div class="flex justify-end mb-6">
+                <PublicLanguageSwitcher />
+            </div>
+
             <!-- Logo -->
             <div class="flex justify-center mb-8">
                 <div class="flex items-center gap-3">
@@ -67,9 +75,9 @@ onMounted(() => {
                 <!-- Header -->
                 <div class="text-center mb-8">
                     <h1 class="text-3xl font-bold text-white mb-2" style="font-family: 'DM Serif Display', serif">
-                        Forgot password?
+                        {{ t('auth.forgotPassword.title') }}
                     </h1>
-                    <p class="text-white/70">No worries, we'll send you reset instructions</p>
+                    <p class="text-white/70">{{ t('auth.forgotPassword.subtitle') }}</p>
                 </div>
 
                 <!-- Status Message -->
@@ -85,7 +93,7 @@ onMounted(() => {
                     <!-- Email -->
                     <div class="space-y-2">
                         <Label for="email" class="text-white/90 text-sm font-medium">
-                            Email address
+                            {{ t('auth.forgotPassword.email') }}
                         </Label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -112,7 +120,7 @@ onMounted(() => {
                         data-test="email-password-reset-link-button"
                     >
                         <Spinner v-if="processing" class="h-5 w-5" />
-                        <span v-else>Send reset link</span>
+                        <span v-else>{{ t('auth.forgotPassword.sendButton') }}</span>
                         <ArrowRight v-if="!processing" class="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                     </button>
                 </Form>
@@ -123,13 +131,13 @@ onMounted(() => {
                     class="mt-6 flex items-center justify-center gap-2 text-sm text-white/70 hover:text-white transition-colors"
                 >
                     <ArrowLeft class="h-4 w-4" />
-                    Back to sign in
+                    {{ t('auth.forgotPassword.backToLogin') }}
                 </Link>
             </div>
 
             <!-- Footer Text -->
             <p class="text-center text-white/40 text-sm mt-6">
-                Check your spam folder if you don't receive an email
+                {{ t('auth.forgotPassword.footer') }}
             </p>
         </div>
     </div>

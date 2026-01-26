@@ -24,8 +24,10 @@ import { Button } from '@/components/ui/button';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import PremiumSidebar from '@/components/PremiumSidebar.vue';
 import VacationRequestForm from '@/components/VacationRequestForm.vue';
+import { useI18n } from 'vue-i18n';
 
 const page = usePage();
+const { t } = useI18n();
 
 interface Props {
     requests: VacationRequest[];
@@ -92,45 +94,45 @@ const usagePercentage = computed(() =>
 );
 
 // Feature cards data
-const featureCards = [
+const featureCards = computed(() => [
     {
         id: 'plannings',
-        title: 'Plannings',
+        title: t('dashboard.employee.plannings'),
         icon: Calendar,
         gradient: 'from-emerald-500 to-teal-500',
         links: [
-            { label: 'Calendrier des vacances', href: '/calendar' },
-            { label: 'Planning de mes collègues', href: '/teams' },
+            { label: t('dashboard.employee.vacationCalendar'), href: '/calendar' },
+            { label: t('dashboard.employee.colleaguesSchedule'), href: '/teams' },
         ],
     },
     {
         id: 'absences',
-        title: 'Absences',
+        title: t('dashboard.employee.absences'),
         icon: Clock,
         gradient: 'from-blue-500 to-indigo-500',
         links: [
-            { label: "Demande d'absence", href: '/calendar' },
-            { label: 'Historique des demandes', href: '/requests' },
+            { label: t('dashboard.employee.absenceRequest'), href: '/calendar' },
+            { label: t('dashboard.employee.requestHistory'), href: '/requests' },
         ],
     },
     {
         id: 'outils',
-        title: 'Outils',
+        title: t('dashboard.employee.tools'),
         icon: Wrench,
         gradient: 'from-pink-500 to-rose-500',
         links: [
-            { label: 'Tableau de présence', href: '/teams' },
-            { label: 'Gestion de Documents', href: '/documents' },
+            { label: t('dashboard.employee.attendanceBoard'), href: '/teams' },
+            { label: t('dashboard.employee.documentManagement'), href: '/documents' },
         ],
     },
     {
         id: 'actualites',
-        title: 'Actualités',
+        title: t('dashboard.employee.news'),
         icon: Newspaper,
         gradient: 'from-violet-500 to-purple-500',
         isNews: true,
     },
-];
+]);
 
 const getTypeIcon = (type: string) => {
     switch (type) {
@@ -203,10 +205,10 @@ const formatDateRange = (start: Date, end: Date) => {
                             <h1
                                 class="mb-1 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-3xl font-bold tracking-tight text-transparent dark:from-slate-100 dark:to-slate-300"
                             >
-                                Welcome back, {{ userName }}
+                                {{ t('dashboard.welcomeMessage', { name: userName }) }}
                             </h1>
                             <p class="text-slate-600 dark:text-slate-300">
-                                Plan your time off and track your balance
+                                {{ t('dashboard.subtitle') }}
                             </p>
                         </div>
                     </div>
@@ -228,7 +230,7 @@ const formatDateRange = (start: Date, end: Date) => {
                     <div class="relative">
                         <div class="mb-3 flex items-center justify-between">
                             <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">
-                                Notifications
+                                {{ t('nav.notifications', 'Notifications') }}
                             </h2>
                             <div class="relative">
                                 <div
@@ -250,7 +252,7 @@ const formatDateRange = (start: Date, end: Date) => {
                             >
                                 {{ notificationCount }}
                             </span>
-                            {{ notificationCount !== 1 ? 'notifications' : 'notification' }}
+                            {{ t('common.notifications', notificationCount) }}
                         </p>
                     </div>
                 </div>
@@ -279,14 +281,14 @@ const formatDateRange = (start: Date, end: Date) => {
                                 <CalendarDays class="h-5 w-5 text-white" />
                             </div>
                             <p class="text-sm font-semibold text-slate-600 dark:text-slate-300">
-                                Days Remaining
+                                {{ t('dashboard.stats.remaining') }}
                             </p>
                         </div>
                         <p class="mb-1 text-5xl font-bold text-slate-900 dark:text-white">
                             {{ daysRemaining }}
                         </p>
                         <p class="mb-3 text-xs text-slate-500 dark:text-slate-400">
-                            of {{ totalDaysAllowed }} total days
+                            {{ t('dashboard.recentRequests.days', { count: totalDaysAllowed }) }}
                         </p>
                         <!-- Progress bar -->
                         <div class="h-2.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
@@ -311,14 +313,14 @@ const formatDateRange = (start: Date, end: Date) => {
                                 <TrendingUp class="h-5 w-5 text-white" />
                             </div>
                             <p class="text-sm font-semibold text-slate-600 dark:text-slate-300">
-                                Days Used
+                                {{ t('dashboard.stats.used') }}
                             </p>
                         </div>
                         <p class="mb-1 text-5xl font-bold text-slate-900 dark:text-white">
                             {{ totalDaysUsed }}
                         </p>
                         <p class="text-xs text-slate-500 dark:text-slate-400">
-                            {{ usagePercentage }}% of allowance
+                            {{ usagePercentage }}% {{ t('dashboard.stats.used').toLowerCase() }}
                         </p>
                     </CardContent>
                 </Card>
@@ -336,15 +338,14 @@ const formatDateRange = (start: Date, end: Date) => {
                                 <Clock class="h-5 w-5 text-white" />
                             </div>
                             <p class="text-sm font-semibold text-slate-600 dark:text-slate-300">
-                                Pending Approval
+                                {{ t('dashboard.stats.pending') }}
                             </p>
                         </div>
                         <p class="mb-1 text-5xl font-bold text-slate-900 dark:text-white">
                             {{ pendingRequests.length }}
                         </p>
                         <p class="text-xs text-slate-500 dark:text-slate-400">
-                            {{ pendingRequests.length === 1 ? 'request' : 'requests' }}
-                            awaiting review
+                            {{ t('requests.pending').toLowerCase() }}
                         </p>
                     </CardContent>
                 </Card>
@@ -367,7 +368,7 @@ const formatDateRange = (start: Date, end: Date) => {
                     <span class="absolute inset-0 bg-gradient-to-r from-orange-600 to-rose-600 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                     <span class="relative flex items-center gap-3">
                         <Plus class="h-6 w-6 transition-transform duration-300 group-hover:rotate-90" />
-                        Request Time Off
+                        {{ t('dashboard.employee.requestTimeOff') }}
                     </span>
                 </Button>
             </div>
@@ -390,10 +391,10 @@ const formatDateRange = (start: Date, end: Date) => {
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">
-                                Support utilisateur
+                                {{ t('dashboard.employee.supportUser') }}
                             </h3>
                             <p class="text-sm text-slate-600 dark:text-slate-300">
-                                Documentation et ressources
+                                {{ t('dashboard.employee.documentationResources') }}
                             </p>
                         </div>
                     </div>
@@ -401,7 +402,7 @@ const formatDateRange = (start: Date, end: Date) => {
                         class="group/btn flex items-center gap-2 rounded-2xl bg-gradient-to-r from-orange-500 to-rose-500 px-6 py-3 font-semibold text-white shadow-lg shadow-orange-500/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-orange-500/40"
                     >
                         <Download class="h-5 w-5 transition-transform duration-300 group-hover/btn:translate-y-0.5" />
-                        <span>Télécharger</span>
+                        <span>{{ t('dashboard.employee.download') }}</span>
                     </button>
                 </div>
             </div>
@@ -462,21 +463,20 @@ const formatDateRange = (start: Date, end: Date) => {
                                 class="rounded-2xl border border-slate-200/50 bg-gradient-to-br from-slate-50 to-white p-4 dark:border-slate-700/50 dark:from-slate-800/50 dark:to-slate-900/50"
                             >
                                 <h4 class="mb-2 font-bold text-slate-800 dark:text-slate-100">
-                                    Actualités utilisateur
+                                    {{ t('dashboard.employee.userNews') }}
                                 </h4>
                                 <p class="mb-1 text-sm font-semibold text-slate-700 dark:text-slate-200">
-                                    Titre
+                                    {{ t('dashboard.employee.titlePlaceholder') }}
                                 </p>
                                 <p class="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-                                    Placer ici votre message d'actualité personnalisé
-                                    pour tous les utilisateurs de la société.
+                                    {{ t('dashboard.employee.newsPlaceholder') }}
                                 </p>
                             </div>
                             <button
                                 class="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-100 py-3 text-sm font-semibold text-slate-700 transition-all duration-300 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
                             >
                                 <ChevronDown class="h-4 w-4" />
-                                <span>Voir plus</span>
+                                <span>{{ t('dashboard.employee.seeMore') }}</span>
                             </button>
                         </div>
                     </div>
@@ -502,7 +502,7 @@ const formatDateRange = (start: Date, end: Date) => {
                             <Plane class="h-6 w-6 text-white" />
                         </div>
                         <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100">
-                            Upcoming Time Off
+                            {{ t('dashboard.employee.upcomingTimeOff') }}
                         </h3>
                     </div>
 
@@ -523,7 +523,7 @@ const formatDateRange = (start: Date, end: Date) => {
                             </div>
                             <div class="flex-1">
                                 <p class="text-sm font-bold capitalize text-slate-900 dark:text-white">
-                                    {{ request.type }} Leave
+                                    {{ request.type }} {{ t('dashboard.employee.leave') }}
                                 </p>
                                 <p class="text-xs text-slate-600 dark:text-slate-400">
                                     {{ formatDateRange(request.startDate, request.endDate) }}
@@ -546,8 +546,8 @@ const formatDateRange = (start: Date, end: Date) => {
                                                 request.startDate.getTime()) /
                                                 (1000 * 60 * 60 * 24),
                                         ) + 1 === 1
-                                            ? 'day'
-                                            : 'days'
+                                            ? t('dashboard.recentRequests.day')
+                                            : t('dashboard.recentRequests.days')
                                     }}
                                 </p>
                             </div>
@@ -562,7 +562,7 @@ const formatDateRange = (start: Date, end: Date) => {
         <Dialog v-model:open="isRequestDialogOpen">
             <DialogContent class="max-w-2xl border-white/20 bg-white/90 backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/90">
                 <DialogHeader>
-                    <DialogTitle class="sr-only">Request Time Off</DialogTitle>
+                    <DialogTitle class="sr-only">{{ t('dashboard.employee.requestTimeOff') }}</DialogTitle>
                 </DialogHeader>
                 <VacationRequestForm
                     @success="handleRequestSuccess"

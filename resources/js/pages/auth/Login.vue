@@ -10,6 +10,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Spinner } from '@/components/ui/spinner'
+import PublicLanguageSwitcher from '@/components/PublicLanguageSwitcher.vue'
+import { useI18n } from 'vue-i18n'
 
 defineProps<{
     status?: string
@@ -17,6 +19,7 @@ defineProps<{
     canRegister: boolean
 }>()
 
+const { t } = useI18n()
 const isLoaded = ref(false)
 
 onMounted(() => {
@@ -54,6 +57,11 @@ onMounted(() => {
             class="relative z-10 w-full max-w-md transition-all duration-1000"
             :class="isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'"
         >
+            <!-- Language Switcher -->
+            <div class="flex justify-end mb-6">
+                <PublicLanguageSwitcher />
+            </div>
+
             <!-- Logo -->
             <div class="flex justify-center mb-8">
                 <div class="flex items-center gap-3">
@@ -71,9 +79,9 @@ onMounted(() => {
                 <!-- Header -->
                 <div class="text-center mb-8">
                     <h1 class="text-3xl font-bold text-white mb-2" style="font-family: 'DM Serif Display', serif">
-                        Welcome back
+                        {{ t('auth.login.title') }}
                     </h1>
-                    <p class="text-white/70">Sign in to your account to continue</p>
+                    <p class="text-white/70">{{ t('auth.login.subtitle') }}</p>
                 </div>
 
                 <!-- Status Message -->
@@ -94,7 +102,7 @@ onMounted(() => {
                     <!-- Email -->
                     <div class="space-y-2">
                         <Label for="email" class="text-white/90 text-sm font-medium">
-                            Email address
+                            {{ t('auth.login.email') }}
                         </Label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -119,7 +127,7 @@ onMounted(() => {
                     <div class="space-y-2">
                         <div class="flex items-center justify-between">
                             <Label for="password" class="text-white/90 text-sm font-medium">
-                                Password
+                                {{ t('auth.login.password') }}
                             </Label>
                             <Link
                                 v-if="canResetPassword"
@@ -127,7 +135,7 @@ onMounted(() => {
                                 class="text-sm text-orange-400 hover:text-orange-300 transition-colors"
                                 :tabindex="5"
                             >
-                                Forgot password?
+                                {{ t('auth.login.forgotPassword') }}
                             </Link>
                         </div>
                         <div class="relative">
@@ -152,7 +160,7 @@ onMounted(() => {
                     <div class="flex items-center">
                         <Label for="remember" class="flex items-center gap-3 cursor-pointer text-white/80 hover:text-white transition-colors">
                             <Checkbox id="remember" name="remember" :tabindex="3" class="border-white/20 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500" />
-                            <span class="text-sm">Remember me for 30 days</span>
+                            <span class="text-sm">{{ t('auth.login.rememberMe') }}</span>
                         </Label>
                     </div>
 
@@ -165,23 +173,23 @@ onMounted(() => {
                         data-test="login-button"
                     >
                         <Spinner v-if="processing" class="h-5 w-5" />
-                        <span v-else>Sign in</span>
+                        <span v-else>{{ t('auth.login.signIn') }}</span>
                         <ArrowRight v-if="!processing" class="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                     </button>
                 </Form>
 
                 <!-- Register Link -->
                 <div v-if="canRegister" class="mt-8 text-center text-sm text-white/70">
-                    Don't have an account?
+                    {{ t('auth.login.noAccount') }}
                     <Link :href="register()" :tabindex="6" class="text-orange-400 hover:text-orange-300 font-medium transition-colors ml-1">
-                        Create account
+                        {{ t('auth.login.createAccount') }}
                     </Link>
                 </div>
             </div>
 
             <!-- Footer Text -->
             <p class="text-center text-white/40 text-sm mt-6">
-                Secure authentication powered by Restio
+                {{ t('auth.login.footer') }}
             </p>
         </div>
     </div>

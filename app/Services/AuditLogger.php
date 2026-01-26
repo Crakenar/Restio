@@ -16,16 +16,22 @@ class AuditLogger
         ?Model $auditable = null,
         ?array $oldValues = null,
         ?array $newValues = null,
-        ?array $metadata = null
+        ?array $metadata = null,
+        ?string $guard = null
     ): AuditLog {
         $user = Auth::user();
+        $guard = $guard ?? Auth::getDefaultDriver();
+
+        // Check if it's an admin user
+        $isAdmin = $guard === 'admin' || $user instanceof \App\Models\Admin;
 
         return AuditLog::create([
             'event' => $event,
             'auditable_type' => $auditable?->getMorphClass(),
             'auditable_id' => $auditable?->getKey(),
-            'user_id' => $user?->id,
-            'company_id' => $user?->company_id,
+            'user_id' => $isAdmin ? null : $user?->id,
+            'admin_id' => $isAdmin ? $user?->id : null,
+            'company_id' => $isAdmin ? null : $user?->company_id,
             'old_values' => $oldValues,
             'new_values' => $newValues,
             'metadata' => $metadata,
@@ -88,11 +94,12 @@ class AuditLogger
     /**
      * Log a successful login.
      */
-    public function successfulLogin(?array $metadata = null): AuditLog
+    public function successfulLogin(?array $metadata = null, ?string $guard = null): AuditLog
     {
         return $this->log(
             event: 'login.success',
-            metadata: $metadata
+            metadata: $metadata,
+            guard: $guard
         );
     }
 
